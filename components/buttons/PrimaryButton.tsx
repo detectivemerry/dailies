@@ -3,7 +3,7 @@ import { Button, Typography } from "@mui/material";
 
 interface PrimaryButtonProps {
   text: string;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const PrimaryButton: FC<PrimaryButtonProps> = ({ text, onClick }) => {
@@ -15,6 +15,7 @@ const PrimaryButton: FC<PrimaryButtonProps> = ({ text, onClick }) => {
         borderRadius: "25px",
       }}
       onClick={onClick}
+      type = "submit"
     >
       {text}
     </Button>
