@@ -11,17 +11,18 @@ export default function Login() {
   const handleLogin = () => {
     console.log("handling login")
   }
+
   return (
     <div className="flex flex-col items-center my-20 gap-4">
       <div className = "mb-20">
         <Logo />
       </div>
       <div>
-        <TextField label="Username" variant="standard" sx = {{ width : "20rem"}}/>
+        <TextField label="Username" variant="standard" sx = {{ width : "20rem"}} required/>
       </div>
       <div className = "flex flex-col">
         <div className = "pb-2">
-          <TextField label="Password" variant="standard" type = "password" sx = {{ width : "20rem"}}/>
+          <TextField label="Password" variant="standard" type = "password" sx = {{ width : "20rem"}} required/>
         </div>
         <div className = "text-right text-sm">
           <Link href = "/register">
