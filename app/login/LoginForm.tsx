@@ -5,6 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { TextField } from "@mui/material";
+import { signIn } from "next-auth/react";
 
 type Inputs = {
   username: string;
@@ -20,12 +21,20 @@ export default function LoginForm() {
     reset
   } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
-    reset({
-      username: "",
-      password: "",
-    });
+  const onSubmit: SubmitHandler<Inputs> = async(data) => {
+    //console.log(data);
+    const result = await signIn('credentials', {email : data.username, password : data.password});
+    console.log("result")
+    console.log(result)
+    if(result?.ok)
+      console.log("result is ok")
+    else
+      console.log("result is not ok")
+
+    //reset({
+      //username: "",
+      //password: "",
+    //});
   }
 
   return (
