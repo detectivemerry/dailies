@@ -1,4 +1,15 @@
 import Image from "next/image";
+import connectDB from "./lib/mongodb";
+
+export async function testDB() {
+  await connectDB();
+
+  return {
+    props: {},
+  };
+}
+
+testDB();
 
 export default function Home() {
   return (
