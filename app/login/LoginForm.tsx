@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
-import { TextField } from "@mui/material";
+import { TextField, Alert } from "@mui/material";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Message from "@/app/lib/message/Message";
 
 type Inputs = {
   username: string;
@@ -13,6 +15,7 @@ type Inputs = {
 };
 
 export default function LoginForm() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -21,24 +24,24 @@ export default function LoginForm() {
     reset
   } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = async(data) => {
-    //console.log(data);
-    const result = await signIn('credentials', {email : data.username, password : data.password});
-    console.log("result")
-    console.log(result)
-    if(result?.ok)
-      console.log("result is ok")
-    else
-      console.log("result is not ok")
+  const [errorMessage, setErrorMessage] = useState("")
 
-    //reset({
-      //username: "",
-      //password: "",
-    //});
+  const onSubmit: SubmitHandler<Inputs> = async(data) => {
+    setErrorMessage("") ;
+    const result = await signIn('credentials', {email : data.username, password : data.password, redirect : false});
+    if(result?.ok)
+      router.push('/home');
+    else{
+      setErrorMessage(Message.Error.InvalidCredentials);
+      return false
+    }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <div className = "w-80 mb-4">
+      {Boolean(errorMessage) && <Alert severity="error">{errorMessage}</Alert>}
+      </div>
       <div>
         <TextField
           label="Username"

@@ -1,5 +1,13 @@
 import { NextAuthOptions, Awaitable, Session, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from 'bcrypt';
+import connectDB  from "@/app/lib/mongodb";
+import { ObjectId } from "mongodb";
+
+type user = {
+  username: string;
+  password: string;
+}
 
 export const authOptions: NextAuthOptions = {
   // Secret for Next-auth, without this JWT encryption/decryption won't work
@@ -18,18 +26,28 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
-        console.log("authorizing bzzt bzzt this is looking good")
-        const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
+        console.log("connecting")
+        const client = await connectDB();
+        
+        let salt :string = await bcrypt.genSalt(12);
+        const db = client.connection.useDb(`Dailies`);
+        const user = await db.collection('Users').findOne({ username : credentials?.email })
 
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
-          console.log("returning user")
-          return user;
-        } else {
+        if(!user) return null;
+
+        const passwordMatch = await bcrypt.compare(credentials?.password, user.password)
+
+        console.log("password matched")
+        console.log(passwordMatch)
+
+        if(!passwordMatch){
           // If you return null then an error will be displayed advising the user to check their details.
-          return null;
           // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+          return null
         }
+
+        // Any object returned will be saved in `user` property of the JWT
+        return user;
       },
     }),
   ],
