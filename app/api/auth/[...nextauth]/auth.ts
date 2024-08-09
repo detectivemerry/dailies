@@ -2,7 +2,6 @@ import { NextAuthOptions, Awaitable, Session, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from 'bcrypt';
 import connectDB  from "@/app/lib/mongodb";
-import { ObjectId } from "mongodb";
 
 type user = {
   username: string;
@@ -26,10 +25,8 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
-        console.log("connecting")
         const client = await connectDB();
         
-        let salt :string = await bcrypt.genSalt(12);
         const db = client.connection.useDb(`Dailies`);
         const user = await db.collection('Users').findOne({ username : credentials?.email })
 
