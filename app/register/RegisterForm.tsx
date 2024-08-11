@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import Link from "next/link";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { TextField, Alert, InputAdornment, IconButton } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material/";
+import { MessageSharp, Visibility, VisibilityOff } from "@mui/icons-material/";
 
 import { useRouter } from "next/navigation";
 import Message from "@/app/lib/message/Message";
@@ -28,11 +28,14 @@ export default function RegisterForm() {
   } = useForm<Inputs>();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [alertMessage, setAlertMessage] = useState({
+    error: false,
+    message: "",
+  });
   const router = useRouter();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    setErrorMessage("");
+    setAlertMessage({ error: false, message: "" });
     try {
       const response = await fetch("/api/register", {
         method: "POST",
@@ -42,28 +45,26 @@ export default function RegisterForm() {
         body: JSON.stringify(data),
       });
 
-      if (response.ok) router.push(`/register/create-goal`);
-      else {
+      if (response.ok) {
+        router.push(`/create-goal?fromRegister=true`);
+      } else {
         const result = await response.json();
-        setErrorMessage(result.message);
+        setAlertMessage({ error: true, message: result.message });
       }
-    } catch (error) {}
+    } catch (error) {
+      setAlertMessage({ error: true, message: Message.Error.General});
+    }
   };
 
   const handleClickShowPassword = () => {
     setShowPassword((show) => !show);
   };
 
-  //<div className="flex flex-col items-center mt-10 gap-2">
-  //<div>
-  //<PrimaryButton text="Continue" />
-  //</div>
-  //</div>
   return (
     <>
       <div className="w-80 mb-4">
-        {Boolean(errorMessage) && (
-          <Alert severity="error">{errorMessage}</Alert>
+        {Boolean(alertMessage.message) && (
+          <Alert severity= {alertMessage.error ? "error" : "success"} >{alertMessage.message}</Alert>
         )}
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>

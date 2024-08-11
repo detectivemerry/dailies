@@ -13,7 +13,15 @@ const PrimaryButton: FC<PrimaryButtonProps> = ({ text, onClick }) => {
       sx={{
         width: "20rem",
         borderRadius: "25px",
+        fontWeight : "bold",
+        color : "#1D5D9B",
+        backgroundColor : "#FBEEAC",
+        textTransform : "none",
+        ':hover' : {
+          backgroundColor : "#F9E47B",
+        }
       }}
+      disableElevation={true}
       onClick={onClick}
       type = "submit"
     >
