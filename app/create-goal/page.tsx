@@ -1,18 +1,20 @@
 import React from "react";
 import CreateGoal from "./CreateGoal";
 
-export default function page() {
+async function getGoalTypes(){
+  const response = await fetch(`${process.env.PUBLIC_URL}/api/goalTypes`, { method : "GET"});
+  const goalTypes = await response.json();
+  if(goalTypes.data){
+    return goalTypes.data;
+  }
+} 
+
+export default async function page() {
+  const goalTypes = await getGoalTypes();
   return (
-    <div className="flex flex-col items-center">
-      <div className="text-3xl font-semibold text-main mt-20">
-        Create a goal
-      </div>
-      <div className = "text-secondaryText text-center mb-10">
-        <div>Already have a goal in mind?</div>
-        <div>Create a goal with us now!</div>
-      </div>
-      <div>
-        <CreateGoal />
+    <div className="flex flex-col items-center mx-8">
+      <div className = "w-full lg:w-3/12">
+        <CreateGoal goalTypes = {goalTypes}/>
       </div>
     </div>
   );
