@@ -185,7 +185,7 @@ export default function RegisterForm() {
         </div>
 
         <div className="mb-20 fixed bottom-0 flex justify-center h-min-screen">
-          <PrimaryButton text="continue" />
+          <PrimaryButton text="Continue" />
         </div>
       </form>
     </>
