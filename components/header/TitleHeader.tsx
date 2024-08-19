@@ -1,25 +1,27 @@
+
 "use client";
 
 import React, { Dispatch, SetStateAction } from "react";
 import { ChevronLeft } from "@mui/icons-material";
 import { Button } from "@mui/material";
 
-interface GoalTypeHeaderProps {
-  headerText: string;
+interface TitleHeaderProps {
+  title: string;
   onClick: any;
 }
 
-export default function GoalTypeHeader({
-  headerText,
+export default function TitleHeader({
+  title,
   onClick,
-}: GoalTypeHeaderProps) {
+}: TitleHeaderProps) {
+
   const handleClick = () => {
     onClick();
   };
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex justify-start w-screen">
+      <div className="flex justify-start w-screen mt-2">
         <Button sx={{ textTransform: "none"}} onClick={handleClick}>
           <div>
             <ChevronLeft sx = {{ fontSize : "2rem"}} />
@@ -29,7 +31,7 @@ export default function GoalTypeHeader({
       </div>
       <div>
         <div className="text-3xl font-semibold text-main my-2 flex flex-col items-center">
-          {headerText}
+          {title}
         </div>
         <div className="border-t w-screen mb-6"></div>
       </div>

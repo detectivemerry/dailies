@@ -22,8 +22,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
-import GoalType from "./GoalType";
-import CreateGoalHeader from "./CreateGoalHeader";
+import GoalTypeMenu from "./GoalTypeMenu";
 import { ObjectId } from "mongodb";
 
 type Inputs = {
@@ -35,21 +34,21 @@ type Inputs = {
 };
 
 interface GoalType {
-  _id : ObjectId;
-  name : string;
-  goal_id : string;
-  avatarIcon : string;
+  _id: ObjectId;
+  name: string;
+  goal_id: string;
+  avatarIcon: string;
 }
 
 interface CreateGoalProps {
-  goalTypes : GoalType[]; 
+  goalTypes: GoalType[];
 }
 
-export default function CreateGoal({ goalTypes } : CreateGoalProps) {
+export default function CreateGoal({ goalTypes }: CreateGoalProps) {
   const searchParams = useSearchParams();
   const fromRegister = searchParams.get("fromRegister");
-  const [selectGoalTypeSubMenu, setSelectGoalTypeSubMenu] = useState<boolean>(false);
-  const [selectGoalSubMenu, setSelectGoalSubMenu] = useState<boolean>(false);
+  const [selectGoalTypeSubMenu, setSelectGoalTypeSubMenu] =
+    useState<boolean>(false);
   const [goal, setGoal] = useState<string | null>(null);
 
   const {
@@ -64,7 +63,23 @@ export default function CreateGoal({ goalTypes } : CreateGoalProps) {
     <div className="flex flex-col items-center gap-6">
       {selectGoalTypeSubMenu ? (
         <>
-          <CreateGoalHeader/>
+          <GoalTypeMenu
+            goalTypes={goalTypes}
+            setSelectGoalTypeSubMenu={setSelectGoalTypeSubMenu}
+            setGoal={setGoal}
+          />
+        </>
+      ) : (
+        <>
+          <div className="flex flex-col items-center">
+            <div className="text-3xl font-semibold text-main mt-20">
+              Create a goal
+            </div>
+            <div className="text-secondaryText text-center mb-10">
+              <div>Already have a goal in mind?</div>
+              <div>Create a goal with us now!</div>
+            </div>
+          </div>
           <div className="w-full">
             <TextField
               label="Goal name"
@@ -130,10 +145,6 @@ export default function CreateGoal({ goalTypes } : CreateGoalProps) {
           <div className="mb-20 fixed bottom-0 flex justify-center h-min-screen">
             <PrimaryButton text="Create" />
           </div>
-        </>
-      ) : (
-        <>
-          <GoalType goalTypes = {goalTypes} setSelectGoalTypeSubMenu = {setSelectGoalTypeSubMenu} setGoal = {setGoal} />
         </>
       )}
     </div>
