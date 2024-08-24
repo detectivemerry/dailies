@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { GoalType, User } from "./types/model";
 
 export type api = {
     users : [
@@ -8,16 +8,38 @@ export type api = {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: {
-                    firstName : string; //"John"
-                    lastName : string; //"Smith"
-                    username : string; //"Js1909"
-                    email : string; //"js1909@gmail.com"
-                    password : string; //"!@Qw#$5rer234cw5#$%regtg2"
-                }
+                body: User;
             },
             response : {
-                message : string; //"Successful registration"
+                message : string; //"Successful registration of new user"
+                status : number; //200
+            }
+        },
+        {
+            method : "GET"; //Get user details
+            request : {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: {
+                    username: string; //"Js1909"
+                };
+            },
+            response : {
+                data : User;
+                status : number; //200
+            }
+        },
+        {
+            method : "PUT"; //Update user details
+            request : {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: User;
+            },
+            response : {
+                message : string; //"Successful update of user details"
                 status : number; //200
             }
         },
@@ -29,23 +51,15 @@ export type api = {
                 cache : "no-store"
             }
             response : {
-                data : [
-                    {
-                        _id : ObjectId; //'1a2b3c4d5e'
-                        name : string; //"Fitness"
-                        icon : string; //"FITNESS"
-                        goals : [
-                            {
-                                _id : ObjectId; //'1a2b3c4d5e'
-                                name : string; //"Gym"
-                                icon : string; //"GYM"
-                                no_of_members : number; //123
-                            }
-                        ]
-                    }
-                ],
+                data : GoalType[];
                 status : number; //200
             }
         },
-    ]
+    ],
+    error : {
+        response : {
+            message : string; //"An unexpected error occured"
+            status : number; //500
+        }
+    }
 }
