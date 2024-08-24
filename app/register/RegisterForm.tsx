@@ -158,6 +158,7 @@ export default function RegisterForm() {
               sx={{ width: "20rem" }}
               className="input-field"
               {...register("password", {
+                required: Message.Error.RequiredField,
                 minLength: { value: 8, message: Message.Error.Min8Characters },
                 maxLength: {
                   value: 50,
