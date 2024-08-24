@@ -43,6 +43,7 @@ import {
   NaturePeopleOutlined,
   ForumOutlined,
   Public,
+  Psychology,
 } from "@mui/icons-material";
 
 type SvgIconComponent = typeof SvgIcon;
@@ -51,8 +52,6 @@ export default function getAvatarIcon(avatarIcon: string): SvgIconComponent {
   switch (avatarIcon) {
     case "HEALTH":
       return FavoriteOutlined;
-    case "EXERCISE":
-      return FitnessCenterOutlined;
     case "DIET":
       return LunchDiningOutlined;
     case "SCHOOL":
@@ -135,6 +134,10 @@ export default function getAvatarIcon(avatarIcon: string): SvgIconComponent {
       return ForumOutlined;
     case "TRAVELLING":
       return Public;
+    case "FITNESS":
+      return FitnessCenter;
+    case "INTELLECTUAL_GROWTH":
+      return Psychology;
     default:
       return QuestionMarkOutlined;
   }
