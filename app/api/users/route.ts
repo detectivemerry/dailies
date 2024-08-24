@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import bcrypt from 'bcrypt';
+import { genSalt, hash } from 'bcrypt';
 import connectDB from "@/app/lib/mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -19,8 +19,8 @@ export async function POST(req: Request, res: NextApiResponse) {
       return NextResponse.json({message : "Email already exists in database"}, {status : 400})
     }
 
-    const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash(data.password, salt);
+    const salt = await genSalt(12);
+    const hashedPassword = await hash(data.password, salt);
     data.password = hashedPassword;
 
     await db.collection("Users").insertOne(data);
