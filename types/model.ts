@@ -12,7 +12,7 @@ export interface User {
     username : string; //"Js1909"
     email : string; //"js1909@gmail.com"
     password : string; //"!@Qw#$5rer234cw5#$%regtg2",
-    goals : Goal[];
+    goals : UserGoal[];
 }
 
 export interface GoalType {
@@ -27,4 +27,11 @@ export type Goal = {
     name : string; //"Gym"
     icon : string; //"GYM"
     no_of_members : number; //123
+}
+
+export interface UserGoal extends Goal {
+    startDate : string; //"31/12/2024"
+    endDate : string; //"01/01/2024"
+    frequencyCount : number; //6
+    frequencyPeriod : string; //"per day"
 }
