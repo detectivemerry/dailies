@@ -11,7 +11,8 @@ export interface User {
     lastName : string; //"Smith"
     username : string; //"Js1909"
     email : string; //"js1909@gmail.com"
-    password : string; //"!@Qw#$5rer234cw5#$%regtg2"
+    password : string; //"!@Qw#$5rer234cw5#$%regtg2",
+    goals : Goal[];
 }
 
 export interface GoalType {
