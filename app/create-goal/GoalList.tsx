@@ -37,18 +37,18 @@ export default function GoalList({
       <div className="grid grid-cols-3 gap-x-6 gap-y-6 items-start">
         {goalType.goals &&
           goalType.goals.map((goal) => {
-            const AvatarIcon = getAvatarIcon(goal.avatarIcon);
+            const AvatarIcon = getAvatarIcon(goal.icon);
             return (
               <Button
                 onClick={() => {handleSelectGoal(goal)}}               
                 sx={{ textTransform: "none", padding: "0px" }}
-                key={String(goal.goal_id)}
+                key={String(goal._id)}
               >
                 <div className="flex flex-col self-auto items-center">
                   <div className="bg-secondary py-4 rounded-2xl w-[4.10rem]">
                     <AvatarIcon sx = {{fontSize : "2.125rem"}} />
                   </div>
-                  <div className = "font-bold text-m">{goal.goal_name}</div>
+                  <div className = "font-bold text-m">{goal.name}</div>
                 </div>
               </Button>
             );

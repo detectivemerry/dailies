@@ -45,7 +45,7 @@ export default function GoalTypeMenu({
           <div className="flex flex-col gap-4">
             {Array.isArray(goalTypes) &&
               goalTypes.map((goalType) => {
-                const AvatarIcon = getAvatarIcon(goalType.avatarIcon);
+                const AvatarIcon = getAvatarIcon(goalType.icon);
                 return (
                   <Button
                     onClick={() => {
