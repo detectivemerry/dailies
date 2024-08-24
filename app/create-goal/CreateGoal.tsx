@@ -6,14 +6,6 @@ import {
   Select,
   MenuItem,
   TextField,
-  Alert,
-  InputAdornment,
-  IconButton,
-  RadioGroup,
-  FormControl,
-  FormControlLabel,
-  Radio,
-  FormLabel,
 } from "@mui/material";
 import Message from "@/app/lib/message/Message";
 import SecondaryButton from "@/components/buttons/SecondaryButton";
@@ -23,7 +15,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import GoalTypeMenu from "./GoalTypeMenu";
-import { ObjectId } from "mongodb";
+import {GoalType, Goal} from "@/types/model"
 
 type Inputs = {
   goalName: string;
@@ -33,13 +25,6 @@ type Inputs = {
   password: string;
 };
 
-interface GoalType {
-  _id: ObjectId;
-  name: string;
-  goal_id: string;
-  avatarIcon: string;
-}
-
 interface CreateGoalProps {
   goalTypes: GoalType[];
 }
@@ -47,9 +32,9 @@ interface CreateGoalProps {
 export default function CreateGoal({ goalTypes }: CreateGoalProps) {
   const searchParams = useSearchParams();
   const fromRegister = searchParams.get("fromRegister");
-  const [selectGoalTypeSubMenu, setSelectGoalTypeSubMenu] =
+  const [viewGoalTypes, setViewGoalTypes] =
     useState<boolean>(false);
-  const [goal, setGoal] = useState<string | null>(null);
+  const [goal, setGoal] = useState<Goal | null>(null);
 
   const {
     register,
@@ -61,11 +46,11 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
 
   return (
     <div className="flex flex-col items-center gap-6">
-      {selectGoalTypeSubMenu ? (
+      {viewGoalTypes ? (
         <>
           <GoalTypeMenu
             goalTypes={goalTypes}
-            setSelectGoalTypeSubMenu={setSelectGoalTypeSubMenu}
+            setViewGoalTypes={setViewGoalTypes}
             setGoal={setGoal}
           />
         </>
@@ -103,9 +88,9 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
           </div>
           <div className="m-4">
             <SecondaryButton
-              text="Select goal type"
+              text={goal? goal.name : "Select Goal Type"}
               onClick={() => {
-                setSelectGoalTypeSubMenu(true);
+                setViewGoalTypes(true);
               }}
             />
           </div>

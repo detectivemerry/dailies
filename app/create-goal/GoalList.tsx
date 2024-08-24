@@ -1,53 +1,54 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useState, useEffect } from "react";
-import { Button, selectClasses } from "@mui/material";
+import React, { Dispatch, SetStateAction } from "react";
+import { Button } from "@mui/material";
 import { GoalType, Goal } from "@/types/model";
 import TitleHeader from "@/components/header/TitleHeader";
 import getAvatarIcon from "./getAvatarIcon";
 
 interface GoalListProps {
-  selectedGoalType: GoalType;
-  setSelectedGoalType: Dispatch<SetStateAction<GoalType | null>>;
-  setGoal: Dispatch<SetStateAction<string | null>>;
+  goalType: GoalType;
+  setGoalType: Dispatch<SetStateAction<GoalType | null>>;
+  setViewGoalTypes : Dispatch<SetStateAction<boolean>>;
+  setGoal: Dispatch<SetStateAction<Goal | null>>;
 }
 
 export default function GoalList({
-  selectedGoalType,
-  setSelectedGoalType,
+  goalType,
+  setGoalType,
+  setViewGoalTypes,
   setGoal,
 }: GoalListProps) {
-  const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
 
-  useEffect(() => {
-    console.log(selectedGoalType);
-  }, []);
+  const handleSelectGoal = (goal : Goal) => {
+    setGoal(goal);
+    setViewGoalTypes(false);
+    setGoalType(null)
+  }
 
   return (
     <div className="w-full">
       <div>
         <TitleHeader
-          title={selectedGoalType.name}
-          onClick={() => setSelectedGoalType(null)}
+          title={goalType.name}
+          onClick={() => setViewGoalTypes(false)}
         />
       </div>
       <div className="grid grid-cols-3 gap-x-6 gap-y-6 items-start">
-        {selectedGoalType.goals &&
-          selectedGoalType.goals.map((goal) => {
-            const AvatarIcon = getAvatarIcon(goal.avatarIcon);
+        {goalType.goals &&
+          goalType.goals.map((goal) => {
+            const AvatarIcon = getAvatarIcon(goal.icon);
             return (
               <Button
-                onClick={() => {
-                  setSelectedGoal(goal);
-                }}
+                onClick={() => {handleSelectGoal(goal)}}               
                 sx={{ textTransform: "none", padding: "0px" }}
-                key={String(goal.goal_id)}
+                key={String(goal._id)}
               >
-                <div className="flex flex-col w-20 self-auto border-2">
-                  <div className="bg-secondary rounded-2xl py-4 border-2">
-                    <AvatarIcon sx = {{fontSize : "2.25rem"}} />
+                <div className="flex flex-col self-auto items-center">
+                  <div className="bg-secondary py-4 rounded-2xl w-[4.10rem]">
+                    <AvatarIcon sx = {{fontSize : "2.125rem"}} />
                   </div>
-                  <div className = "font-bold text-m">{goal.goal_name}</div>
+                  <div className = "font-bold text-m">{goal.name}</div>
                 </div>
               </Button>
             );
@@ -56,3 +57,4 @@ export default function GoalList({
     </div>
   );
 }
+

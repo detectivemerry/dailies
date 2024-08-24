@@ -5,8 +5,6 @@ async function getGoalTypes(){
   const response = await fetch(`${process.env.PUBLIC_URL}/api/goalTypes`, { method : "GET", cache : "no-store"});
   const goalTypes = await response.json();
   if(goalTypes.data){
-    //console.log("data here")
-    //console.log(goalTypes.data)
     return goalTypes.data;
   }
 } 

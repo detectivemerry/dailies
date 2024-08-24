@@ -33,7 +33,7 @@ export default function TitleHeader({
         <div className="text-3xl font-semibold text-main my-2 flex flex-col items-center">
           {title}
         </div>
-        <div className="border-t w-screen mb-6"></div>
+        <div className="border-t w-screen mb-8"></div>
       </div>
     </div>
   );
