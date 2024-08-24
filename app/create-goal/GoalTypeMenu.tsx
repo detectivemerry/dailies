@@ -9,26 +9,27 @@ import {GoalType, Goal} from "@/types/model"
 
 interface GoalTypeMenuProps {
   goalTypes: GoalType[];
-  setSelectGoalTypeSubMenu: Dispatch<SetStateAction<boolean>>;
-  setGoal: Dispatch<SetStateAction<string | null>>;
+  setViewGoalTypes: Dispatch<SetStateAction<boolean>>;
+  setGoal: Dispatch<SetStateAction<Goal | null>>;
 }
 
 export default function GoalTypeMenu({
   goalTypes,
-  setSelectGoalTypeSubMenu,
+  setViewGoalTypes,
   setGoal,
 }: GoalTypeMenuProps) {
-  const [selectedGoalType, setSelectedGoalType] = useState<GoalType | null>(
+  const [goalType, setGoalType] = useState<GoalType | null>(
     null
   );
 
   return (
     <div className="w-full">
-      {selectedGoalType ? (
+      {goalType ? (
         <>
           <GoalList
-            selectedGoalType={selectedGoalType}
-            setSelectedGoalType={setSelectedGoalType}
+            goalType={goalType}
+            setGoalType={setGoalType}
+            setViewGoalTypes={setViewGoalTypes}
             setGoal={setGoal}
           />
         </>
@@ -37,7 +38,7 @@ export default function GoalTypeMenu({
           <div>
             <TitleHeader
               title="Goal Type"
-              onClick={() => setSelectGoalTypeSubMenu(false)}
+              onClick={() => setViewGoalTypes(false)}
             />
           </div>
 
@@ -48,12 +49,12 @@ export default function GoalTypeMenu({
                 return (
                   <Button
                     onClick={() => {
-                      setSelectedGoalType(goalType);
+                      setGoalType(goalType);
                     }}
                     sx={{ textTransform: "none", padding: "0px" }}
                     key={String(goalType._id)}
                   >
-                    <div className="bg-secondary flex w-full p-3 px-6 gap-3 text-primary, font-bold rounded-3xl">
+                    <div className="bg-secondary flex w-full p-3 px-6 gap-3 text-primary font-bold rounded-3xl">
                       <div>
                         <AvatarIcon />
                       </div>
