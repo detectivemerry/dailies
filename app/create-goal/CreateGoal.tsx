@@ -23,7 +23,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import GoalTypeMenu from "./GoalTypeMenu";
-import { ObjectId } from "mongodb";
+import {GoalType} from "@/types/model"
 
 type Inputs = {
   goalName: string;
@@ -32,13 +32,6 @@ type Inputs = {
   email: string;
   password: string;
 };
-
-interface GoalType {
-  _id: ObjectId;
-  name: string;
-  goal_id: string;
-  avatarIcon: string;
-}
 
 interface CreateGoalProps {
   goalTypes: GoalType[];

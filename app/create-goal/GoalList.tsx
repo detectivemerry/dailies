@@ -43,9 +43,9 @@ export default function GoalList({
                 sx={{ textTransform: "none", padding: "0px" }}
                 key={String(goal.goal_id)}
               >
-                <div className="flex flex-col w-20 self-auto border-2">
-                  <div className="bg-secondary rounded-2xl py-4 border-2">
-                    <AvatarIcon sx = {{fontSize : "2.25rem"}} />
+                <div className="flex flex-col self-auto items-center">
+                  <div className="bg-secondary py-4 rounded-2xl w-[4.10rem]">
+                    <AvatarIcon sx = {{fontSize : "2.125rem"}} />
                   </div>
                   <div className = "font-bold text-m">{goal.goal_name}</div>
                 </div>
