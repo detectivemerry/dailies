@@ -20,7 +20,6 @@ export default function GoalList({
   const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
 
   useEffect(() => {
-    console.log("selectedGoalType is ehre");
     console.log(selectedGoalType);
   }, []);
 
@@ -32,7 +31,7 @@ export default function GoalList({
           onClick={() => setSelectedGoalType(null)}
         />
       </div>
-      <div className="col-span-4 gap-4">
+      <div className="grid grid-cols-3 gap-x-6 gap-y-6 items-start">
         {selectedGoalType.goals &&
           selectedGoalType.goals.map((goal) => {
             const AvatarIcon = getAvatarIcon(goal.avatarIcon);
@@ -44,11 +43,11 @@ export default function GoalList({
                 sx={{ textTransform: "none", padding: "0px" }}
                 key={String(goal.goal_id)}
               >
-                <div className="flex flex-col w-full">
-                  <div className="bg-secondary p-3 rounded-3xl w-">
-                    <AvatarIcon />
+                <div className="flex flex-col w-20 self-auto border-2">
+                  <div className="bg-secondary rounded-2xl py-4 border-2">
+                    <AvatarIcon sx = {{fontSize : "2.25rem"}} />
                   </div>
-                  <div>{goal.goal_name}</div>
+                  <div className = "font-bold text-m">{goal.goal_name}</div>
                 </div>
               </Button>
             );
