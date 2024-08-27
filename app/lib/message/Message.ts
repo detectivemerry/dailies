@@ -1,6 +1,6 @@
 const Message = {
   Error: {
-    General : "Somethine unexpected has occured. Please try again later.",
+    General : "Something unexpected has occured. Please try again later.",
     InvalidCredentials: "Incorrect username or password. Please try again.",
     RequiredField : "Please fill in this field.",
     LettersOnly: "Please enter letters only.",
