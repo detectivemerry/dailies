@@ -42,6 +42,8 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+
+    const response = await fetch("/api/users/", { method : "PATCH"});
     
   };
 
