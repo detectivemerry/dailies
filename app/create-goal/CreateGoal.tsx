@@ -21,8 +21,8 @@ type Inputs = {
   goalType: string;
   frequencyCount: number;
   frequencyPeriod: string;
-  startDate: Dayjs;
-  endDate: Dayjs;
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
   startDateStr: string;
   endDateStr: string;
   goal_id: ObjectId;
@@ -41,8 +41,8 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
   const today = new Date();
   const tomorrow = today.setDate(today.getDate() + 1);
 
-  const [startDate, setStartDate] = useState<Dayjs | undefined>(today);
-  const [endDate, setEndDate] = useState<Dayjs | undefined>(tomorrow);
+  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
   const {
     register,
@@ -56,15 +56,18 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (goal != null) data.goal_id = goal._id;
-
-    const startDateStr = data.startDate.toISOString();
-    data.startDateStr = startDateStr;
-
+    let startDateStr = "";
     let endDateStr = "";
-    if (endDate) {
+
+    if(data && data.startDate)
+      startDateStr = data.startDate.toISOString();
+
+    if(data && data.endDate){
       endDateStr = data.endDate.toISOString();
-      data.endDateStr = endDateStr;
     }
+
+    data.startDateStr = startDateStr;
+    data.endDateStr = endDateStr;
 
     console.log(data);
 
@@ -78,6 +81,8 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
     //});
 
     //const result = await response.json();
+
+                      //renderInput={(params) => <TextField {...params}/>}
   };
 
   return (
@@ -173,7 +178,7 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
                 defaultValue={startDate}
                 control={control}
                 render={({ field: { onChange, ...restField } }) => (
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       label="Start Date"
                       disablePast
@@ -182,7 +187,7 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
                         onChange(event);
                         setStartDate(event);
                       }}
-                      renderInput={(params) => <TextField {...params} />}
+                      slotProps={{textField : {}}}
                       {...restField}
                     />
                   </LocalizationProvider>
@@ -194,16 +199,16 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
                 defaultValue={endDate}
                 control={control}
                 render={({ field: { onChange, ...restField } }) => (
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
-                      disablePast
+                      minDate={dayjs(startDate).add(1, 'day')}
                       label="End Date (optional)"
                       format="DD/MM/YYYY"
                       onChange={(event) => {
                         onChange(event);
                         setEndDate(event);
                       }}
-                      renderInput={(params) => <TextField {...params} />}
+                      slotProps={{textField : {}}}
                       {...restField}
                     />
                   </LocalizationProvider>
