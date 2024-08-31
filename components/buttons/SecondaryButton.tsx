@@ -1,12 +1,13 @@
 import React, { FC } from "react";
 import { Button, Typography } from "@mui/material";
+import { PropaneSharp } from "@mui/icons-material";
 
 interface SecondaryButtonProps {
   text: string;
   onClick?: () => void;
 }
 
-const SecondaryButton: FC<SecondaryButtonProps> = ({ text, onClick }) => {
+const SecondaryButton: FC<SecondaryButtonProps> = ({ text, onClick, ...props }) => {
   return (
     <Button
       variant="outlined"
@@ -15,7 +16,7 @@ const SecondaryButton: FC<SecondaryButtonProps> = ({ text, onClick }) => {
         borderRadius: "25px",
       }}
       onClick={onClick}
-      type = "submit"
+      {...props}
     >
       {text}
     </Button>

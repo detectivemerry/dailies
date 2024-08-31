@@ -7,7 +7,7 @@ export async function GET(req: Request, res: NextApiResponse) {
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
 
-    const goalTypes = await db.collection("Goals").find().toArray();
+    const goalTypes = await db.collection("GoalTypes").find().toArray();
 
     if(!goalTypes){
       return NextResponse.json({message : "No goal types found."}, {status : 500})
@@ -16,6 +16,7 @@ export async function GET(req: Request, res: NextApiResponse) {
     return NextResponse.json({data : goalTypes}, {status : 200})
 
   } catch (error) {
+    console.log(error)
     return NextResponse.json({ message : "An unexpected error occured"}, { status: 500 });
   }
 }
