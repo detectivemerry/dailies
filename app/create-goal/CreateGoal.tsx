@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
-import { Select, MenuItem, TextField } from "@mui/material";
+import { Select, MenuItem, TextField, Alert } from "@mui/material";
 import Message from "@/app/lib/message/Message";
 import SecondaryButton from "@/components/buttons/SecondaryButton";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -13,8 +13,6 @@ import PrimaryButton from "@/components/buttons/PrimaryButton";
 import GoalTypeMenu from "./GoalTypeMenu";
 import { GoalType, Goal } from "@/types/model";
 import { ObjectId } from "mongodb";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
-import { PickerValidDate } from "@mui/x-date-pickers";
 
 type Inputs = {
   goalName: string;
@@ -37,12 +35,12 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
   const fromRegister = searchParams.get("fromRegister");
   const [viewGoalTypes, setViewGoalTypes] = useState<boolean>(false);
   const [goal, setGoal] = useState<Goal | null>(null);
-  
-  const today = new Date();
-  const tomorrow = today.setDate(today.getDate() + 1);
-
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [alertMessage, setAlertMessage] = useState({
+    error: false,
+    message: "",
+  });
 
   const {
     register,
@@ -55,14 +53,20 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setAlertMessage({});
     if (goal != null) data.goal_id = goal._id;
     let startDateStr = "";
     let endDateStr = "";
 
-    if(data && data.startDate)
+    if (data.startDate && data.endDate && data.startDate > data.endDate) {
+      setAlertMessage({ error: true, message: Message.Error.EndDateEarlierThanStartDate })
+      return
+    }
+
+    if (data && data.startDate)
       startDateStr = data.startDate.toISOString();
 
-    if(data && data.endDate){
+    if (data && data.endDate) {
       endDateStr = data.endDate.toISOString();
     }
 
@@ -82,10 +86,11 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
 
     //const result = await response.json();
 
-                      //renderInput={(params) => <TextField {...params}/>}
+    //renderInput={(params) => <TextField {...params}/>}
   };
 
   return (
+
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col items-center gap-6">
         {viewGoalTypes ? (
@@ -106,6 +111,11 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
                 <div>Already have a goal in mind?</div>
                 <div>Create a goal with us now!</div>
               </div>
+            </div>
+            <div className="w-80 mb-4">
+              {Boolean(alertMessage.message) && (
+                <Alert severity={alertMessage.error ? "error" : "success"} >{alertMessage.message}</Alert>
+              )}
             </div>
             <div className="w-full">
               <TextField
@@ -187,7 +197,7 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
                         onChange(event);
                         setStartDate(event);
                       }}
-                      slotProps={{textField : {}}}
+                      slotProps={{ textField: {} }}
                       {...restField}
                     />
                   </LocalizationProvider>
@@ -208,7 +218,7 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
                         onChange(event);
                         setEndDate(event);
                       }}
-                      slotProps={{textField : {}}}
+                      slotProps={{ textField: {} }}
                       {...restField}
                     />
                   </LocalizationProvider>

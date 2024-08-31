@@ -7,7 +7,7 @@ export async function GET(req: Request, res: NextApiResponse) {
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
 
-    const goalTypes = await db.collection("GoalTypes").find().toArray();
+    const goalTypes = await db.collection("Goals").find().toArray();
 
     if(!goalTypes){
       return NextResponse.json({message : "No goal types found."}, {status : 500})
