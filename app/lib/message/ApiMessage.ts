@@ -1,8 +1,11 @@
 
 const ApiMessage = {
+  Success : {
+    General : "Action successfully executed.",
+  },
   Error: {
     General : "Something unexpected has occured. Please try again later.",
-    Unauthenticated : "Session has expired. Please log in again."
+    Unauthenticated : "Session has expired. Please log in again.",
   } 
 };
 

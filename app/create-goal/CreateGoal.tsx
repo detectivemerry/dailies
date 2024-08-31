@@ -1,11 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
 import { Select, MenuItem, TextField } from "@mui/material";
 import Message from "@/app/lib/message/Message";
 import SecondaryButton from "@/components/buttons/SecondaryButton";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -13,6 +12,9 @@ import dayjs, { Dayjs } from "dayjs";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import GoalTypeMenu from "./GoalTypeMenu";
 import { GoalType, Goal } from "@/types/model";
+import { ObjectId } from "mongodb";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
+import { PickerValidDate } from "@mui/x-date-pickers";
 
 type Inputs = {
   goalName: string;
@@ -21,6 +23,9 @@ type Inputs = {
   frequencyPeriod: string;
   startDate: Dayjs;
   endDate: Dayjs;
+  startDateStr: string;
+  endDateStr: string;
+  goal_id: ObjectId;
 };
 
 interface CreateGoalProps {
@@ -32,6 +37,12 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
   const fromRegister = searchParams.get("fromRegister");
   const [viewGoalTypes, setViewGoalTypes] = useState<boolean>(false);
   const [goal, setGoal] = useState<Goal | null>(null);
+  
+  const today = new Date();
+  const tomorrow = today.setDate(today.getDate() + 1);
+
+  const [startDate, setStartDate] = useState<Dayjs | undefined>(today);
+  const [endDate, setEndDate] = useState<Dayjs | undefined>(tomorrow);
 
   const {
     register,
@@ -39,12 +50,34 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
     watch,
     formState: { errors },
     reset,
+    control,
+    setValue,
   } = useForm<Inputs>();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    if (goal != null) data.goal_id = goal._id;
 
-    const response = await fetch("/api/users/", { method : "PATCH"});
-    
+    const startDateStr = data.startDate.toISOString();
+    data.startDateStr = startDateStr;
+
+    let endDateStr = "";
+    if (endDate) {
+      endDateStr = data.endDate.toISOString();
+      data.endDateStr = endDateStr;
+    }
+
+    console.log(data);
+
+    //const response = await fetch("/api/users/", {
+    //method: "PATCH",
+    //headers: {
+    //"Content-Type": "application/json",
+    //},
+    //body: JSON.stringify(data),
+    //cache: "no-store",
+    //});
+
+    //const result = await response.json();
   };
 
   return (
@@ -135,26 +168,47 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
               </div>
             </div>
             <div className="w-full flex flex-col gap-6">
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="Start Date"
-                  sx={{ width: "100%" }}
-                  views = {["year", "month", "day"]}
-                  format = "dd/mm/YYYY"
-                  defaultValue={dayjs()}
-                  disablePast
-                  {...register("startDate", {
-                    required: Message.Error.RequiredField,
-                  })}
-                />
-                <DatePicker
-                  label="End Date (optional)"
-                  format="DD-MM-YYYY"
-                  sx={{ width: "100%" }}
-                  disablePast
-                  {...register("endDate")}
-                />
-              </LocalizationProvider>
+              <Controller
+                name="startDate"
+                defaultValue={startDate}
+                control={control}
+                render={({ field: { onChange, ...restField } }) => (
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      label="Start Date"
+                      disablePast
+                      format="DD/MM/YYYY"
+                      onChange={(event) => {
+                        onChange(event);
+                        setStartDate(event);
+                      }}
+                      renderInput={(params) => <TextField {...params} />}
+                      {...restField}
+                    />
+                  </LocalizationProvider>
+                )}
+              />
+
+              <Controller
+                name="endDate"
+                defaultValue={endDate}
+                control={control}
+                render={({ field: { onChange, ...restField } }) => (
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      disablePast
+                      label="End Date (optional)"
+                      format="DD/MM/YYYY"
+                      onChange={(event) => {
+                        onChange(event);
+                        setEndDate(event);
+                      }}
+                      renderInput={(params) => <TextField {...params} />}
+                      {...restField}
+                    />
+                  </LocalizationProvider>
+                )}
+              />
             </div>
             <div className="mb-20 fixed bottom-0 flex justify-center h-min-screen">
               <PrimaryButton text="Create" />

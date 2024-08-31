@@ -2,10 +2,13 @@ import { NextAuthOptions, Awaitable, Session, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import connectDB from "@/app/lib/mongodb";
+import { Goal } from "@/types/model";
 
 type user = {
   username: string;
   password: string;
+  email : string;
+  goals : Array<Goal>;
 };
 
 export const authOptions: NextAuthOptions = {
@@ -34,7 +37,7 @@ export const authOptions: NextAuthOptions = {
         const db = client.connection.useDb(`Dailies`);
         const user = await db
           .collection("Users")
-          .findOne({ username: credentials?.email });
+          .findOne({ email: credentials?.email });
 
         if (!user) return null;
 
@@ -56,17 +59,22 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ user, token, trigger, session }) {
-      console.log("jwt token is ran");
-      console.log(user);
+
       if (user) {
         token.id = user.id;
-        token.name = user.name;
+        token.username = user.username;
+        token.email = user.email;
+        token.goals = user.goals;
       }
       return token;
     },
 
     async session({ session, token, user }) {
-      console.log("session is ran");
+      session.user.email = token.id;
+      session.user.username = token.username;
+      session.user.email = token.email;
+      session.user.goals = token.goals;
+
       return session;
     },
   },
