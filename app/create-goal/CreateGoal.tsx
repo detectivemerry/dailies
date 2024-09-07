@@ -8,6 +8,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { ObjectId } from "mongodb";
+import { useSession } from "next-auth/react";
 
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import GoalTypeMenu from "./GoalTypeMenu";
@@ -44,6 +45,7 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
     message: "",
   });
   const [isGoalCreated, setIsGoalCreated] = useState<boolean>(false);
+  const { data : session } = useSession();
 
   const {
     register,
@@ -82,19 +84,23 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
 
     data.startDate = startDateStr;
     data.endDate = endDateStr;
+    console.log("session is this")
+    console.log(session)
+    console.log(session.token)
+    //const response = await fetch("/api/users/", {
+      //method: "PATCH",
+      //headers: {
+        //"Content-Type": "application/json",
+        //"email" :  session?.user?.email,
+        //"Authorization" : `bearer ${session?.user?.token}`
+      //},
+      //body: JSON.stringify(data),
+      //cache: "no-store",
+    //});
 
-    const response = await fetch("/api/users/", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-      cache: "no-store",
-    });
-
-    const result = await response.json();
-    if (response.ok) setIsGoalCreated(true);
-    else setAlertMessage({ error: true, message: result.message });
+    //const result = await response.json();
+    //if (response.ok) setIsGoalCreated(true);
+    //else setAlertMessage({ error: true, message: result.message });
   };
 
   return (

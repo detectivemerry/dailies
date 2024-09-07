@@ -4,6 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { ObjectId } from "mongodb";
 import { headers } from 'next/headers';
+import { getToken } from "next-auth/jwt";
 
 import { authOptions } from "../auth/[...nextauth]/auth";
 import connectDB from "@/app/lib/mongodb";
@@ -66,65 +67,70 @@ export async function PATCH(req: Request, res: NextApiResponse) {
     } = await req.json();
 
     const objectId = new ObjectId(String(_id)) ;
-    //const headerList = headers();
-    //const email = headerList.get('email')
-    //const token = headerList.get('token')
-    const session = await getServerSession(authOptions);
+    const headerList = headers();
+    const email = headerList.get('email')
+    const accessToken = headerList.get('token')
+    console.log(email)
+    console.log(accessToken)
+
+
+    //const session = await getServerSession(authOptions);
     //console.log(session)
-    //return NextResponse.json({status : 200})
+    return NextResponse.json({status : 200})
+
     const client = await connectDB();
-    const db = client.connection.useDb(`Dailies`);
+    //const db = client.connection.useDb(`Dailies`);
 
-    if(!session || !session.user){
-      return NextResponse.json(
-        { message: ApiMessage.Error.Unauthenticated },
-        { status: 401 }
-      );
-    }
-    //Add goal to user document
-    const { user } = session;
-    //const user = {email : "testuser@gmail.com"}
-    const addGoalToUserResult = await db.collection("Users").updateOne(
-      { email: user.email },
-      {
-        $push: {
-          goals: {
-            endDate: endDate,
-            startDate: startDate,
-            frequencyCount: frequencyCount,
-            frequencyPeriod: frequencyPeriod,
-            name: name,
-            _id: objectId,
-          },
-        },
-      }
-    );
-    const {acknowledged, modifiedCount} = addGoalToUserResult;
+    //if(!session || !session.user){
+      //return NextResponse.json(
+        //{ message: ApiMessage.Error.Unauthenticated },
+        //{ status: 401 }
+      //);
+    //}
+    ////Add goal to user document
+    //const { user } = session;
+    ////const user = {email : "testuser@gmail.com"}
+    //const addGoalToUserResult = await db.collection("Users").updateOne(
+      //{ email: user.email },
+      //{
+        //$push: {
+          //goals: {
+            //endDate: endDate,
+            //startDate: startDate,
+            //frequencyCount: frequencyCount,
+            //frequencyPeriod: frequencyPeriod,
+            //name: name,
+            //_id: objectId,
+          //},
+        //},
+      //}
+    //);
+    //const {acknowledged, modifiedCount} = addGoalToUserResult;
 
-    // Increment GoalType no_of_members if user is a new member 
-    const userDoc = await db.collection("Users").find({email : user.email}, {goals : 1}).next();
-    const relatedGoals = userDoc.goals.filter((userGoal) => String(userGoal._id) === String(objectId));
+    //// Increment GoalType no_of_members if user is a new member 
+    //const userDoc = await db.collection("Users").find({email : user.email}, {goals : 1}).next();
+    //const relatedGoals = userDoc.goals.filter((userGoal) => String(userGoal._id) === String(objectId));
 
-    if(relatedGoals.length === 1){
-      const updateNoOfMembersResult = await db.collection("GoalTypes").updateOne(
-        {"goals._id" : objectId},
-        {$inc : { "goals.$.no_of_members" : 1}}
-      )
+    //if(relatedGoals.length === 1){
+      //const updateNoOfMembersResult = await db.collection("GoalTypes").updateOne(
+        //{"goals._id" : objectId},
+        //{$inc : { "goals.$.no_of_members" : 1}}
+      //)
 
-      if(updateNoOfMembersResult.modifiedCount != 1)
-        console.error(`${_id}: no_of_members not incremented`)
-    }
+      //if(updateNoOfMembersResult.modifiedCount != 1)
+        //console.error(`${_id}: no_of_members not incremented`)
+    //}
 
-    if (acknowledged && modifiedCount === 1)
-      return NextResponse.json(
-        { message: ApiMessage.Success.General },
-        { status: 200 }
-      );
-    else
-      return NextResponse.json(
-        { message: ApiMessage.Error.General },
-        { status: 500 }
-      );
+    //if (acknowledged && modifiedCount === 1)
+      //return NextResponse.json(
+        //{ message: ApiMessage.Success.General },
+        //{ status: 200 }
+      //);
+    //else
+      //return NextResponse.json(
+        //{ message: ApiMessage.Error.General },
+        //{ status: 500 }
+      //);
 
   } catch (error) {
     console.error(error)

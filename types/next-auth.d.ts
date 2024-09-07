@@ -10,6 +10,7 @@ declare module "next-auth" {
     password: string| unknown;
     email: string | undefined | null;
     goals: Array<Goal> | unknown;
+    token: string | unknown;
   }
 
   interface Session {
@@ -18,6 +19,8 @@ declare module "next-auth" {
       password: string| unknown;
       email: string | unknown;
       goals: Array<Goal> | unknown;
+      token : string | unknown;
+      testing : string;
     };
   }
 }
