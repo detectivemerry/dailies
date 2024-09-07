@@ -13,7 +13,7 @@ const Message = {
     AlphaNumericOnly : "Please enter only letters and numbers.",
     EmailOnly : "Please enter a valid email.",
     InvalidPassword : "Please ensure that you have at least one lower and upper case character, one numeric character and one special character.",
-    EndDateEarlierThanStartDate : "Please ensure that the end date is after the start date",
+    EndDateBeforeStartDate : "Please ensure that the end date is after the start date",
   },
 };
 

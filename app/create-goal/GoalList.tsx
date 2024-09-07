@@ -31,7 +31,7 @@ export default function GoalList({
       <div>
         <TitleHeader
           title={goalType.name}
-          onClick={() => setViewGoalTypes(false)}
+          onClick={() => setGoalType(null)}
         />
       </div>
       <div className="grid grid-cols-3 gap-x-6 gap-y-6 items-start">

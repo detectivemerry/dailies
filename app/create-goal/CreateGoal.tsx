@@ -3,19 +3,21 @@ import React, { useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
 import { Select, MenuItem, TextField, Alert } from "@mui/material";
-import Message from "@/app/lib/message/Message";
-import SecondaryButton from "@/components/buttons/SecondaryButton";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
+import { ObjectId } from "mongodb";
+
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import GoalTypeMenu from "./GoalTypeMenu";
 import { GoalType, Goal } from "@/types/model";
-import { ObjectId } from "mongodb";
+import Message from "@/app/lib/message/Message";
+import SecondaryButton from "@/components/buttons/SecondaryButton";
+import CreateMoreGoalDialog from "./CreateMoreGoalDialog";
 
-type Inputs = {
-  goalName: string;
+export type CreateGoalInputs = {
+  name: string;
   goalType: string;
   frequencyCount: number;
   frequencyPeriod: string;
@@ -23,7 +25,7 @@ type Inputs = {
   endDateObj: Dayjs | null;
   startDate: string;
   endDate: string;
-  goal_id: ObjectId;
+  _id: ObjectId;
 };
 
 interface CreateGoalProps {
@@ -41,6 +43,7 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
     error: false,
     message: "",
   });
+  const [isGoalCreated, setIsGoalCreated] = useState<boolean>(false);
 
   const {
     register,
@@ -50,11 +53,11 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
     reset,
     control,
     setValue,
-  } = useForm<Inputs>();
+  } = useForm<CreateGoalInputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+  const onSubmit: SubmitHandler<CreateGoalInputs> = async (data) => {
     setAlertMessage({ error: false, message: "" });
-    if (goal != null) data.goal_id = goal._id;
+    if (goal != null) data._id = goal._id;
     let startDateStr = "";
     let endDateStr = "";
 
@@ -65,7 +68,7 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
     ) {
       setAlertMessage({
         error: true,
-        message: Message.Error.EndDateEarlierThanStartDate,
+        message: Message.Error.EndDateBeforeStartDate,
       });
       return;
     }
@@ -90,11 +93,18 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
     });
 
     const result = await response.json();
-    
+    if (response.ok) setIsGoalCreated(true);
+    else setAlertMessage({ error: true, message: result.message });
   };
 
   return (
     <>
+      <CreateMoreGoalDialog
+        isGoalCreated={isGoalCreated}
+        setIsGoalCreated={setIsGoalCreated}
+        reset={reset}
+        setGoal={setGoal}
+      />
       {viewGoalTypes ? (
         <>
           <GoalTypeMenu
@@ -128,7 +138,7 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
                   label="Goal name"
                   variant="standard"
                   className="input-field"
-                  {...register("goalName", {
+                  {...register("name", {
                     required: Message.Error.RequiredField,
                     maxLength: {
                       value: 50,
@@ -139,8 +149,8 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
                       message: Message.Error.AlphaNumericOnly,
                     },
                   })}
-                  error={Boolean(errors.goalName)}
-                  helperText={errors.goalName?.message}
+                  error={Boolean(errors.name)}
+                  helperText={errors.name?.message}
                   fullWidth
                 />
               </div>

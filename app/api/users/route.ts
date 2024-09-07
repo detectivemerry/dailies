@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import { genSalt, hash } from "bcrypt";
-import connectDB from "@/app/lib/mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
+import { ObjectId } from "mongodb";
+import { headers } from 'next/headers';
+
 import { authOptions } from "../auth/[...nextauth]/auth";
+import connectDB from "@/app/lib/mongodb";
 import ApiMessage from "@/app/lib/message/ApiMessage";
 
 export async function POST(req: Request, res: NextApiResponse) {
@@ -58,13 +61,19 @@ export async function PATCH(req: Request, res: NextApiResponse) {
       startDate,
       frequencyCount,
       frequencyPeriod,
-      goalName,
-      goal_id,
+      name,
+      _id,
     } = await req.json();
 
+    const objectId = new ObjectId(String(_id)) ;
+    //const headerList = headers();
+    //const email = headerList.get('email')
+    //const token = headerList.get('token')
+    const session = await getServerSession(authOptions);
+    //console.log(session)
+    //return NextResponse.json({status : 200})
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
-    const session = await getServerSession(authOptions);
 
     if(!session || !session.user){
       return NextResponse.json(
@@ -72,10 +81,10 @@ export async function PATCH(req: Request, res: NextApiResponse) {
         { status: 401 }
       );
     }
-
+    //Add goal to user document
     const { user } = session;
-
-    const result = await db.collection("Users").updateOne(
+    //const user = {email : "testuser@gmail.com"}
+    const addGoalToUserResult = await db.collection("Users").updateOne(
       { email: user.email },
       {
         $push: {
@@ -84,13 +93,27 @@ export async function PATCH(req: Request, res: NextApiResponse) {
             startDate: startDate,
             frequencyCount: frequencyCount,
             frequencyPeriod: frequencyPeriod,
-            goalName: goalName,
-            goal_id: goal_id,
+            name: name,
+            _id: objectId,
           },
         },
       }
     );
-    const {acknowledged, modifiedCount} = result;
+    const {acknowledged, modifiedCount} = addGoalToUserResult;
+
+    // Increment GoalType no_of_members if user is a new member 
+    const userDoc = await db.collection("Users").find({email : user.email}, {goals : 1}).next();
+    const relatedGoals = userDoc.goals.filter((userGoal) => String(userGoal._id) === String(objectId));
+
+    if(relatedGoals.length === 1){
+      const updateNoOfMembersResult = await db.collection("GoalTypes").updateOne(
+        {"goals._id" : objectId},
+        {$inc : { "goals.$.no_of_members" : 1}}
+      )
+
+      if(updateNoOfMembersResult.modifiedCount != 1)
+        console.error(`${_id}: no_of_members not incremented`)
+    }
 
     if (acknowledged && modifiedCount === 1)
       return NextResponse.json(
@@ -104,6 +127,7 @@ export async function PATCH(req: Request, res: NextApiResponse) {
       );
 
   } catch (error) {
+    console.error(error)
     return NextResponse.json(
       { message: ApiMessage.Error.General },
       { status: 500 }

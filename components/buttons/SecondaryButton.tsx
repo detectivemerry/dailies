@@ -14,6 +14,8 @@ const SecondaryButton: FC<SecondaryButtonProps> = ({ text, onClick, ...props }) 
       sx={{
         width: "20rem",
         borderRadius: "25px",
+        textTransform : "none",
+        fontWeight : "bold",
       }}
       onClick={onClick}
       {...props}
