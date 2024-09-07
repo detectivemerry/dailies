@@ -8,6 +8,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { ObjectId } from "mongodb";
+import { useSession } from "next-auth/react";
 
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import GoalTypeMenu from "./GoalTypeMenu";
@@ -15,6 +16,7 @@ import { GoalType, Goal } from "@/types/model";
 import Message from "@/app/lib/message/Message";
 import SecondaryButton from "@/components/buttons/SecondaryButton";
 import CreateMoreGoalDialog from "./CreateMoreGoalDialog";
+import Link from "next/link";
 
 export type CreateGoalInputs = {
   name: string;
@@ -44,6 +46,7 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
     message: "",
   });
   const [isGoalCreated, setIsGoalCreated] = useState<boolean>(false);
+  const { data: session } = useSession();
 
   const {
     register,
@@ -87,6 +90,8 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        email: session?.user?.email as string,
+        Authorization: `bearer ${session?.user?.token}`,
       },
       body: JSON.stringify(data),
       cache: "no-store",
@@ -241,9 +246,11 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
                   )}
                 />
               </div>
-              <div className="mb-20 fixed bottom-0 flex justify-center h-min-screen">
+              <div className="flex flex-col items-center gap-2 mb-20 fixed bottom-0 flex justify-center h-min-screen">
                 <PrimaryButton text="Create" />
+                <Link href="/">Back to home</Link>
               </div>
+              <div></div>
             </div>
           </form>
         </>

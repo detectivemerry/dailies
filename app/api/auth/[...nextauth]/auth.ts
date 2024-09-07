@@ -7,13 +7,17 @@ import { Goal } from "@/types/model";
 type user = {
   username: string;
   password: string;
-  email : string;
-  goals : Array<Goal>;
+  email: string;
+  goals: Array<Goal>;
 };
 
 export const authOptions: NextAuthOptions = {
   // Secret for Next-auth, without this JWT encryption/decryption won't work
   secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "jwt",
+    maxAge: 3600,
+  },
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
@@ -31,40 +35,37 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        // Add logic here to look up the user from the credentials supplied
-        const client = await connectDB();
-
-        const db = client.connection.useDb(`Dailies`);
-        const user = await db
-          .collection("Users")
-          .findOne({ email: credentials?.email });
-
-        if (!user) return null;
-
-        const passwordMatch = await bcrypt.compare(
-          credentials?.password,
-          user.password
+        const loginResponse = await fetch(
+          `${process.env.PUBLIC_URL}/api/users/login`,
+          { method: "POST", 
+            body: JSON.stringify(credentials),
+            cache: "no-store"
+          }
         );
 
-        if (!passwordMatch) {
-          // If you return null then an error will be displayed advising the user to check their details.
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+        const loginResult = await loginResponse.json();
+        //console.log("login result:")
+        //console.log(loginResult)
+
+        if (loginResponse.ok) {
+          const { user } = loginResult;
+          return user;
+        } else {
           return null;
         }
-
-        // Any object returned will be saved in `user` property of the JWT
-        return user;
       },
     }),
   ],
   callbacks: {
     async jwt({ user, token, trigger, session }) {
-
       if (user) {
+        console.log(`user : ${user}`);
         token.id = user.id;
         token.username = user.username;
         token.email = user.email;
         token.goals = user.goals;
+        token.token = user.token;
+        console.log(`token : ${token.token}`);
       }
       return token;
     },
@@ -74,6 +75,7 @@ export const authOptions: NextAuthOptions = {
       session.user.username = token.username;
       session.user.email = token.email;
       session.user.goals = token.goals;
+      session.user.token = token.token;
 
       return session;
     },

@@ -30,7 +30,7 @@ export default function LoginForm() {
     setErrorMessage("") ;
     const result = await signIn('credentials', {email : data.username, password : data.password, redirect : false});
     if(result?.ok)
-      router.push('/home');
+      router.push('/');
     else{
       setErrorMessage(Message.Error.InvalidCredentials);
       return false
