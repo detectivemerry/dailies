@@ -1,7 +1,5 @@
-import { NextAuthOptions, Awaitable, Session, User } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
-import connectDB from "@/app/lib/mongodb";
 import { Goal } from "@/types/model";
 
 type user = {
@@ -30,22 +28,19 @@ export const authOptions: NextAuthOptions = {
         email: {
           label: "email",
           type: "text",
-          placeholder: "jsmith@email.com",
         },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
+        console.log("yo we in authorize");
         const loginResponse = await fetch(
           `${process.env.PUBLIC_URL}/api/users/login`,
-          { method: "POST", 
-            body: JSON.stringify(credentials),
-            cache: "no-store"
-          }
+          { method: "POST", body: JSON.stringify(credentials) }
         );
 
         const loginResult = await loginResponse.json();
-        //console.log("login result:")
-        //console.log(loginResult)
+        console.log("login result:");
+        console.log(loginResult);
 
         if (loginResponse.ok) {
           const { user } = loginResult;

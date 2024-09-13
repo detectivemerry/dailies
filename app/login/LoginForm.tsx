@@ -22,33 +22,43 @@ export default function LoginForm() {
     handleSubmit,
     watch,
     formState: { errors },
-    reset
+    reset,
   } = useForm<Inputs>();
 
-  const [errorMessage, setErrorMessage] = useState("")
+  const [errorMessage, setErrorMessage] = useState("");
+  const [pending, setPending] = useState(false);
 
-  const onSubmit: SubmitHandler<Inputs> = async(data) => {
-    setErrorMessage("") ;
-    const result = await signIn('credentials', {email : data.username, password : data.password, redirect : false});
-    if(result?.ok)
-      router.push('/');
-    else{
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setPending(true);
+    setErrorMessage("");
+    
+    const result = await signIn("credentials", {
+      email: data.username,
+      password: data.password,
+      redirect: false,
+    });
+    setPending(false);
+    if (result?.ok) router.push("/");
+    else {
       setErrorMessage(Message.Error.InvalidCredentials);
-      return false
+      return false;
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className = "w-80 mb-4">
-      {Boolean(errorMessage) && <Alert severity="error">{errorMessage}</Alert>}
+      <div className="w-80 mb-4">
+        {Boolean(errorMessage) && (
+          <Alert severity="error">{errorMessage}</Alert>
+        )}
       </div>
       <div>
         <TextField
           label="Username"
           variant="standard"
           sx={{ width: "20rem" }}
-          className = "input-field" {...register("username")}
+          className="input-field"
+          {...register("username")}
           required
         />
       </div>
@@ -59,7 +69,8 @@ export default function LoginForm() {
             variant="standard"
             type="password"
             sx={{ width: "20rem" }}
-            className = "input-field" {...register("password")}
+            className="input-field"
+            {...register("password")}
             required
           />
         </div>
@@ -69,7 +80,7 @@ export default function LoginForm() {
       </div>
       <div className="flex flex-col items-center mt-10 gap-2">
         <div>
-          <PrimaryButton text="login"/>
+          <PrimaryButton text="Login" pending={pending} />
         </div>
         <div className="text-sm">
           <Link href="/register">Or create a new account</Link>

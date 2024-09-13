@@ -1,12 +1,14 @@
 import React, { FC } from "react";
 import { Button, Typography } from "@mui/material";
-
+import ButtonSpinner from "../loading/ButtonSpinner";
+    
 interface PrimaryButtonProps {
   text: string;
   onClick?: () => void;
+  pending? : boolean;
 }
 
-const PrimaryButton: FC<PrimaryButtonProps> = ({ text, onClick }) => {
+const PrimaryButton: FC<PrimaryButtonProps> = ({ text, onClick, pending = false }) => {
   return (
     <Button
       variant="contained"
@@ -19,13 +21,14 @@ const PrimaryButton: FC<PrimaryButtonProps> = ({ text, onClick }) => {
         textTransform : "none",
         ':hover' : {
           backgroundColor : "#F9E47B",
-        }
+        },
+        fontSize : "1.125rem",
       }}
       disableElevation={true}
       onClick={onClick}
       type = "submit"
     >
-      {text}
+      {pending? <ButtonSpinner size = {"2rem"} /> : <>{text}</>}
     </Button>
   );
 };

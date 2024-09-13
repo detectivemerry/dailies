@@ -7,6 +7,7 @@ import ApiMessage from "@/app/lib/message/ApiMessage";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {
+    console.log("yo we in users/login POST")
     let { email, password } = await req.json();
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
