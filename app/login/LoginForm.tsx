@@ -37,9 +37,9 @@ export default function LoginForm() {
       password: data.password,
       redirect: false,
     });
-    setPending(false);
     if (result?.ok) router.push("/");
     else {
+      setPending(false);
       setErrorMessage(Message.Error.InvalidCredentials);
       return false;
     }

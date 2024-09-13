@@ -22,13 +22,13 @@ const PrimaryButton: FC<PrimaryButtonProps> = ({ text, onClick, pending = false 
         ':hover' : {
           backgroundColor : "#F9E47B",
         },
-        fontSize : "1.125rem",
+        paddingY : "0.5rem"
       }}
       disableElevation={true}
       onClick={onClick}
       type = "submit"
     >
-      {pending? <ButtonSpinner size = {"2rem"} /> : <>{text}</>}
+      {pending? <ButtonSpinner size = {"1.5rem"} /> : <>{text}</>}
     </Button>
   );
 };

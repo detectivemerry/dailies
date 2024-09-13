@@ -34,7 +34,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials, req) {
         console.log("yo we in authorize");
         const loginResponse = await fetch(
-          `${process.env.PUBLIC_URL}/api/users/login`,
+          `${process.env.NEXT_PUBLIC_URL}/api/users/login`,
           { method: "POST", body: JSON.stringify(credentials) }
         );
 

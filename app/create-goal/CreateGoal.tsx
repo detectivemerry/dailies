@@ -20,14 +20,14 @@ import Link from "next/link";
 
 export type CreateGoalInputs = {
   name: string;
-  goalType: string;
+  goalName: string;
   frequencyCount: number;
   frequencyPeriod: string;
   startDateObj: Dayjs | null;
   endDateObj: Dayjs | null;
   startDate: string;
   endDate: string;
-  _id: ObjectId;
+  goalId : ObjectId;
 };
 
 interface CreateGoalProps {
@@ -46,6 +46,7 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
     message: "",
   });
   const [isGoalCreated, setIsGoalCreated] = useState<boolean>(false);
+  const [pending, setPending] = useState<boolean>(false);
   const { data: session } = useSession();
 
   const {
@@ -60,7 +61,10 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
 
   const onSubmit: SubmitHandler<CreateGoalInputs> = async (data) => {
     setAlertMessage({ error: false, message: "" });
-    if (goal != null) data._id = goal._id;
+    if (goal != null){
+      data.goalId = goal._id;
+      data.goalName = goal.name;
+    } 
     let startDateStr = "";
     let endDateStr = "";
 
@@ -86,20 +90,21 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
     data.startDate = startDateStr;
     data.endDate = endDateStr;
 
-    const response = await fetch("/api/users/", {
-      method: "PATCH",
+    setPending(true);
+    const response = await fetch("/api/goal/", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         email: session?.user?.email as string,
         Authorization: `bearer ${session?.user?.token}`,
       },
       body: JSON.stringify(data),
-      cache: "no-store",
     });
 
     const result = await response.json();
     if (response.ok) setIsGoalCreated(true);
     else setAlertMessage({ error: true, message: result.message });
+    setPending(false);
   };
 
   return (
@@ -247,11 +252,15 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
                 />
               </div>
               <div className="flex flex-col items-center gap-2 mb-20 fixed bottom-0 flex justify-center h-min-screen">
-                <PrimaryButton text="Create" />
+                <PrimaryButton text="Create" pending={pending} />
                 {fromRegister === "true" ? (
-                  <Link href="/">Or continue without goal</Link>
+                  <Link href="/">
+                    <span className="text-sm">Or continue without goal</span>
+                  </Link>
                 ) : (
-                  <Link href="/profile">Back to profile</Link>
+                  <Link href="/profile">
+                    <span className="text-sm">Back to profile</span>
+                  </Link>
                 )}
               </div>
               <div></div>

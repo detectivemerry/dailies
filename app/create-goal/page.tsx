@@ -2,7 +2,7 @@ import React from "react";
 import CreateGoal from "./CreateGoal";
 
 async function getGoalTypes(){
-  const response = await fetch(`${process.env.PUBLIC_URL}/api/goalTypes`, { method : "GET", cache : "no-store"});
+  const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/goalTypes`, { method : "GET", cache : "no-store"});
   const goalTypes = await response.json();
   if(goalTypes.data){
     return goalTypes.data;

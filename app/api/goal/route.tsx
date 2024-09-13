@@ -1,20 +1,18 @@
 import { NextResponse } from "next/server";
-import { genSalt, hash } from "bcrypt";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
-import { getToken } from "next-auth/jwt";
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import connectDB from "@/app/lib/mongodb";
 import ApiMessage from "@/app/lib/message/ApiMessage";
 
-export async function PATCH(req: Request, res: NextApiResponse) {
+export async function POST(req: Request, res: NextApiResponse) {
   try {
-    let { endDate, startDate, frequencyCount, frequencyPeriod, name, _id } = await req.json()
+    let { endDate, startDate, frequencyCount, frequencyPeriod, name, goalName, goalId } = await req.json()
     
-    const objectId = new ObjectId(String(_id));
+    const objectId = new ObjectId(String(goalId));
     const headerList = headers();
     const email = headerList.get("email");
     const accessToken = headerList.get("Authorization");
@@ -42,7 +40,8 @@ export async function PATCH(req: Request, res: NextApiResponse) {
             frequencyCount: frequencyCount,
             frequencyPeriod: frequencyPeriod,
             name: name,
-            _id: objectId,
+            goalId: objectId,
+            goalName : goalName,
           },
         },
       }
@@ -67,7 +66,7 @@ export async function PATCH(req: Request, res: NextApiResponse) {
         );
 
       if (updateNoOfMembersResult.modifiedCount != 1)
-        console.error(`${_id}: no_of_members not incremented`);
+        console.error(`${goalId}: no_of_members not incremented`);
     }
 
     if (acknowledged && modifiedCount === 1)

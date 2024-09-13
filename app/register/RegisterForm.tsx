@@ -27,17 +27,19 @@ export default function RegisterForm() {
     reset,
   } = useForm<Inputs>();
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState({
     error: false,
     message: "",
   });
+  const [pending, setPending] = useState<boolean>(false);
   const router = useRouter();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setAlertMessage({ error: false, message: "" });
+    setPending(true);
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch("/api/users/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,17 +48,21 @@ export default function RegisterForm() {
       });
 
       if (!response.ok) {
+        setPending(false)
         const result = await response.json();
         setAlertMessage({ error: true, message: result.message });
+        return
       }
 
       // Logins user
       const loginResult = await signIn("credentials", {
         email: data.email,
         password: data.password,
+        redirect : false
       });
 
       if (!loginResult?.ok) {
+        setPending(false);
         setAlertMessage({
           error: true,
           message: Message.Error.InvalidCredentials,
@@ -202,7 +208,7 @@ export default function RegisterForm() {
         </div>
 
         <div className="mb-20 fixed bottom-0 flex justify-center h-min-screen">
-          <PrimaryButton text="Continue" />
+          <PrimaryButton text="Continue" pending = {pending}/>
         </div>
       </form>
     </>

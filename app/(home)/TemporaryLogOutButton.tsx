@@ -6,9 +6,8 @@ import { useRouter } from "next/navigation";
 
 export default function TemporaryLogOutButton() {
   const router = useRouter();
-  const handleSignOut = () => {
-    signOut();
-    router.push('/login')
+  const handleSignOut = async () => {
+    await signOut({redirect : true, callbackUrl : `${process.env.NEXT_PUBLIC_URL}login`});
   };
   return <Button onClick={handleSignOut}>Sign out</Button>;
 }
