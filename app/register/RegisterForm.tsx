@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import Link from "next/link";
-import PrimaryButton from "@/components/buttons/PrimaryButton";
+import { signIn } from "next-auth/react";
 import { TextField, Alert, InputAdornment, IconButton } from "@mui/material";
 import { MessageSharp, Visibility, VisibilityOff } from "@mui/icons-material/";
-
 import { useRouter } from "next/navigation";
+
 import Message from "@/app/lib/message/Message";
+import PrimaryButton from "@/components/buttons/PrimaryButton";
 
 type Inputs = {
   firstName: string;
@@ -45,14 +45,28 @@ export default function RegisterForm() {
         body: JSON.stringify(data),
       });
 
-      if (response.ok) {
-        router.push(`/create-goal?fromRegister=true`);
-      } else {
+      if (!response.ok) {
         const result = await response.json();
         setAlertMessage({ error: true, message: result.message });
       }
+
+      // Logins user
+      const loginResult = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+      });
+
+      if (!loginResult?.ok) {
+        setAlertMessage({
+          error: true,
+          message: Message.Error.InvalidCredentials,
+        });
+      }
+      // Successful register and login
+      router.push(`/create-goal?fromRegister=true`);
+
     } catch (error) {
-      setAlertMessage({ error: true, message: Message.Error.General});
+      setAlertMessage({ error: true, message: Message.Error.General });
     }
   };
 
@@ -64,7 +78,9 @@ export default function RegisterForm() {
     <>
       <div className="w-80 mb-4">
         {Boolean(alertMessage.message) && (
-          <Alert severity= {alertMessage.error ? "error" : "success"} >{alertMessage.message}</Alert>
+          <Alert severity={alertMessage.error ? "error" : "success"}>
+            {alertMessage.message}
+          </Alert>
         )}
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>

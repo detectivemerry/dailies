@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
-import { Select, MenuItem, TextField, Alert } from "@mui/material";
+import { Select, MenuItem, TextField, Alert, Button } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -248,7 +248,11 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
               </div>
               <div className="flex flex-col items-center gap-2 mb-20 fixed bottom-0 flex justify-center h-min-screen">
                 <PrimaryButton text="Create" />
-                <Link href="/">Back to home</Link>
+                {fromRegister === "true" ? (
+                  <Link href="/">Or continue without goal</Link>
+                ) : (
+                  <Link href="/profile">Back to profile</Link>
+                )}
               </div>
               <div></div>
             </div>

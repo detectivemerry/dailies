@@ -24,12 +24,12 @@ export async function POST(req: Request, res: NextApiResponse) {
     //const accessToken = jwt.sign(JSON.stringify(user), process.env.TOKEN_SECRET)
 
     if (passwordMatch) {
+      user.token = "topsecret"
       return NextResponse.json(
         { message: ApiMessage.Success.General, user : user},
         { status: 200 }
       );
     } else {
-      console.log("yo this does not match")
       return NextResponse.json(
         { message: ApiMessage.Error.InvalidCredentials },
         { status: 400 }
