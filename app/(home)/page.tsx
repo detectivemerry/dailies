@@ -2,6 +2,7 @@ import Image from "next/image";
 import connectDB from "@/app/lib/mongodb";
 import CreateGoalButton from "./CreateGoalButton";
 import TemporaryLogOutButton from "./TemporaryLogOutButton";
+import Navbar from "@/components/navbar/Navbar";
 
 export async function testDB() {
   await connectDB();

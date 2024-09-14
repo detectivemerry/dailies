@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
+
+import Navbar from "@/components/navbar/Navbar";
 import theme from "./theme";
 import AuthProvider from "@/app/lib/providers/AuthProvider";
 
@@ -23,7 +25,10 @@ export default function RootLayout({
       <AppRouterCacheProvider>
         <ThemeProvider theme={theme}>
           <AuthProvider>
-            <body className={inter.className}>{children}</body>
+            <body className={`${inter.className} flex flex-col items-center`}>
+              {children}
+              <Navbar/>
+            </body>
           </AuthProvider>
         </ThemeProvider>
       </AppRouterCacheProvider>

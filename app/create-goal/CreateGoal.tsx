@@ -108,7 +108,7 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
   };
 
   return (
-    <>
+    <div className = "mx-8">
       <CreateMoreGoalDialog
         isGoalCreated={isGoalCreated}
         setIsGoalCreated={setIsGoalCreated}
@@ -268,6 +268,6 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
           </form>
         </>
       )}
-    </>
+    </div>
   );
 }
