@@ -45,4 +45,5 @@ export type Post = {
     imageUrl : string //www.s3/imageurl.com
     postedDateTime : string //"2024-09-18T16:00:00.000Z"
     _id : ObjectId; //'1a2b3c4d5e'
+    goalId : ObjectId;
 }

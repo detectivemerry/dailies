@@ -10,6 +10,7 @@ const ApiMessage = {
     Unauthenticated : "Session has expired. Please log in again.",
     UserAlreadyInDB : "Username already exists in database. Please enter a different username.",
     EmailAlreadyExist : "Email already exists in database. Please enter a different email.",
+    NoUserFound : "Current user was not found. Please try again later."
   } 
 };
 

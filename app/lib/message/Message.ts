@@ -8,6 +8,7 @@ const Message = {
     Min6Characters : "Please enter a value with more than 6 characters",
     Min8Characters : "Please enter a value with more than 8 characters",
     Max50Characters : "Please enter a value with fewer than 50 characters.",
+    Max250Characters : "The maximum number of characters allow for this field is 250.",
     Max366Value : "Please enter a value that is lesser than 366.",
     AlphaNumericAndSpecialOnly : "Please enter only alphanumeric or special characters.",
     AlphaNumericOnly : "Please enter only letters and numbers.",

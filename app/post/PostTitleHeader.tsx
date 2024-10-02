@@ -5,7 +5,7 @@ import React from "react";
 export default function PostTitleHeader() {
   return (
     <>
-      <div className="flex justify-between border-b py-3 w-[26.85rem]">
+      <div className="flex justify-between border-b py-3">
         <div className="">
           <Button>
             <Close />
