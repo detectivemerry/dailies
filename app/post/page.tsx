@@ -1,7 +1,17 @@
-import React from 'react'
+import React from "react";
+import PostForm from "./PostForm";
 
-export default function page() {
+const getUserGoals = async () => {
+
+}
+
+export default async function page() {
+  
+  const userGoals = await getUserGoals();
+
   return (
-    <div>page</div>
-  )
+    <>
+      <PostForm userGoals = {userGoals} />
+    </>
+  );
 }

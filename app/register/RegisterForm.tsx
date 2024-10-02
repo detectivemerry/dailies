@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import { TextField, Alert, InputAdornment, IconButton } from "@mui/material";
-import { MessageSharp, Visibility, VisibilityOff } from "@mui/icons-material/";
+import { Visibility, VisibilityOff } from "@mui/icons-material/";
 import { useRouter } from "next/navigation";
 
 import Message from "@/app/lib/message/Message";

@@ -40,8 +40,8 @@ export async function POST(req: Request, res: NextApiResponse) {
             frequencyCount: frequencyCount,
             frequencyPeriod: frequencyPeriod,
             name: name,
-            goalId: objectId,
-            goalName : goalName,
+            _id: objectId,
+            posts : []
           },
         },
       }
