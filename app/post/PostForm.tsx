@@ -29,6 +29,11 @@ export default function PostForm({ userGoals }) {
   const onSubmit: SubmitHandler<Post> = async (data) => {
     setPending(true);
     const imgUrl = "www.google.com"
+    data.imageUrl = imgUrl
+    data.postedDateTime = String(new Date());
+
+    console.log("data be like")
+    console.log(data)
 
     try {
       const response = await fetch("/api/post", {
