@@ -64,13 +64,16 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    async session({ session, token, user }) {
+    async session({ session, token, user, trigger, newSession }) {
       session.user.email = token.id;
       session.user.username = token.username;
       session.user.email = token.email;
       session.user.goals = token.goals;
       session.user.token = token.token;
 
+      if(trigger === "update" &&  newSession?.goals){
+        session.user.goals = newSession.goals;
+      }
       return session;
     },
   },

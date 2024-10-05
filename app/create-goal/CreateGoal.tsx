@@ -12,7 +12,7 @@ import { useSession } from "next-auth/react";
 
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import GoalTypeMenu from "./GoalTypeMenu";
-import { GoalType, Goal } from "@/types/model";
+import { GoalType, Goal, Post } from "@/types/model";
 import Message from "@/app/lib/message/Message";
 import SecondaryButton from "@/components/buttons/SecondaryButton";
 import CreateMoreGoalDialog from "./CreateMoreGoalDialog";
@@ -28,6 +28,8 @@ export type CreateGoalInputs = {
   startDate: string;
   endDate: string;
   goalId : ObjectId;
+  inactive : boolean;
+  posts : Post[];
 };
 
 interface CreateGoalProps {
@@ -63,7 +65,7 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
     setAlertMessage({ error: false, message: "" });
     if (goal != null){
       data.goalId = goal._id;
-      data.goalName = goal.name;
+      data.name = goal.name;
     } 
     let startDateStr = "";
     let endDateStr = "";
@@ -89,6 +91,8 @@ export default function CreateGoal({ goalTypes }: CreateGoalProps) {
 
     data.startDate = startDateStr;
     data.endDate = endDateStr;
+    data.inactive = false;
+    data.posts = []; 
 
     setPending(true);
     const response = await fetch("/api/goal/", {

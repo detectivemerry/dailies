@@ -10,9 +10,11 @@ import ApiMessage from "@/app/lib/message/ApiMessage";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {
-    let { endDate, startDate, frequencyCount, frequencyPeriod, name, goalName, goalId } = await req.json()
+    let { endDate, startDate, frequencyCount, frequencyPeriod, name, goalId, inactive, posts } = await req.json()
     
-    const objectId = new ObjectId(String(goalId));
+    const goalIdObject = new ObjectId(String(goalId));
+    const newIdObject = new ObjectId();
+
     const headerList = headers();
     const email = headerList.get("email");
     const accessToken = headerList.get("Authorization");
@@ -22,6 +24,8 @@ export async function POST(req: Request, res: NextApiResponse) {
     
     // TO-DO: verify bearer token here
     const session = await getServerSession(authOptions);
+    console.log("hey yea im at goal POST")
+    console.log(session)
     if (!session || !session.user) {
       return NextResponse.json(
         { message: ApiMessage.Error.Unauthenticated },
@@ -40,8 +44,10 @@ export async function POST(req: Request, res: NextApiResponse) {
             frequencyCount: frequencyCount,
             frequencyPeriod: frequencyPeriod,
             name: name,
-            _id: objectId,
-            posts : []
+            goalId : goalIdObject,
+            _id: newIdObject,
+            inactive : inactive,
+            posts : posts,
           },
         },
       }
@@ -54,14 +60,14 @@ export async function POST(req: Request, res: NextApiResponse) {
       .find({ email: user.email }, { goals: 1 })
       .next();
     const relatedGoals = userDoc?.goals.filter(
-      (userGoal) => String(userGoal._id) === String(objectId)
+      (userGoal) => String(userGoal._id) === String(goalId)
     );
 
     if (relatedGoals.length === 1) {
       const updateNoOfMembersResult = await db
         .collection("GoalTypes")
         .updateOne(
-          { "goals._id": objectId },
+          { "goals._id": goalId },
           { $inc: { "goals.$.no_of_members": 1 } }
         );
 

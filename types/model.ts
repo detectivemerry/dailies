@@ -36,6 +36,7 @@ export type UserGoals = {
     frequencyCount : number; //3
     frequencyPeriod : string; //per week
     _id : ObjectId; //'1a2b3c4d5e'
+    goalId : ObjectId;
     inactive : boolean;
     posts : Post[];
 }
