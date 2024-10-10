@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { CollectionsOutlined, PhotoCamera } from "@mui/icons-material";
 import {
@@ -12,12 +12,15 @@ import {
   InputLabel,
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
+import { v4 as uuidv4 } from "uuid";
 
 import PostTitleHeader from "./PostTitleHeader";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { Post, UserGoals } from "@/types/model";
 import NoImageSelected from "./NoImageSelected";
 import Message from "../lib/message/Message";
+//import parseFile from "./fileParser";
 
 interface PostFormProps {
   userGoals: UserGoals[];
@@ -25,10 +28,20 @@ interface PostFormProps {
 
 export default function PostForm({ userGoals }: PostFormProps) {
   const [pending, setPending] = useState<boolean>(false);
+  const [image, setImage] = useState<File | null>(null);
   const [alertMessage, setAlertMessage] = useState({
     error: false,
     message: "",
   });
+
+  const Bucket = process.env.NEXT_PUBLIC_S3_BUCKET;
+  const s3 = new S3Client({
+    region : process.env.NEXT_PUBLIC_S3_REGION,
+    credentials : {
+      accessKeyId : process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID as string,
+      secretAccessKey : process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY as string,
+    }
+  })
 
   const {
     register,
@@ -41,28 +54,67 @@ export default function PostForm({ userGoals }: PostFormProps) {
   const onSubmit: SubmitHandler<Post> = async (data) => {
     try {
       setPending(true);
-      const imgUrl = "www.google.com";
-      data.imageUrl = imgUrl;
-      data.postedDateTime = dayjs().toISOString();
+      await handleUploadS3();
+      //const imgUrl = "www.google.com";
+      //data.imageUrl = imgUrl;
+      //data.postedDateTime = dayjs().toISOString();
 
-      const response = await fetch("/api/post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      //const response = await fetch("/api/post", {
+        //method: "POST",
+        //headers: {
+          //"Content-Type": "application/json",
+        //},
+        //body: JSON.stringify(data),
+      //});
 
-      if (!response.ok) {
-        setPending(false);
-        const result = await response.json();
-      }
+      //if (!response.ok) {
+        //setPending(false);
+        //const result = await response.json();
+      //}
     } catch (error) {
       console.error(error);
     } finally {
       setPending(false);
     }
   };
+
+  const handleUploadImage = async (e : ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if(!e.target.files) return;
+    setImage(e.target.files[0]);
+
+    //if(e.target.files &&  e.target.files.length > 0){
+      ////setImage(URL.createObjectURL(e?.target?.files[0]));
+      
+      //const formData = new FormData();
+      //formData.append('image', e.target.files[0]);
+
+    //}
+  };
+
+  const handleUploadS3 = async () => {
+    if(!image) return;
+    const ext = image?.name.split(".").at(-1);
+     const uid = uuidv4().replace(/-/g, "");
+     const fileName = `${uid}${ext ? "." + ext : ""}`;
+
+     console.log(fileName)
+
+     try {
+       const uploadToS3 = new PutObjectCommand({
+         Bucket : Bucket,
+         Key: fileName,
+         Body: image,
+       });
+       const result = await s3.send(uploadToS3);
+       console.log(result)
+     } catch (error) {
+       console.error(error);
+     }
+
+  }
+
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -71,12 +123,12 @@ export default function PostForm({ userGoals }: PostFormProps) {
           <PostTitleHeader />
           <div className="flex flex-col gap-3">
             <div
-              className="border-2 h-[40vh] cursor-pointer"
+              className="border-2 h-[40vh] cursor-pointer flex flex-col items-center"
               onClick={() => {
                 document.getElementById("file_upload")?.click();
               }}
             >
-              <NoImageSelected />
+              {image ? <img src={image} className = "h-full"/> : <NoImageSelected />}
             </div>
             <div className="flex justify-end mx-6 lg:mx-3 gap-4">
               <div
@@ -87,7 +139,13 @@ export default function PostForm({ userGoals }: PostFormProps) {
               >
                 <CollectionsOutlined sx={{ color: "#1D5D9B" }} />
 
-                <input type="file" accept=".png" hidden id="file_upload" />
+                <input
+                  type="file"
+                  accept=".png, .jpg, .jpeg"
+                  hidden
+                  id="file_upload"
+                  onChange={handleUploadImage}
+                />
               </div>
               <div className="bg-gray-200 rounded-full p-1.5">
                 <PhotoCamera sx={{ color: "#1D5D9B" }} />
