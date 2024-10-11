@@ -10,9 +10,10 @@ import {
   Button,
   FormControl,
   InputLabel,
+  Alert,
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
 
 import PostTitleHeader from "./PostTitleHeader";
@@ -20,7 +21,7 @@ import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { Post, UserGoals } from "@/types/model";
 import NoImageSelected from "./NoImageSelected";
 import Message from "../lib/message/Message";
-//import parseFile from "./fileParser";
+import PostCreatedDialog from "./PostCreatedDialog";
 
 interface PostFormProps {
   userGoals: UserGoals[];
@@ -28,20 +29,13 @@ interface PostFormProps {
 
 export default function PostForm({ userGoals }: PostFormProps) {
   const [pending, setPending] = useState<boolean>(false);
+  const [previewImage, setPreviewImage] = useState<string | undefined>("");
   const [image, setImage] = useState<File | null>(null);
   const [alertMessage, setAlertMessage] = useState({
     error: false,
     message: "",
   });
-
-  const Bucket = process.env.NEXT_PUBLIC_S3_BUCKET;
-  const s3 = new S3Client({
-    region : process.env.NEXT_PUBLIC_S3_REGION,
-    credentials : {
-      accessKeyId : process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID as string,
-      secretAccessKey : process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY as string,
-    }
-  })
+  const [postCreated, setPostCreated] = useState(false);
 
   const {
     register,
@@ -54,23 +48,37 @@ export default function PostForm({ userGoals }: PostFormProps) {
   const onSubmit: SubmitHandler<Post> = async (data) => {
     try {
       setPending(true);
-      await handleUploadS3();
-      //const imgUrl = "www.google.com";
-      //data.imageUrl = imgUrl;
-      //data.postedDateTime = dayjs().toISOString();
+      const { statusCode, fileName } = await handleUploadS3();
 
-      //const response = await fetch("/api/post", {
-        //method: "POST",
-        //headers: {
-          //"Content-Type": "application/json",
-        //},
-        //body: JSON.stringify(data),
-      //});
+      if (statusCode != 200) {
+        setAlertMessage({
+          error: true,
+          message: Message.Error.UnsuccessfulImageUpload,
+        });
+        return;
+      }
+      data.imageUrl = `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}${fileName}`;
+      data.postedDateTime = dayjs().toISOString();
 
-      //if (!response.ok) {
-        //setPending(false);
+      const response = await fetch("/api/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        setPending(false);
         //const result = await response.json();
-      //}
+        setAlertMessage({
+          error: true,
+          message: Message.Error.UnsuccessfulPostCreation,
+        });
+      } else {
+        setPostCreated(true);
+      }
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -78,57 +86,78 @@ export default function PostForm({ userGoals }: PostFormProps) {
     }
   };
 
-  const handleUploadImage = async (e : ChangeEvent<HTMLInputElement>) => {
+  const handleUploadImage = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if(!e.target.files) return;
+    if (!e.target.files) return;
     setImage(e.target.files[0]);
-
-    //if(e.target.files &&  e.target.files.length > 0){
-      ////setImage(URL.createObjectURL(e?.target?.files[0]));
-      
-      //const formData = new FormData();
-      //formData.append('image', e.target.files[0]);
-
-    //}
+    setPreviewImage(URL.createObjectURL(e.target.files[0]));
   };
 
-  const handleUploadS3 = async () => {
-    if(!image) return;
-    const ext = image?.name.split(".").at(-1);
-     const uid = uuidv4().replace(/-/g, "");
-     const fileName = `${uid}${ext ? "." + ext : ""}`;
+  type S3UploadResponse = {
+    statusCode: number;
+    fileName: string;
+  };
 
-     console.log(fileName)
+  const handleUploadS3 = async (): Promise<S3UploadResponse> => {
+    try {
+      if (!image) return { statusCode: 400, fileName: "" };
+      const Bucket = process.env.NEXT_PUBLIC_S3_BUCKET;
+      const s3 = new S3Client({
+        region: process.env.NEXT_PUBLIC_S3_REGION,
+        credentials: {
+          accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID as string,
+          secretAccessKey: process.env
+            .NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY as string,
+        },
+      });
+      const ext = image?.name.split(".").at(-1);
+      const uid = uuidv4().replace(/-/g, "");
+      const fileName = `${uid}${ext ? "." + ext : ""}`;
 
-     try {
-       const uploadToS3 = new PutObjectCommand({
-         Bucket : Bucket,
-         Key: fileName,
-         Body: image,
-       });
-       const result = await s3.send(uploadToS3);
-       console.log(result)
-     } catch (error) {
-       console.error(error);
-     }
+      const uploadToS3 = new PutObjectCommand({
+        Bucket: Bucket,
+        Key: fileName,
+        Body: image,
+        ContentType : "image/jpeg",
+      });
 
-  }
-
-
+      const result = await s3.send(uploadToS3);
+      if (result.$metadata.httpStatusCode)
+        return {
+          statusCode: result.$metadata.httpStatusCode,
+          fileName: fileName,
+        };
+      else return { statusCode: 500, fileName: fileName };
+    } catch (error) {
+      console.error(error);
+      return { statusCode: 500, fileName: "" };
+    }
+  };
 
   return (
+    <>
+    <PostCreatedDialog postCreated={postCreated}/>
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col justify-between h-screen">
         <div>
           <PostTitleHeader />
           <div className="flex flex-col gap-3">
+            {Boolean(alertMessage.message) && (
+              <Alert severity={alertMessage.error ? "error" : "success"}>
+                {alertMessage.message}
+              </Alert>
+            )}
             <div
               className="border-2 h-[40vh] cursor-pointer flex flex-col items-center"
               onClick={() => {
                 document.getElementById("file_upload")?.click();
               }}
             >
-              {image ? <img src={image} className = "h-full"/> : <NoImageSelected />}
+              {image ? (
+                <img src={previewImage} className="h-full" />
+              ) : (
+                <NoImageSelected />
+              )}
             </div>
             <div className="flex justify-end mx-6 lg:mx-3 gap-4">
               <div
@@ -195,5 +224,6 @@ export default function PostForm({ userGoals }: PostFormProps) {
         </div>
       </div>
     </form>
+    </>
   );
 }
