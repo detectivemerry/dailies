@@ -11,6 +11,7 @@ import {
   FormControl,
   InputLabel,
   Alert,
+  FormHelperText,
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
@@ -48,6 +49,7 @@ export default function PostForm({ userGoals }: PostFormProps) {
   const onSubmit: SubmitHandler<Post> = async (data) => {
     try {
       setPending(true);
+
       const { statusCode, fileName } = await handleUploadS3();
 
       if (statusCode != 200) {
@@ -78,13 +80,17 @@ export default function PostForm({ userGoals }: PostFormProps) {
       } else {
         setPostCreated(true);
       }
-
     } catch (error) {
       console.error(error);
     } finally {
       setPending(false);
     }
   };
+
+  //const validatePostFormFields = (postFormFields : Post) : boolean => {
+  //if(!postFormFields.caption || !postFormFields.imageUrl || !postFormFields.postedDateTime)
+
+  //}
 
   const handleUploadImage = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -118,7 +124,7 @@ export default function PostForm({ userGoals }: PostFormProps) {
         Bucket: Bucket,
         Key: fileName,
         Body: image,
-        ContentType : "image/jpeg",
+        ContentType: "image/jpeg",
       });
 
       const result = await s3.send(uploadToS3);
@@ -136,94 +142,104 @@ export default function PostForm({ userGoals }: PostFormProps) {
 
   return (
     <>
-    <PostCreatedDialog postCreated={postCreated}/>
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex flex-col justify-between h-screen">
-        <div>
-          <PostTitleHeader />
-          <div className="flex flex-col gap-3">
-            {Boolean(alertMessage.message) && (
-              <Alert severity={alertMessage.error ? "error" : "success"}>
-                {alertMessage.message}
-              </Alert>
-            )}
-            <div
-              className="border-2 h-[40vh] cursor-pointer flex flex-col items-center"
-              onClick={() => {
-                document.getElementById("file_upload")?.click();
-              }}
-            >
-              {image ? (
-                <img src={previewImage} className="h-full" />
-              ) : (
-                <NoImageSelected />
+      <PostCreatedDialog postCreated={postCreated} />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-col justify-between h-screen">
+          <div>
+            <PostTitleHeader />
+            <div className="flex flex-col gap-3">
+              {Boolean(alertMessage.message) && (
+                <Alert severity={alertMessage.error ? "error" : "success"}>
+                  {alertMessage.message}
+                </Alert>
               )}
-            </div>
-            <div className="flex justify-end mx-6 lg:mx-3 gap-4">
               <div
-                className="bg-gray-200 rounded-full p-1.5 cursor-pointer hover:bg-gray-300"
+                className="border-b-2 h-[40vh] cursor-pointer flex flex-col items-center"
                 onClick={() => {
                   document.getElementById("file_upload")?.click();
                 }}
               >
-                <CollectionsOutlined sx={{ color: "#1D5D9B" }} />
+                {image ? (
+                  <img src={previewImage} className="h-full" />
+                ) : (
+                  <NoImageSelected />
+                )}
+              </div>
+              <div className="flex justify-end mx-6 lg:mx-3 gap-4">
+                <div
+                  className="bg-gray-200 rounded-full p-1.5 cursor-pointer hover:bg-gray-300"
+                  onClick={() => {
+                    document.getElementById("file_upload")?.click();
+                  }}
+                >
+                  <CollectionsOutlined sx={{ color: "#1D5D9B" }} />
 
-                <input
-                  type="file"
-                  accept=".png, .jpg, .jpeg"
-                  hidden
-                  id="file_upload"
-                  onChange={handleUploadImage}
+                  <input
+                    type="file"
+                    accept=".png, .jpg, .jpeg"
+                    hidden
+                    id="file_upload"
+                    onChange={handleUploadImage}
+                  />
+                </div>
+                <div className="bg-gray-200 rounded-full p-1.5">
+                  <PhotoCamera sx={{ color: "#1D5D9B" }} />
+                </div>
+              </div>
+              <div>
+                <TextField
+                  placeholder="Write a caption..."
+                  multiline
+                  fullWidth
+                  rows={6}
+                  {...register("caption", {
+                    required: Message.Error.RequiredField,
+                    maxLength: {
+                      value: 50,
+                      message: Message.Error.Max250Characters,
+                    },
+                  })}
+                  error={Boolean(errors.caption)}
+                  helperText={errors.caption?.message}
                 />
               </div>
-              <div className="bg-gray-200 rounded-full p-1.5">
-                <PhotoCamera sx={{ color: "#1D5D9B" }} />
-              </div>
+            </div>
+          </div>
+          <div className="flex flex-col items-center mb-12 gap-8">
+            <div className="w-[80%]">
+              <FormControl fullWidth variant="standard">
+                <InputLabel id="goal-label">Choose a goal</InputLabel>
+                <Select
+                  defaultValue={""}
+                  {...register("goalId", {
+                    required: Message.Error.RequiredField,
+                  })}
+                  error={Boolean(errors.goalId)}
+                >
+                  {userGoals &&
+                    userGoals.map((userGoal, idx) => {
+                      return (
+                        <MenuItem key={idx} value={String(userGoal.goalId)}>
+                          {userGoal.name}
+                        </MenuItem>
+                      );
+                    })}
+                </Select>
+                {Boolean(errors.goalId) && (
+                  <FormHelperText>
+                    <span className="text-red-600">
+                      {Message.Error.RequiredField}
+                    </span>
+                  </FormHelperText>
+                )}
+              </FormControl>
             </div>
             <div>
-              <TextField
-                placeholder="Write a caption..."
-                multiline
-                fullWidth
-                rows={6}
-                {...register("caption", {
-                  required: Message.Error.RequiredField,
-                  maxLength: {
-                    value: 50,
-                    message: Message.Error.Max250Characters,
-                  },
-                })}
-              />
+              <PrimaryButton text="Share" pending={pending} />
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-center mb-12 gap-8">
-          <div className="w-[80%]">
-            <FormControl fullWidth variant="standard">
-              <InputLabel id="goal-label">Choose a goal</InputLabel>
-              <Select
-                defaultValue={""}
-                {...register("goalId", {
-                  required: Message.Error.RequiredField,
-                })}
-              >
-                {userGoals &&
-                  userGoals.map((userGoal, idx) => {
-                    return (
-                      <MenuItem key={idx} value={String(userGoal.goalId)}>
-                        {userGoal.name}
-                      </MenuItem>
-                    );
-                  })}
-              </Select>
-            </FormControl>
-          </div>
-          <div>
-            <PrimaryButton text="Share" pending={pending} />
-          </div>
-        </div>
-      </div>
-    </form>
+      </form>
     </>
   );
 }
