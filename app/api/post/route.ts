@@ -15,6 +15,8 @@ export async function POST(req: Request, res: NextApiResponse) {
     let data = await req.json();
     const session = await getServerSession(authOptions);
     const goalIdObject = new ObjectId(String(data.goalId));
+    const postId = new ObjectId();
+    data._id = postId;
     const filter = {email : session?.user.email, 'goals.goalId' : goalIdObject}
     const options = { upsert : true }
 
