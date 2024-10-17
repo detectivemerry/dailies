@@ -19,13 +19,13 @@ import { v4 as uuidv4 } from "uuid";
 
 import PostTitleHeader from "./PostTitleHeader";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
-import { Post, UserGoals } from "@/types/model";
+import { Post, UserGoal } from "@/types/model";
 import NoImageSelected from "./NoImageSelected";
 import Message from "../lib/message/Message";
 import PostCreatedDialog from "./PostCreatedDialog";
 
 interface PostFormProps {
-  userGoals: UserGoals[];
+  userGoals: UserGoal[];
 }
 
 export default function PostForm({ userGoals }: PostFormProps) {
@@ -86,11 +86,6 @@ export default function PostForm({ userGoals }: PostFormProps) {
       setPending(false);
     }
   };
-
-  //const validatePostFormFields = (postFormFields : Post) : boolean => {
-  //if(!postFormFields.caption || !postFormFields.imageUrl || !postFormFields.postedDateTime)
-
-  //}
 
   const handleUploadImage = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -211,21 +206,21 @@ export default function PostForm({ userGoals }: PostFormProps) {
                 <InputLabel id="goal-label">Choose a goal</InputLabel>
                 <Select
                   defaultValue={""}
-                  {...register("goalId", {
+                  {...register("userGoal", {
                     required: Message.Error.RequiredField,
                   })}
-                  error={Boolean(errors.goalId)}
+                  error={Boolean(errors.userGoal)}
                 >
                   {userGoals &&
                     userGoals.map((userGoal, idx) => {
                       return (
-                        <MenuItem key={idx} value={String(userGoal.goalId)}>
+                        <MenuItem key={idx} value={String(userGoal._id)}>
                           {userGoal.name}
                         </MenuItem>
                       );
                     })}
                 </Select>
-                {Boolean(errors.goalId) && (
+                {Boolean(errors.userGoal) && (
                   <FormHelperText>
                     <span className="text-red-600">
                       {Message.Error.RequiredField}

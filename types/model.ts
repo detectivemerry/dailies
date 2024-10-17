@@ -29,7 +29,7 @@ export type Goal = {
     no_of_members : number; //123
 }
 
-export type UserGoals = {
+export type UserGoal = {
     name : string; //running
     endDate : string; //"2024-09-18T16:00:00.000Z"
     startDate : string; //"2024-09-18T16:00:00.000Z"
@@ -38,7 +38,6 @@ export type UserGoals = {
     _id : ObjectId; //'1a2b3c4d5e'
     goalId : ObjectId;
     inactive : boolean;
-    posts : Post[];
 }
 
 export type Post = {
@@ -46,5 +45,11 @@ export type Post = {
     imageUrl : string //www.s3/imageurl.com
     postedDateTime : string //"2024-09-18T16:00:00.000Z"
     _id : ObjectId; //'1a2b3c4d5e'
-    goalId : ObjectId;
+    // remove goalId, included in userGoal
+    //goalId : ObjectId;
+    //new fields
+    userGoal : ObjectId; // to trace back to user
 }
+
+
+

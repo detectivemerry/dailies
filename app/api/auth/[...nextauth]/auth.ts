@@ -36,11 +36,7 @@ export const authOptions: NextAuthOptions = {
           `${process.env.NEXT_PUBLIC_URL}/api/users/login`,
           { method: "POST", body: JSON.stringify(credentials) }
         );
-
         const loginResult = await loginResponse.json();
-        console.log("login result:");
-        console.log(loginResult);
-
         if (loginResponse.ok) {
           const { user } = loginResult;
           return user;
