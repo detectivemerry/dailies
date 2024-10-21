@@ -23,13 +23,9 @@ import { Post, UserGoal } from "@/types/model";
 import NoImageSelected from "./NoImageSelected";
 import Message from "../lib/message/Message";
 import PostCreatedDialog from "./PostCreatedDialog";
+import { useSession } from "next-auth/react";
 
-interface PostFormProps {
-  userGoals: UserGoal[];
-  username : string;
-}
-
-export default function PostForm({ userGoals, username }: PostFormProps) {
+export default function PostForm() {
   const [pending, setPending] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string | undefined>("");
   const [image, setImage] = useState<File | null>(null);
@@ -38,6 +34,9 @@ export default function PostForm({ userGoals, username }: PostFormProps) {
     message: "",
   });
   const [postCreated, setPostCreated] = useState(false);
+  const { data : session } = useSession();
+  const userGoals = session?.user.goals as UserGoal[];
+  const username = session?.user.username as string;
 
   const {
     register,
@@ -51,16 +50,17 @@ export default function PostForm({ userGoals, username }: PostFormProps) {
     try {
       setPending(true);
 
-      const { statusCode, fileName } = await handleUploadS3();
+      //const { statusCode, fileName } = await handleUploadS3();
 
-      if (statusCode != 200) {
-        setAlertMessage({
-          error: true,
-          message: Message.Error.UnsuccessfulImageUpload,
-        });
-        return;
-      }
-      data.imageUrl = `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}${fileName}`;
+      //if (statusCode != 200) {
+        //setAlertMessage({
+          //error: true,
+          //message: Message.Error.UnsuccessfulImageUpload,
+        //});
+        //return;
+      //}
+      //data.imageUrl = `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}${fileName}`;
+      data.imageUrl = "testomg";
 
       // assign required details to post 
       data.imageUrl = `testing`;

@@ -32,7 +32,7 @@ export async function POST(req: Request, res: NextApiResponse) {
       _id : new ObjectId(),
       userGoalId : userGoalObject._id,
       userId : userObject._id, 
-      username : data._id,
+      username : data.username,
       frequencyCount : data.frequencyCount,
       frequencyPeriod : data.frequencyPeriod,
       goalName : data.goalName,
