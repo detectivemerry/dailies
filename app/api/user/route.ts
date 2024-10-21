@@ -12,7 +12,7 @@ export async function GET(req: Request, res: NextApiResponse) {
 
     const session = await getServerSession(authOptions);
     const filter = { email: session?.user.email };
-    const userDoc = await db.collection("Users").findOne(filter, { goals: 1 });
+    const userDoc = await db.collection("Users").findOne(filter, { goals: 1, username : 1 });
 
     if(!userDoc){
       return NextResponse.json({message : ApiMessage.Error.General}, { status: 500 });

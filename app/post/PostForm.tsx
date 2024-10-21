@@ -26,9 +26,10 @@ import PostCreatedDialog from "./PostCreatedDialog";
 
 interface PostFormProps {
   userGoals: UserGoal[];
+  username : string;
 }
 
-export default function PostForm({ userGoals }: PostFormProps) {
+export default function PostForm({ userGoals, username }: PostFormProps) {
   const [pending, setPending] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string | undefined>("");
   const [image, setImage] = useState<File | null>(null);
@@ -60,7 +61,17 @@ export default function PostForm({ userGoals }: PostFormProps) {
         return;
       }
       data.imageUrl = `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}${fileName}`;
+
+      // assign required details to post 
+      data.imageUrl = `testing`;
       data.postedDateTime = dayjs().toISOString();
+      data.username = username;
+      const selectedUserGoal = userGoals.filter((userGoal) => userGoal._id === data.userGoalId)
+      data.frequencyCount = selectedUserGoal[0].frequencyCount;
+      data.frequencyPeriod = selectedUserGoal[0].frequencyPeriod;
+      data.goalName = selectedUserGoal[0].name
+      data.goalStartDate = selectedUserGoal[0].startDate;
+      data.goalEndDate = selectedUserGoal[0].endDate;
 
       const response = await fetch("/api/post", {
         method: "POST",
@@ -149,7 +160,7 @@ export default function PostForm({ userGoals }: PostFormProps) {
                 </Alert>
               )}
               <div
-                className="border-b-2 h-[40vh] cursor-pointer flex flex-col items-center"
+                className="border-b-2 lg:border-2 h-[40vh] cursor-pointer flex flex-col items-center"
                 onClick={() => {
                   document.getElementById("file_upload")?.click();
                 }}
@@ -206,10 +217,10 @@ export default function PostForm({ userGoals }: PostFormProps) {
                 <InputLabel id="goal-label">Choose a goal</InputLabel>
                 <Select
                   defaultValue={""}
-                  {...register("userGoal", {
+                  {...register("userGoalId", {
                     required: Message.Error.RequiredField,
                   })}
-                  error={Boolean(errors.userGoal)}
+                  error={Boolean(errors.userGoalId)}
                 >
                   {userGoals &&
                     userGoals.map((userGoal, idx) => {
@@ -220,7 +231,7 @@ export default function PostForm({ userGoals }: PostFormProps) {
                       );
                     })}
                 </Select>
-                {Boolean(errors.userGoal) && (
+                {Boolean(errors.userGoalId) && (
                   <FormHelperText>
                     <span className="text-red-600">
                       {Message.Error.RequiredField}

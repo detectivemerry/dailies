@@ -16,14 +16,28 @@ export async function POST(req: Request, res: NextApiResponse) {
     let data : Post = await req.json();
     const session = await getServerSession(authOptions);
 
-    const userGoalObject = new ObjectId(String(data.userGoal))
+    // get user details for post
+    const userObject = await db.collection("Users").findOne({ email : session?.user.email }, {_id : 1})
+
+    if(!userObject)
+      return NextResponse.json({ message : ApiMessage.Error.General}, {status : 500})
+
+    const userGoalObject = new ObjectId(String(data.userGoalId))
 
     const result = await db.collection("Posts").insertOne({
       caption : data.caption,
       imageUrl : data.imageUrl,
       postedDateTime : data.postedDateTime,
-      userGoal : userGoalObject,
+      //userGoal : userGoalObject,
       _id : new ObjectId(),
+      userGoalId : userGoalObject._id,
+      userId : userObject._id, 
+      username : data._id,
+      frequencyCount : data.frequencyCount,
+      frequencyPeriod : data.frequencyPeriod,
+      goalName : data.goalName,
+      goalStartDate : data.goalStartDate,
+      goalEndDate : data.goalEndDate,
     })
 
     const { acknowledged } = result;
@@ -62,30 +76,4 @@ export async function POST(req: Request, res: NextApiResponse) {
     console.log(error)
     return NextResponse.json({ message : ApiMessage.Error.General}, { status: 500 });
   }
-}
-
-export async function GET(req : Request, res : NextApiResponse){
-
-    const client = await connectDB();
-    const db = client.connection.useDb(`Dailies`);
-
-    // user profile
-    // given userGoalId, retrieve this post
-
-    // explore page
-    // given goalId, retrieve all userGoals, get userGoalId, retrieve this post
-
-    //home page
-    //given userGoals, get userGoalId, retrieve this post
-    
-    // therefore, input should be for this get should be a userGoalId
-
-    
-
-
-
-
-
-
-
 }

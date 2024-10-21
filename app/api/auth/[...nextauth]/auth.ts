@@ -33,7 +33,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         const loginResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/api/users/login`,
+          `${process.env.NEXT_PUBLIC_URL}/api/user/login`,
           { method: "POST", body: JSON.stringify(credentials) }
         );
         const loginResult = await loginResponse.json();

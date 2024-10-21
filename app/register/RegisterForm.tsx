@@ -39,7 +39,7 @@ export default function RegisterForm() {
     setAlertMessage({ error: false, message: "" });
     setPending(true);
     try {
-      const response = await fetch("/api/users/register", {
+      const response = await fetch("/api/user/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

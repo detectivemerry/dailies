@@ -48,7 +48,16 @@ export type Post = {
     // remove goalId, included in userGoal
     //goalId : ObjectId;
     //new fields
-    userGoal : ObjectId; // to trace back to user
+    userGoalId : ObjectId;
+    userId : ObjectId;
+    username : string;
+    goalId : ObjectId;
+    goalName : string;
+    frequencyCount : number;
+    frequencyPeriod : string;
+    inactive : boolean;
+    goalStartDate : string;
+    goalEndDate : string;
 }
 
 
