@@ -15,9 +15,9 @@ export default async function page({ params } : ProfilePageProps) {
     cache: "no-store",
   });
 
-  const { data : userGoals } = await userGoalsResponse.json();
+  const { data : userGoalsData } = await userGoalsResponse.json();
   console.log("user goals:")
-  console.log(userGoals)
+  console.log(userGoalsData)
 
   const postsResponse = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/user`, {
     method: "GET",
@@ -35,7 +35,7 @@ export default async function page({ params } : ProfilePageProps) {
         <ProfileTitleHeader username = {params.username}/>
       </div>
       <div>
-        <ProfileContent userGoals = {userGoals} posts = {posts} />
+        <ProfileContent userGoals = {userGoalsData.userGoals} posts = {posts} />
       </div>
     </div>
   )

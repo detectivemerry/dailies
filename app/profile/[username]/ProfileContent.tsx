@@ -3,6 +3,8 @@
 import { Post, UserGoal } from "@/types/model";
 import React, { useState } from "react";
 import ProfileModeMenu from "./ProfileModeMenu";
+import PostCard from "@/components/post/PostCard";
+import UserGoalCard from "./UserGoalCard";
 
 interface ProfileContentProps {
   userGoals: UserGoal[];
@@ -17,6 +19,17 @@ export default function ProfileContent({
   return (
     <div className="flex flex-col">
       <ProfileModeMenu mode = {mode} setMode = {setMode} />
+      {userGoals && mode === "Goals" && <div>
+        {userGoals.map((userGoal) => (
+          <UserGoalCard userGoal = {userGoal} />
+        ))}
+      </div>}
+
+      {posts && mode === "Posts" && <div>
+        {posts.map((post) => (
+          <PostCard post = {post} />
+        ))}
+      </div>}
 
     </div>
   );
