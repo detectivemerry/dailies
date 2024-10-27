@@ -36,7 +36,7 @@ interface CreateGoalProps {
   goalTypes: GoalType[];
 }
 
-export default function CreateGoal({ goalTypes }: CreateGoalProps) {
+export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
   const searchParams = useSearchParams();
   const fromRegister = searchParams.get("fromRegister");
   const [viewGoalTypes, setViewGoalTypes] = useState<boolean>(false);

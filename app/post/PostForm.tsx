@@ -25,7 +25,10 @@ import Message from "../lib/message/Message";
 import PostCreatedDialog from "./PostCreatedDialog";
 import { useSession } from "next-auth/react";
 
-export default function PostForm() {
+interface PostFormProps {
+  userGoals : UserGoal[];
+}
+export default function PostForm({userGoals} : PostFormProps) {
   const [pending, setPending] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string | undefined>("");
   const [image, setImage] = useState<File | null>(null);
@@ -35,7 +38,7 @@ export default function PostForm() {
   });
   const [postCreated, setPostCreated] = useState(false);
   const { data : session } = useSession();
-  const userGoals = session?.user.goals as UserGoal[];
+  //const userGoals = session?.user.goals as UserGoal[];
   const username = session?.user.username as string;
 
   const {
@@ -46,24 +49,27 @@ export default function PostForm() {
     reset,
   } = useForm<Post>();
 
+  //useEffect(() => {
+    //console.log('user goals')
+    //console.log(userGoals)
+  //}, [userGoals])
+
   const onSubmit: SubmitHandler<Post> = async (data) => {
     try {
       setPending(true);
 
-      //const { statusCode, fileName } = await handleUploadS3();
+      const { statusCode, fileName } = await handleUploadS3();
 
-      //if (statusCode != 200) {
-        //setAlertMessage({
-          //error: true,
-          //message: Message.Error.UnsuccessfulImageUpload,
-        //});
-        //return;
-      //}
-      //data.imageUrl = `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}${fileName}`;
-      data.imageUrl = "testomg";
+      if (statusCode != 200) {
+        setAlertMessage({
+          error: true,
+          message: Message.Error.UnsuccessfulImageUpload,
+        });
+        return;
+      }
+      data.imageUrl = `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}${fileName}`;
 
       // assign required details to post 
-      data.imageUrl = `testing`;
       data.postedDateTime = dayjs().toISOString();
       data.username = username;
       const selectedUserGoal = userGoals.filter((userGoal) => userGoal._id === data.userGoalId)

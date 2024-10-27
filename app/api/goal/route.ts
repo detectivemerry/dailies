@@ -10,7 +10,7 @@ import ApiMessage from "@/app/lib/message/ApiMessage";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {
-    let { endDate, startDate, frequencyCount, frequencyPeriod, name, goalId, inactive, posts } = await req.json()
+    let { endDate, startDate, frequencyCount, frequencyPeriod, name, goalId, inactive } = await req.json()
     
     const goalIdObject = new ObjectId(String(goalId));
     const newIdObject = new ObjectId();
@@ -47,7 +47,6 @@ export async function POST(req: Request, res: NextApiResponse) {
             goalId : goalIdObject,
             _id: newIdObject,
             inactive : inactive,
-            posts : posts,
           },
         },
       }

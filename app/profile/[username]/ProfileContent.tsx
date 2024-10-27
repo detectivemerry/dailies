@@ -21,13 +21,13 @@ export default function ProfileContent({
       <ProfileModeMenu mode = {mode} setMode = {setMode} />
       {userGoals && mode === "Goals" && <div>
         {userGoals.map((userGoal) => (
-          <UserGoalCard userGoal = {userGoal} />
+          <UserGoalCard userGoal = {userGoal} key = {String(userGoal._id)} />
         ))}
       </div>}
 
       {posts && mode === "Posts" && <div>
         {posts.map((post) => (
-          <PostCard post = {post} />
+          <PostCard post = {post}  key = {String(post._id)}/>
         ))}
       </div>}
 

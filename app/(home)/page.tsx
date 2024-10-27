@@ -1,7 +1,7 @@
 import CreateGoalButton from "./CreateGoalButton";
 import TemporaryLogOutButton from "./TemporaryLogOutButton";
 import PostCard from "@/components/post/PostCard";
-import { encryptData } from "@/app/lib/encryption/encryption"
+//import { encryptData } from "@/app/lib/encryption/encryption"
 
 //export async function testDB() {
   //await connectDB();
@@ -12,17 +12,17 @@ import { encryptData } from "@/app/lib/encryption/encryption"
 //testDB();
 
 async function getPosts(userGoalId : string){
-  const encryptedId = encryptData(userGoalId) 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/post/${encryptedId}`, {
-    method : "GET",
-    cache : "no-store",
-  })
+  //const encryptedId = encryptData(userGoalId) 
+  //const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/post/${encryptedId}`, {
+    //method : "GET",
+    //cache : "no-store",
+  //})
 }
 
 export default async function Home () {
 
-  const userGoalIdSample = "670130093f9b74e0483d40b3" 
-  const post = await getPosts(userGoalIdSample);
+  //const userGoalIdSample = "670130093f9b74e0483d40b3" 
+  //const post = await getPosts(userGoalIdSample);
 
   //const examplePost = {
     //caption: "hello this is my 2nd post POG!!",

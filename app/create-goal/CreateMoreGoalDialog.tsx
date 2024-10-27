@@ -8,7 +8,7 @@ import { UseFormReset } from "react-hook-form";
 
 import SecondaryButton from "@/components/buttons/SecondaryButton";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
-import { CreateGoalInputs } from "./CreateGoal"
+import { CreateGoalInputs } from "./CreateGoalForm"
 import { Goal } from "@/types/model";
 
 interface CreateMoreGoalDialogProps {
