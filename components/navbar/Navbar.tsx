@@ -12,6 +12,7 @@ import {
 } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function Navbar() {
   const pagesWithoutNavbar = [
@@ -23,6 +24,7 @@ export default function Navbar() {
   ];
   const pathName = usePathname();
   const router = useRouter();
+  const { data: session } = useSession();
 
   return (
     <>
@@ -125,10 +127,10 @@ export default function Navbar() {
               <div>
                 <Button
                   onClick={() => {
-                    router.push("/profile");
+                    router.push(`/profile/${session?.user.username}`);
                   }}
                 >
-                  {pathName === "/profile" ? (
+                  {pathName === `/profile/${session?.user.username}` ? (
                     <>
                       <Person sx={{ color: "#1D5D9B", fontSize: "1.75rem" }} />
                     </>
