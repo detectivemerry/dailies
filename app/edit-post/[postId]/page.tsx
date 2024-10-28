@@ -1,4 +1,5 @@
 import React from 'react'
+import { decryptData } from "@/app/lib/encryption/encryption";
 import EditPostForm from './EditPostForm'
 
 interface EditPostPageProps {
@@ -7,10 +8,13 @@ interface EditPostPageProps {
     }
 }
 
-export default function EditPostPage({params} : EditPostPageProps) {
+export default async function EditPostPage({params} : EditPostPageProps) {
+  const postId = decodeURIComponent(params.postId)
+  const decrpytedPostId = await decryptData(postId)
+
   return (
     <div>
-        <EditPostForm postId = {params.postId}/>
+        <EditPostForm postId = {decrpytedPostId}/>
     </div>
   )
 }

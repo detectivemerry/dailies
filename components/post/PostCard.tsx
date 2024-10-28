@@ -35,9 +35,8 @@ export default function PostCard({ post }: PostCardProps) {
 
   const handleNavigateToEditPost = async (e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const target = e.target as HTMLDivElement;
-    const encryptedPostId = await encryptData(String(post._id));
-    router.push(`/edit-post/${encryptedPostId}`);
+    const postId = await encryptData(String(post._id));
+    router.push(`/edit-post/${postId}`);
   };
 
   const displayTimeLeftForGoal = (): string => {
