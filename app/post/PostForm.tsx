@@ -37,7 +37,6 @@ export default function PostForm({userGoals} : PostFormProps) {
   });
   const [postCreated, setPostCreated] = useState(false);
   const { data : session } = useSession();
-  //const userGoals = session?.user.goals as UserGoal[];
   const username = session?.user.username as string;
 
   const {
@@ -48,11 +47,6 @@ export default function PostForm({userGoals} : PostFormProps) {
     reset,
   } = useForm<Post>();
 
-  //useEffect(() => {
-    //console.log('user goals')
-    //console.log(userGoals)
-  //}, [userGoals])
-
   const onSubmit: SubmitHandler<Post> = async (data) => {
     try {
       setPending(true);
@@ -60,12 +54,10 @@ export default function PostForm({userGoals} : PostFormProps) {
 
       if(image === null)
         return
-      console.log("this da client hehe")
-      console.log(image)
+
       imageData.append("file", image, "image")
 
       const { statusCode, fileName } = await handleUploadS3(imageData);
-      console.log("submitted")
 
       if (statusCode != 200) {
         setAlertMessage({

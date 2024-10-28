@@ -9,12 +9,17 @@ interface EditPostPageProps {
 }
 
 export default async function EditPostPage({params} : EditPostPageProps) {
-  const postId = decodeURIComponent(params.postId)
-  const decrpytedPostId = await decryptData(postId)
+  const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/post`, {
+    method : "GET",
+    headers : {"postId" : params.postId},
+    cache : "no-store",
+  })
+
+  const {data : post} = await response.json();
 
   return (
-    <div>
-        <EditPostForm postId = {decrpytedPostId}/>
+    <div className = "w-screen lg:w-[24.5rem]">
+        <EditPostForm post = {post}/>
     </div>
   )
 }
