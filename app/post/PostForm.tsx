@@ -13,8 +13,7 @@ import {
   FormHelperText,
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { v4 as uuidv4 } from "uuid";
+import { useSession } from "next-auth/react";
 
 import PostTitleHeader from "./PostTitleHeader";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
@@ -22,11 +21,12 @@ import { Post, UserGoal } from "@/types/model";
 import NoImageSelected from "./NoImageSelected";
 import Message from "../lib/message/Message";
 import PostCreatedDialog from "./PostCreatedDialog";
-import { useSession } from "next-auth/react";
+import { handleUploadS3 } from "../lib/actions/imageUpload/imageUpload";
 
 interface PostFormProps {
   userGoals : UserGoal[];
 }
+
 export default function PostForm({userGoals} : PostFormProps) {
   const [pending, setPending] = useState<boolean>(false);
   const [previewImage, setPreviewImage] = useState<string | undefined>("");
@@ -56,8 +56,16 @@ export default function PostForm({userGoals} : PostFormProps) {
   const onSubmit: SubmitHandler<Post> = async (data) => {
     try {
       setPending(true);
+      let imageData : FormData = new FormData();
 
-      const { statusCode, fileName } = await handleUploadS3();
+      if(image === null)
+        return
+      console.log("this da client hehe")
+      console.log(image)
+      imageData.append("file", image, "image")
+
+      const { statusCode, fileName } = await handleUploadS3(imageData);
+      console.log("submitted")
 
       if (statusCode != 200) {
         setAlertMessage({
@@ -110,46 +118,6 @@ export default function PostForm({userGoals} : PostFormProps) {
     setPreviewImage(URL.createObjectURL(e.target.files[0]));
   };
 
-  type S3UploadResponse = {
-    statusCode: number;
-    fileName: string;
-  };
-
-  const handleUploadS3 = async (): Promise<S3UploadResponse> => {
-    try {
-      if (!image) return { statusCode: 400, fileName: "" };
-      const Bucket = process.env.NEXT_PUBLIC_S3_BUCKET;
-      const s3 = new S3Client({
-        region: process.env.NEXT_PUBLIC_S3_REGION,
-        credentials: {
-          accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID as string,
-          secretAccessKey: process.env
-            .NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY as string,
-        },
-      });
-      const ext = image?.name.split(".").at(-1);
-      const uid = uuidv4().replace(/-/g, "");
-      const fileName = `${uid}${ext ? "." + ext : ""}`;
-
-      const uploadToS3 = new PutObjectCommand({
-        Bucket: Bucket,
-        Key: fileName,
-        Body: image,
-        ContentType: "image/jpeg",
-      });
-
-      const result = await s3.send(uploadToS3);
-      if (result.$metadata.httpStatusCode)
-        return {
-          statusCode: result.$metadata.httpStatusCode,
-          fileName: fileName,
-        };
-      else return { statusCode: 500, fileName: fileName };
-    } catch (error) {
-      console.error(error);
-      return { statusCode: 500, fileName: "" };
-    }
-  };
 
   return (
     <>

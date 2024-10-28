@@ -1,14 +1,11 @@
 "use client";
 import { Post } from "@/types/model";
 import React, { useState, useEffect, MouseEvent } from "react";
-import {
-  AccessTime,
-  Edit,
-  Replay,
-} from "@mui/icons-material";
+import { AccessTime, Edit, Replay } from "@mui/icons-material";
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
+import { encryptData } from "@/app/lib/encryption/encryption";
 
 interface PostCardProps {
   post: Post;
@@ -36,6 +33,13 @@ export default function PostCard({ post }: PostCardProps) {
     router.push(`/community/${target.innerHTML}`);
   };
 
+  const handleNavigateToEditPost = async (e: MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const target = e.target as HTMLDivElement;
+    const encryptedPostId = await encryptData(String(post._id));
+    router.push(`/edit-post/${encryptedPostId}`);
+  };
+
   const displayTimeLeftForGoal = (): string => {
     if (post.goalEndDate === "") return "Lifelong goal";
 
@@ -48,11 +52,6 @@ export default function PostCard({ post }: PostCardProps) {
     const diffInYears = startDate.diff(endDate, "years") * -1;
     return `${diffInYears} years left`;
   };
-
-  //useEffect(() => {
-  //console.log(post.goalStartDate);
-  //console.log(post.goalEndDate);
-  //}, []);
 
   return (
     <div className="flex flex-col px-2">
@@ -72,7 +71,7 @@ export default function PostCard({ post }: PostCardProps) {
           </div>
         </div>
         {session?.user.username === post.username && (
-          <div className="px-3 py-2">
+          <div className="px-3 py-2" onClick={handleNavigateToEditPost}>
             <Edit sx={{ color: "#1D5D9B", fontSize: "1rem" }} />
           </div>
         )}
