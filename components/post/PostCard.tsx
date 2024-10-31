@@ -14,7 +14,13 @@ interface PostCardProps {
 export default function PostCard({ post }: PostCardProps) {
   const [expanded, setExpanded] = useState(false);
   const { data: session } = useSession();
-  const formattedDate = dayjs(post.postedDateTime).format("DD MMM YYYY");
+  const displayDate = post.editedDateTime
+    ? dayjs(post.editedDateTime).format("DD MMM YYYY")
+    : dayjs(post.postedDateTime).format("DD MMM YYYY");
+  //let editedDateTime = null;
+  //if(post.editedDateTime){
+  //editedDateTime = dayjs(post.editedDateTime).format("DD MMM YYYY")
+  //}
   const router = useRouter();
 
   const handleExpand = () => {
@@ -130,7 +136,9 @@ export default function PostCard({ post }: PostCardProps) {
           )}
         </div>
       </div>
-      <div className="text-secondaryText py-2">{formattedDate}</div>
+      <div className="text-secondaryText py-2">
+        {displayDate} {post.editedDateTime ? "(edited)" : ""}
+      </div>
     </div>
   );
 }

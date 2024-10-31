@@ -77,6 +77,7 @@ export default function PostForm({userGoals} : PostFormProps) {
       data.goalName = selectedUserGoal[0].name
       data.goalStartDate = selectedUserGoal[0].startDate;
       data.goalEndDate = selectedUserGoal[0].endDate;
+      data.editedDateTime = "";
 
       const response = await fetch("/api/post", {
         method: "POST",
