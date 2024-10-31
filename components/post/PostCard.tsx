@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { encryptData } from "@/app/lib/encryption/encryption";
+import Link from "next/link";
 
 interface PostCardProps {
   post: Post;
@@ -17,27 +18,18 @@ export default function PostCard({ post }: PostCardProps) {
   const displayDate = post.editedDateTime
     ? dayjs(post.editedDateTime).format("DD MMM YYYY")
     : dayjs(post.postedDateTime).format("DD MMM YYYY");
-  //let editedDateTime = null;
-  //if(post.editedDateTime){
-  //editedDateTime = dayjs(post.editedDateTime).format("DD MMM YYYY")
-  //}
+
   const router = useRouter();
 
   const handleExpand = () => {
     setExpanded((prev) => !prev);
   };
 
-  const handleNavigateToProfile = (e: MouseEvent<HTMLSpanElement>) => {
-    e.preventDefault();
-    const target = e.target as HTMLSpanElement;
-    router.push(`/profile/${target.innerHTML}`);
-  };
-
-  const handleNavigateToCommuntiy = (e: MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const target = e.target as HTMLDivElement;
-    router.push(`/community/${target.innerHTML}`);
-  };
+  //const handleNavigateToCommuntiy = (e: MouseEvent<HTMLDivElement>) => {
+  //e.preventDefault();
+  //const target = e.target as HTMLDivElement;
+  //router.push(`/community/${target.innerHTML}`);
+  //};
 
   const handleNavigateToEditPost = async (e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -62,18 +54,14 @@ export default function PostCard({ post }: PostCardProps) {
     <div className="flex flex-col px-2">
       <div className="flex justify-between px-2">
         <div className="flex gap-3 my-3">
-          <div
-            className="font-bold text-main"
-            onClick={handleNavigateToProfile}
-          >
-            {post.username}
-          </div>
-          <div
-            className="bg-secondary rounded-2xl px-3 text-main"
-            onClick={handleNavigateToCommuntiy}
-          >
-            {post.goalName}
-          </div>
+          <Link href={`/profile/${post.username}`} className="no-underline">
+            <div className="font-bold text-main">{post.username}</div>
+          </Link>
+          <Link href={`/community/${post.goalName}`} className="no-underline">
+            <div className="bg-secondary rounded-2xl px-3 text-main">
+              {post.goalName}
+            </div>
+          </Link>
         </div>
         {session?.user.username === post.username && (
           <div className="px-3 py-2" onClick={handleNavigateToEditPost}>
@@ -81,10 +69,10 @@ export default function PostCard({ post }: PostCardProps) {
           </div>
         )}
       </div>
-      <div onClick={handleExpand}>
+      <div onClick={handleExpand} className = "flex justify-center">
         {post.imageUrl ? (
           <>
-            <img src={post.imageUrl} />
+            <img src={post.imageUrl} className = "max-h-[40vh]" />
           </>
         ) : (
           <>
@@ -96,12 +84,9 @@ export default function PostCard({ post }: PostCardProps) {
         <div className="flex flex-col">
           <div className="flex" onClick={handleExpand}>
             <span className={`${expanded ? "" : "truncate"} px-2`}>
-              <span
-                className="font-400 text-main"
-                onClick={handleNavigateToProfile}
-              >
-                {post.username}
-              </span>{" "}
+              <Link href={`/profile/${post.username}`} className="no-underline">
+                <span className="font-400 text-main">{post.username}</span>{" "}
+              </Link>
               {post.caption}
             </span>
           </div>
@@ -136,7 +121,7 @@ export default function PostCard({ post }: PostCardProps) {
           )}
         </div>
       </div>
-      <div className="text-secondaryText py-2">
+      <div className="text-secondaryText p-2">
         {displayDate} {post.editedDateTime ? "(edited)" : ""}
       </div>
     </div>
