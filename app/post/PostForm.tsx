@@ -15,13 +15,14 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import { useSession } from "next-auth/react";
 
-import PostTitleHeader from "./PostTitleHeader";
+import PostTitleHeader from "@/components/title/PostTitleHeader";
+import AlertDialog from "@/components/dialogs/AlertDialog"
+import NoImageSelected from "@/components/placeholders/NoImageSelected";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { Post, UserGoal } from "@/types/model";
-import NoImageSelected from "./NoImageSelected";
 import Message from "../lib/message/Message";
-import PostCreatedDialog from "./PostCreatedDialog";
 import { handleUploadS3 } from "../lib/actions/imageUpload/imageUpload";
+import revalidatePage from "@/app/lib/actions/revalidatePage/revalidatePage";
 
 interface PostFormProps {
   userGoals : UserGoal[];
@@ -95,6 +96,7 @@ export default function PostForm({userGoals} : PostFormProps) {
           message: Message.Error.UnsuccessfulPostCreation,
         });
       } else {
+        await revalidatePage("/profile/[username]")
         setPostCreated(true);
       }
     } catch (error) {
@@ -111,14 +113,19 @@ export default function PostForm({userGoals} : PostFormProps) {
     setPreviewImage(URL.createObjectURL(e.target.files[0]));
   };
 
-
   return (
     <>
-      <PostCreatedDialog postCreated={postCreated} />
+      <AlertDialog
+        showDialog={postCreated}
+        title="Post successfully posted"
+        content="Post has been created, view the new post in profile."
+        buttonText="View in profile"
+        path={`/profile/${username}`}
+       />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col justify-between h-screen">
           <div>
-            <PostTitleHeader />
+            <PostTitleHeader title = "New Post" />
             <div className="flex flex-col gap-3">
               {Boolean(alertMessage.message) && (
                 <Alert severity={alertMessage.error ? "error" : "success"}>

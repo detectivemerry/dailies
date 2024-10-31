@@ -15,7 +15,7 @@ interface PostCreatedDialogProps {
   path : string;
 }
 
-export default function PostCreatedDialog({ showDialog, title, content, buttonText, path } : PostCreatedDialogProps) {
+export default function AlertDialog({ showDialog, title, content, buttonText, path } : PostCreatedDialogProps) {
   const router = useRouter();
   
   return (
