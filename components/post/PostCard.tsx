@@ -1,7 +1,7 @@
 "use client";
 import { Post } from "@/types/model";
 import React, { useState, useEffect, MouseEvent } from "react";
-import { AccessTime, Edit, Replay } from "@mui/icons-material";
+import { AccessTime, CheckCircle, Edit, Replay } from "@mui/icons-material";
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -43,6 +43,7 @@ export default function PostCard({ post }: PostCardProps) {
     const startDate = dayjs(post.goalStartDate);
     const endDate = dayjs(post.goalEndDate);
     const diffInDays = startDate.diff(endDate, "days") * -1;
+    if (diffInDays < 0) return `finished`;
     if (diffInDays < 30) return `${diffInDays} days left`;
     const diffInMonths = startDate.diff(endDate, "months") * -1;
     if (diffInMonths < 12) return `${diffInMonths} months left`;
@@ -69,10 +70,10 @@ export default function PostCard({ post }: PostCardProps) {
           </div>
         )}
       </div>
-      <div onClick={handleExpand} className = "flex justify-center">
+      <div onClick={handleExpand} className="flex justify-center">
         {post.imageUrl ? (
           <>
-            <img src={post.imageUrl} className = "max-h-[40vh]" />
+            <img src={post.imageUrl} className="max-h-[40vh]" />
           </>
         ) : (
           <>
@@ -82,7 +83,7 @@ export default function PostCard({ post }: PostCardProps) {
       </div>
       <div>
         <div className="flex flex-col">
-          <div className="flex" onClick={handleExpand}>
+          <div className="flex pt-3" onClick={handleExpand}>
             <span className={`${expanded ? "" : "truncate"} px-2`}>
               <Link href={`/profile/${post.username}`} className="no-underline">
                 <span className="font-400 text-main">{post.username}</span>{" "}
@@ -97,7 +98,15 @@ export default function PostCard({ post }: PostCardProps) {
               </div>
               <div className="bg-lightGray rounded-2xl px-3 flex gap-1">
                 <div>
-                  {post.goalEndDate ? (
+                  {displayTimeLeftForGoal() === "finished" ? (
+                    <CheckCircle
+                      sx={{
+                        color: "#1D5D9B",
+                        fontSize: "1rem",
+                        marginTop: "-3px",
+                      }}
+                    />
+                  ) : post.goalEndDate ? (
                     <AccessTime
                       sx={{
                         color: "#1D5D9B",

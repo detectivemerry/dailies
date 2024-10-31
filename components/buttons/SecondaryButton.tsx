@@ -1,8 +1,8 @@
 import React, { FC } from "react";
-import { Button, Typography } from "@mui/material";
+import { Button, ButtonProps, Typography } from "@mui/material";
 import { PropaneSharp } from "@mui/icons-material";
 
-interface SecondaryButtonProps {
+interface SecondaryButtonProps extends ButtonProps {
   text: string;
   onClick?: () => void;
 }

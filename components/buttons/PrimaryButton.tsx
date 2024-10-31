@@ -1,14 +1,14 @@
 import React, { FC } from "react";
-import { Button, Typography } from "@mui/material";
+import { Button, ButtonProps, Typography } from "@mui/material";
 import ButtonSpinner from "../loading/ButtonSpinner";
     
-interface PrimaryButtonProps {
+interface PrimaryButtonProps extends ButtonProps {
   text: string;
   onClick?: () => void;
   pending? : boolean;
 }
 
-const PrimaryButton: FC<PrimaryButtonProps> = ({ text, onClick, pending = false }) => {
+const PrimaryButton: FC<PrimaryButtonProps> = ({ text, onClick, pending = false, ...props}) => {
   return (
     <Button
       variant="contained"
@@ -26,6 +26,7 @@ const PrimaryButton: FC<PrimaryButtonProps> = ({ text, onClick, pending = false 
       }}
       disableElevation={true}
       onClick={onClick}
+      {...props}
       type = "submit"
     >
       {pending? <ButtonSpinner size = {"1.5rem"} /> : <>{text}</>}

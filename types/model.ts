@@ -38,6 +38,8 @@ export type UserGoal = {
     _id : ObjectId; //'1a2b3c4d5e'
     goalId : ObjectId;
     inactive : boolean;
+    goalName : string;
+    streak : number;
 }
 
 export type Post = {

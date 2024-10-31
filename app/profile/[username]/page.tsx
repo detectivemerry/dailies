@@ -32,7 +32,7 @@ export default async function page({ params } : ProfilePageProps) {
         <ProfileTitleHeader username = {params.username}/>
       </div>
       <div>
-        <ProfileContent userGoals = {userGoalsData?.userGoals} posts = {posts} />
+        <ProfileContent userGoals = {userGoalsData?.goals} posts = {posts} />
       </div>
     </div>
   )

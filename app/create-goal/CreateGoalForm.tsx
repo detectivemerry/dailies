@@ -65,7 +65,7 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
     setAlertMessage({ error: false, message: "" });
     if (goal != null){
       data.goalId = goal._id;
-      data.name = goal.name;
+      data.goalName = goal.name;
     } 
     let startDateStr = "";
     let endDateStr = "";
