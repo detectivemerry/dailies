@@ -17,6 +17,7 @@ interface PostCreatedDialogProps {
 
 export default function PostCreatedDialog({ showDialog, title, content, buttonText, path } : PostCreatedDialogProps) {
   const router = useRouter();
+  
   return (
     <Dialog open={showDialog} PaperProps={{ sx: { borderRadius: "10px" } }}>
       <div className="flex flex-col items-center p-4">
@@ -31,7 +32,8 @@ export default function PostCreatedDialog({ showDialog, title, content, buttonTe
           <div>
             <PrimaryButton
               text={buttonText}
-              onClick={() => router.push(path)}
+              onClick={() => {
+                router.push(path)}}
             />
           </div>
         </div>

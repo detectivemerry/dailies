@@ -166,7 +166,7 @@ export default function PostForm({userGoals} : PostFormProps) {
                   {...register("caption", {
                     required: Message.Error.RequiredField,
                     maxLength: {
-                      value: 50,
+                      value: 250,
                       message: Message.Error.Max250Characters,
                     },
                   })}

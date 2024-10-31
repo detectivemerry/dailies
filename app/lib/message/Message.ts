@@ -17,6 +17,7 @@ const Message = {
     EndDateBeforeStartDate : "Please ensure that the end date is after the start date",
     UnsuccessfulImageUpload : "Image upload has failed, please try again later.",
     UnsuccessfulPostCreation : "Failed to create post, please try again later.",
+    UnsuccessfulPostEdit : "Failed to edit post, please try again later.",
   },
 };
 

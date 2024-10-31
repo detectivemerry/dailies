@@ -91,7 +91,6 @@ export async function GET(req: Request, res: NextApiResponse) {
   try {
     const headerList = headers();
     const postId = headerList.get("postId");
-    console.log(`post id: ${postId}`);
 
     if (postId === null)
       return NextResponse.json(
@@ -131,27 +130,23 @@ export async function PATCH(req: Request, res: NextApiResponse) {
     const db = client.connection.useDb(`Dailies`);
 
     let data: Post = await req.json();
-    const session = await getServerSession(authOptions);
+    const idObject = new ObjectId(data._id)
 
-    // get user details for post
-    const userObject = await db
-      .collection("Users")
-      .findOne({ email: session?.user.email }, { _id: 1 });
+    const updateFields : {caption : string; editedDateTime : string; imageUrl? : string} = {
+      caption : data.caption,
+      editedDateTime : data.editedDateTime
+    }
+    
+    if(data.imageUrl){
+      updateFields.imageUrl = data.imageUrl;
+    }
 
-    if (!userObject)
-      return NextResponse.json(
-        { message: ApiMessage.Error.General },
-        { status: 500 }
-      );
-
-    const userGoalObject = new ObjectId(String(data.userGoalId));
-
-    const { modifiedCount } = await db.collection("Posts").updateOne({ _id: data._id }, {
-      $set : {
-        caption : data.caption,
-        imageUrl : data.imageUrl
-      }
+    const { modifiedCount } = await db.collection("Posts").updateOne({ _id: idObject
+     }, {
+      $set : updateFields
     });
+
+    console.log(modifiedCount)
     
     if(modifiedCount !== 1)
       return NextResponse.json({message : ApiMessage.Error.General}, {status : 500})

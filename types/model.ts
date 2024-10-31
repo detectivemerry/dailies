@@ -58,6 +58,7 @@ export type Post = {
     inactive : boolean;
     goalStartDate : string;
     goalEndDate : string;
+    editedDateTime : string;
 }
 
 

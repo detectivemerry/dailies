@@ -1,5 +1,4 @@
 "use client";
-
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { CollectionsOutlined, PhotoCamera } from "@mui/icons-material";
@@ -14,11 +13,11 @@ import {
 } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { useSession } from "next-auth/react";
+import revalidatePage from "@/app/lib/actions/revalidatePage/revalidatePage";
 
 import PostTitleHeader from "@/components/title/PostTitleHeader";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { Post, UserGoal } from "@/types/model";
-import NoImageSelected from "@/components/placeholders/NoImageSelected";
 import Message from "@/app/lib/message/Message";
 import AlertDialog from "@/components/dialogs/AlertDialog";
 import { handleUploadS3 } from "@/app/lib/actions/imageUpload/imageUpload";
@@ -65,8 +64,9 @@ export default function EditPostForm({ post }: EditPostPageProps) {
         }
         data.imageUrl = `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}${fileName}`;
       }
+      data._id = post._id;
+      data.editedDateTime = dayjs().toISOString();
 
-      //TO-DO: add edited post time here
       const response = await fetch("/api/post", {
         method: "PATCH",
         headers: {
@@ -80,9 +80,10 @@ export default function EditPostForm({ post }: EditPostPageProps) {
         //const result = await response.json();
         setAlertMessage({
           error: true,
-          message: Message.Error.UnsuccessfulPostCreation,
+          message: Message.Error.UnsuccessfulPostEdit,
         });
       } else {
+        await revalidatePage("/profile/[username]")
         setPostEdited(true);
       }
     } catch (error) {
@@ -103,8 +104,8 @@ export default function EditPostForm({ post }: EditPostPageProps) {
     <>
       <AlertDialog
         showDialog={postEdited}
-        title="Goal successfully edited"
-        content="Goal has been updated, view the updated post in profile."
+        title="Post successfully edited"
+        content="Post has been updated, view the updated post in profile."
         buttonText="View in profile"
         path={`/profile/${post.username}`}
       />
@@ -157,7 +158,7 @@ export default function EditPostForm({ post }: EditPostPageProps) {
                   {...register("caption", {
                     required: Message.Error.RequiredField,
                     maxLength: {
-                      value: 50,
+                      value: 250,
                       message: Message.Error.Max250Characters,
                     },
                   })}
