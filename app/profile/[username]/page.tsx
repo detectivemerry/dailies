@@ -24,6 +24,7 @@ export default async function page({ params } : ProfilePageProps) {
   });
 
   const { data : posts } = await postsResponse.json();
+  posts.reverse();
 
   return (
     <div className = "flex flex-col w-screen lg:w-[24.5rem]">
