@@ -60,10 +60,6 @@ export async function POST(req: Request, res: NextApiResponse) {
         return userGoal._id.equals(userGoalObject)
       }
     );
-    console.log("streak check HAHAHAAHAHAHA")
-    console.log(currentUserGoal.timesPostedCurrentPeriod)
-    console.log(currentUserGoal.timesPostedCurrentPeriod + 1)
-    console.log(currentUserGoal.frequencyCount)
 
     if (
       currentUserGoal.timesPostedCurrentPeriod + 1 ==
@@ -72,18 +68,12 @@ export async function POST(req: Request, res: NextApiResponse) {
       updateFields["goals.$.streak"] = 1;
     }
 
-    console.log("updated fields");
-    console.log(updateFields);
-
     const updatedUserGoal = await db
       .collection("Users")
       .updateOne(
         { email: session?.user.email, "goals._id": userGoalObject },
         { $inc: updateFields }
       );
-
-    console.log("updated user goal");
-    console.log(updatedUserGoal);
 
     if (result.acknowledged && updatedUserGoal.modifiedCount === 1)
       return NextResponse.json({ status: 200 });
@@ -188,8 +178,6 @@ export async function PATCH(req: Request, res: NextApiResponse) {
         $set: updateFields,
       }
     );
-
-    console.log(modifiedCount);
 
     if (modifiedCount !== 1)
       return NextResponse.json(

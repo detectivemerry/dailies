@@ -11,7 +11,6 @@ type S3UploadResponse = {
 const handleUploadS3 = async (imageData : FormData): Promise<S3UploadResponse> => {
   try {
     const image = imageData.get('file') as File;
-    console.log(image)
 
     if (!image) return { statusCode: 400, fileName: "" };
     const Bucket = process.env.S3_BUCKET;

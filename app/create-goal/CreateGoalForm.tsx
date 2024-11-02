@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
-import { Select, MenuItem, TextField, Alert, Button } from "@mui/material";
+import { Select, MenuItem, TextField, Alert } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -17,7 +17,7 @@ import Message from "@/app/lib/message/Message";
 import SecondaryButton from "@/components/buttons/SecondaryButton";
 import CreateMoreGoalDialog from "./CreateMoreGoalDialog";
 import Link from "next/link";
-import { SettingsBackupRestore } from "@mui/icons-material";
+import { Info, SettingsBackupRestore } from "@mui/icons-material";
 
 export type CreateGoalInputs = {
   name: string;
@@ -55,6 +55,7 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
   const [isGoalCreated, setIsGoalCreated] = useState<boolean>(false);
   const [pending, setPending] = useState<boolean>(false);
   const { data: session } = useSession();
+  const [readMore, setReadMore] = useState<boolean>(false);
 
   const {
     register,
@@ -102,16 +103,28 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
 
     if (data.frequencyPeriod === "per day") {
       data.startOfCurrentPeriod = dayjs().toISOString();
-      data.endOfCurrentPeriod =  dayjs().add(1, 'day').startOf('day').toISOString();
+      data.endOfCurrentPeriod = dayjs().hour(23).minute(59).toISOString();
     } else if (data.frequencyPeriod === "per week") {
       data.startOfCurrentPeriod = dayjs().toISOString();
-      data.endOfCurrentPeriod =  dayjs().add(7, 'day').startOf('day').toISOString();
+      data.endOfCurrentPeriod = dayjs()
+        .add(6, "day")
+        .hour(23)
+        .minute(59)
+        .toISOString();
     } else if (data.frequencyPeriod === "per month") {
       data.startOfCurrentPeriod = dayjs().toISOString();
-      data.endOfCurrentPeriod =  dayjs().add(30, 'day').startOf('day').toISOString();
+      data.endOfCurrentPeriod = dayjs()
+        .add(29, "day")
+        .hour(23)
+        .minute(59)
+        .toISOString();
     } else if (data.frequencyPeriod === "per year") {
       data.startOfCurrentPeriod = dayjs().toISOString();
-      data.endOfCurrentPeriod =  dayjs().add(365, 'day').startOf('day').toISOString();
+      data.endOfCurrentPeriod = dayjs()
+        .add(364, "day")
+        .hour(23)
+        .minute(59)
+        .toISOString();
     } else {
       setAlertMessage({
         error: true,
@@ -238,7 +251,35 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
                   </div>
                 </div>
               </div>
-              <div className="w-full flex flex-col gap-6">
+              <div className="w-full flex flex-col gap-6" id="hehehaha">
+                <div className="text-xs text-secondaryText flex items-center gap-2">
+                  <div>
+                    <Info sx={{ color: "#838383" }} />
+                  </div>
+                  <div>
+                    Start date would determine the start of the period.{" "}
+                    {!readMore && (
+                      <span
+                        className="text-blue-400 underline"
+                        onClick={() => setReadMore(true)}
+                      >
+                        Read more.
+                      </span>
+                    )}
+                    {readMore && (
+                      <span> {" "}
+                        e.g if you have a weekly goal and the start date is a Monday, 
+                        your week for this goal would start on Monday and end on Sunday. {" "}
+                        <span
+                          className="text-blue-400 underline"
+                          onClick={() => setReadMore(false)}
+                        >
+                          Read less.
+                        </span>
+                      </span>
+                    )}
+                  </div>
+                </div>
                 <Controller
                   name="startDateObj"
                   defaultValue={startDateObj}

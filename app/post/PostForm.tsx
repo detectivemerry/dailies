@@ -51,24 +51,24 @@ export default function PostForm({userGoals} : PostFormProps) {
   const onSubmit: SubmitHandler<Post> = async (data) => {
     try {
       setPending(true);
-      //let imageData : FormData = new FormData();
+      let imageData : FormData = new FormData();
 
-      //if(image === null)
-        //return
+      if(image === null)
+        return
 
-      //imageData.append("file", image, "image")
+      imageData.append("file", image, "image")
 
-      //const { statusCode, fileName } = await handleUploadS3(imageData);
+      const { statusCode, fileName } = await handleUploadS3(imageData);
 
-      //if (statusCode != 200) {
-        //setAlertMessage({
-          //error: true,
-          //message: Message.Error.UnsuccessfulImageUpload,
-        //});
-        //return;
-      //}
-      //data.imageUrl = `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}${fileName}`;
-      data.imageUrl = `https://dailies-image-bucket.s3.ap-southeast-1.amazonaws.com/1196c2cc9a084361803aee494f8c4111.image`
+      if (statusCode != 200) {
+        setAlertMessage({
+          error: true,
+          message: Message.Error.UnsuccessfulImageUpload,
+        });
+        return;
+      }
+      data.imageUrl = `${process.env.NEXT_PUBLIC_S3_BUCKET_URL}${fileName}`;
+      //data.imageUrl = `https://dailies-image-bucket.s3.ap-southeast-1.amazonaws.com/1196c2cc9a084361803aee494f8c4111.image`
 
       // assign required details to post 
       data.postedDateTime = dayjs().toISOString();
