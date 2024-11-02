@@ -29,7 +29,7 @@ interface UserGoalCardProps {
 export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
   const router = useRouter();
 
-  const encryptedId = encryptData(String(userGoal._id));
+  //const encryptedId = encryptData(String(userGoal._id));
   const percentCompleted = computePercentCompleted(userGoal);
   const pieChartData = getPieChartData(userGoal);
 
@@ -51,7 +51,9 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
     <div className="flex flex-col border p-3 mx-3">
       <div className="flex justify-between">
         <div className="text-main font-bold pb-3">{userGoal.name}</div>
-        <div onClick={() => router.push(`/edit-goal/${encryptedId}`)}>
+        <div onClick={async () => { 
+          const encryptedId = await encryptData(String(userGoal._id)) 
+          router.push(`/edit-goal/${encryptedId}`)}}>
           <Edit sx={{ color: "#1D5D9B", fontSize: "1rem" }} />
         </div>
       </div>
@@ -99,7 +101,7 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
           {!userGoal.streak ? (
             <span className="text-lightGray">0 streak</span>
           ) : (
-            <span className="text-main">`${userGoal.streak} streak`</span>
+            <span className="text-main">{userGoal.streak} streak</span>
           )}
         </div>
         {userGoal.endDate && (
@@ -113,7 +115,7 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
       </div>
 
       <div className="flex pt-3 justify-between items-center">
-        <div>0/3 this week</div>
+        <div>{userGoal.timesPostedCurrentPeriod}/{userGoal.frequencyCount} {userGoal.frequencyPeriod.replace(/per (\w+)/, "this $1")}</div>
         <div>
           <PrimaryButton
             text="Post"

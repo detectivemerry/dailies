@@ -10,10 +10,21 @@ import ApiMessage from "@/app/lib/message/ApiMessage";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {
-    let { endDate, startDate, frequencyCount, frequencyPeriod, name, goalId, inactive } = await req.json()
-    
+    let {
+      endDate,
+      startDate,
+      frequencyCount,
+      frequencyPeriod,
+      name,
+      goalId,
+      streak,
+      timesPostedCurrentPeriod,
+      startOfCurrentPeriod,
+      endOfCurrentPeriod,
+      inactive,
+    } = await req.json();
+
     const goalIdObject = new ObjectId(String(goalId));
-    const newIdObject = new ObjectId();
 
     const headerList = headers();
     const email = headerList.get("email");
@@ -21,11 +32,9 @@ export async function POST(req: Request, res: NextApiResponse) {
 
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
-    
+
     // TO-DO: verify bearer token here
     const session = await getServerSession(authOptions);
-    console.log("hey yea im at goal POST")
-    console.log(session)
     if (!session || !session.user) {
       return NextResponse.json(
         { message: ApiMessage.Error.Unauthenticated },
@@ -44,9 +53,12 @@ export async function POST(req: Request, res: NextApiResponse) {
             frequencyCount: frequencyCount,
             frequencyPeriod: frequencyPeriod,
             name: name,
-            goalId : goalIdObject,
-            _id: newIdObject,
-            inactive : inactive,
+            goalId: goalIdObject,
+            inactive: inactive,
+            streak : streak,
+            timesPostedCurrentPeriod : timesPostedCurrentPeriod,
+            startOfCurrentPeriod : startOfCurrentPeriod,
+            endOfCurrentPeriod :  endOfCurrentPeriod,
           },
         },
       }

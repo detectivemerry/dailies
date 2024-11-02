@@ -17,6 +17,7 @@ import Message from "@/app/lib/message/Message";
 import SecondaryButton from "@/components/buttons/SecondaryButton";
 import CreateMoreGoalDialog from "./CreateMoreGoalDialog";
 import Link from "next/link";
+import { SettingsBackupRestore } from "@mui/icons-material";
 
 export type CreateGoalInputs = {
   name: string;
@@ -27,9 +28,13 @@ export type CreateGoalInputs = {
   endDateObj: Dayjs | null;
   startDate: string;
   endDate: string;
-  goalId : ObjectId;
-  inactive : boolean;
-  posts : Post[];
+  goalId: ObjectId;
+  inactive: boolean;
+  posts: Post[];
+  streak: number;
+  timesPostedCurrentPeriod: number;
+  startOfCurrentPeriod: string;
+  endOfCurrentPeriod: string;
 };
 
 interface CreateGoalProps {
@@ -63,10 +68,10 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
 
   const onSubmit: SubmitHandler<CreateGoalInputs> = async (data) => {
     setAlertMessage({ error: false, message: "" });
-    if (goal != null){
+    if (goal != null) {
       data.goalId = goal._id;
       data.goalName = goal.name;
-    } 
+    }
     let startDateStr = "";
     let endDateStr = "";
 
@@ -92,7 +97,28 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
     data.startDate = startDateStr;
     data.endDate = endDateStr;
     data.inactive = false;
-    data.posts = []; 
+    data.streak = 0;
+    data.timesPostedCurrentPeriod = 0;
+
+    if (data.frequencyPeriod === "per day") {
+      data.startOfCurrentPeriod = dayjs().toISOString();
+      data.endOfCurrentPeriod =  dayjs().add(1, 'day').startOf('day').toISOString();
+    } else if (data.frequencyPeriod === "per week") {
+      data.startOfCurrentPeriod = dayjs().toISOString();
+      data.endOfCurrentPeriod =  dayjs().add(7, 'day').startOf('day').toISOString();
+    } else if (data.frequencyPeriod === "per month") {
+      data.startOfCurrentPeriod = dayjs().toISOString();
+      data.endOfCurrentPeriod =  dayjs().add(30, 'day').startOf('day').toISOString();
+    } else if (data.frequencyPeriod === "per year") {
+      data.startOfCurrentPeriod = dayjs().toISOString();
+      data.endOfCurrentPeriod =  dayjs().add(365, 'day').startOf('day').toISOString();
+    } else {
+      setAlertMessage({
+        error: true,
+        message: "Please enter a valid frequency period",
+      });
+      return;
+    }
 
     setPending(true);
     const response = await fetch("/api/goal/", {
@@ -112,7 +138,7 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
   };
 
   return (
-    <div className = "mx-8">
+    <div className="mx-8">
       <CreateMoreGoalDialog
         isGoalCreated={isGoalCreated}
         setIsGoalCreated={setIsGoalCreated}

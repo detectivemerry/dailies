@@ -40,6 +40,9 @@ export type UserGoal = {
     inactive : boolean;
     goalName : string;
     streak : number;
+    timesPostedCurrentPeriod : number;
+    startOfCurrentPeriod : string;
+    endOfCurrentPeriod : string;
 }
 
 export type Post = {

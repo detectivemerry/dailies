@@ -16,6 +16,7 @@ export default async function page({ params } : ProfilePageProps) {
   });
 
   const { data : userGoalsData } = await userGoalsResponse.json();
+  const userGoals = userGoalsData?.goals.reverse();
 
   const postsResponse = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/user`, {
     method: "GET",
@@ -32,7 +33,7 @@ export default async function page({ params } : ProfilePageProps) {
         <ProfileTitleHeader username = {params.username}/>
       </div>
       <div>
-        <ProfileContent userGoals = {userGoalsData?.goals} posts = {posts} />
+        <ProfileContent userGoals = {userGoals} posts = {posts} />
       </div>
     </div>
   )

@@ -6,7 +6,7 @@ import { ObjectId } from "mongodb";
 
 import { authOptions } from "../auth/[...nextauth]/auth";
 import ApiMessage from "@/app/lib/message/ApiMessage";
-import { Post } from "@/types/model";
+import { Post, UserGoal } from "@/types/model";
 import { headers } from "next/headers";
 import { decryptData } from "@/app/lib/encryption/encryption";
 
@@ -28,16 +28,14 @@ export async function POST(req: Request, res: NextApiResponse) {
         { message: ApiMessage.Error.General },
         { status: 500 }
       );
-
     const userGoalObject = new ObjectId(String(data.userGoalId));
-
+    // insert into Post collection
     const result = await db.collection("Posts").insertOne({
       caption: data.caption,
       imageUrl: data.imageUrl,
       postedDateTime: data.postedDateTime,
       //userGoal : userGoalObject,
-      _id: new ObjectId(),
-      userGoalId: userGoalObject._id,
+      userGoalId: userGoalObject,
       userId: userObject._id,
       username: data.username,
       frequencyCount: data.frequencyCount,
@@ -47,9 +45,48 @@ export async function POST(req: Request, res: NextApiResponse) {
       goalEndDate: data.goalEndDate,
     });
 
-    const { acknowledged } = result;
+    let updateFields: {
+      "goals.$.timesPostedCurrentPeriod": number;
+      "goals.$.streak"?: number;
+    } = { "goals.$.timesPostedCurrentPeriod": 1 };
 
-    if (acknowledged) return NextResponse.json({ status: 200 });
+    // update userGoal's streak
+    const userDoc = await db
+      .collection("Users")
+      .findOne({ email: session?.user.email });
+
+    const currentUserGoal = userDoc?.goals.find(
+      (userGoal: UserGoal) =>{
+        return userGoal._id.equals(userGoalObject)
+      }
+    );
+    console.log("streak check HAHAHAAHAHAHA")
+    console.log(currentUserGoal.timesPostedCurrentPeriod)
+    console.log(currentUserGoal.timesPostedCurrentPeriod + 1)
+    console.log(currentUserGoal.frequencyCount)
+
+    if (
+      currentUserGoal.timesPostedCurrentPeriod + 1 ==
+      currentUserGoal.frequencyCount
+    ) {
+      updateFields["goals.$.streak"] = 1;
+    }
+
+    console.log("updated fields");
+    console.log(updateFields);
+
+    const updatedUserGoal = await db
+      .collection("Users")
+      .updateOne(
+        { email: session?.user.email, "goals._id": userGoalObject },
+        { $inc: updateFields }
+      );
+
+    console.log("updated user goal");
+    console.log(updatedUserGoal);
+
+    if (result.acknowledged && updatedUserGoal.modifiedCount === 1)
+      return NextResponse.json({ status: 200 });
     else
       return NextResponse.json(
         { message: ApiMessage.Error.General },
@@ -100,8 +137,8 @@ export async function GET(req: Request, res: NextApiResponse) {
 
     const decoded = decodeURIComponent(postId);
     const decryptedId = await decryptData(decoded);
-    const objectId = new ObjectId(decryptedId)
-    
+    const objectId = new ObjectId(decryptedId);
+
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
 
@@ -130,29 +167,37 @@ export async function PATCH(req: Request, res: NextApiResponse) {
     const db = client.connection.useDb(`Dailies`);
 
     let data: Post = await req.json();
-    const idObject = new ObjectId(data._id)
+    const idObject = new ObjectId(data._id);
 
-    const updateFields : {caption : string; editedDateTime : string; imageUrl? : string} = {
-      caption : data.caption,
-      editedDateTime : data.editedDateTime
-    }
-    
-    if(data.imageUrl){
+    const updateFields: {
+      caption: string;
+      editedDateTime: string;
+      imageUrl?: string;
+    } = {
+      caption: data.caption,
+      editedDateTime: data.editedDateTime,
+    };
+
+    if (data.imageUrl) {
       updateFields.imageUrl = data.imageUrl;
     }
 
-    const { modifiedCount } = await db.collection("Posts").updateOne({ _id: idObject
-     }, {
-      $set : updateFields
-    });
+    const { modifiedCount } = await db.collection("Posts").updateOne(
+      { _id: idObject },
+      {
+        $set: updateFields,
+      }
+    );
 
-    console.log(modifiedCount)
-    
-    if(modifiedCount !== 1)
-      return NextResponse.json({message : ApiMessage.Error.General}, {status : 500})
+    console.log(modifiedCount);
 
-    return NextResponse.json({status : 200});
+    if (modifiedCount !== 1)
+      return NextResponse.json(
+        { message: ApiMessage.Error.General },
+        { status: 500 }
+      );
 
+    return NextResponse.json({ status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json(

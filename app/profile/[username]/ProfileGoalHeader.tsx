@@ -9,7 +9,7 @@ export default function ProfileGoalHeader() {
       <SecondaryButton
         text="Add new Goal"
         onClick={() => {
-          router.push("/post");
+          router.push("/create-goal");
         }}
         sx={{
           width: "8rem",
