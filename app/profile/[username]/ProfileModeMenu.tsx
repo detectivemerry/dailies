@@ -9,7 +9,7 @@ export default function ProfileModeMenu({
   setMode,
 }: ProfileModeMenuProps) {
   return (
-    <div className="flex border">
+    <div className="flex">
       <div
         className={`w-2/4 font-bold flex justify-center h-full py-3 text-main ${
           mode === "Goals" ? "border-b border-main" : "text-mainDisabled"
