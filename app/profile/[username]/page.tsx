@@ -29,7 +29,7 @@ export default async function page({ params } : ProfilePageProps) {
 
   return (
     <div className = "flex flex-col w-screen lg:w-[24.5rem]">
-      <div>
+      <div className = "mb-16">
         <ProfileTitleHeader username = {params.username}/>
       </div>
       <div>
