@@ -22,10 +22,15 @@ export async function POST(req: Request, res: NextApiResponse) {
       startOfCurrentPeriod,
       endOfCurrentPeriod,
       inactive,
+      goalName,
     } = await req.json();
 
     const goalIdObject = new ObjectId(String(goalId));
-
+    const endDateObject = new Date(endDate);
+    const startDateObject = new Date(startDate);
+    const startOfCurrentPeriodObject = new Date(startOfCurrentPeriod);
+    const endOfCurrentPeriodObject = new Date(endOfCurrentPeriod) 
+    
     const headerList = headers();
     const email = headerList.get("email");
     const accessToken = headerList.get("Authorization");
@@ -48,17 +53,23 @@ export async function POST(req: Request, res: NextApiResponse) {
       {
         $push: {
           goals: {
-            endDate: endDate,
-            startDate: startDate,
-            frequencyCount: frequencyCount,
+            // endDate: endDate,
+            // startDate: startDate,
+            // startOfCurrentPeriod : startOfCurrentPeriod,
+            // endOfCurrentPeriod :  endOfCurrentPeriod,
+            _id : new ObjectId(),
+            frequencyCount: Number(frequencyCount),
             frequencyPeriod: frequencyPeriod,
             name: name,
             goalId: goalIdObject,
             inactive: inactive,
             streak : streak,
             timesPostedCurrentPeriod : timesPostedCurrentPeriod,
-            startOfCurrentPeriod : startOfCurrentPeriod,
-            endOfCurrentPeriod :  endOfCurrentPeriod,
+            endDate : endDateObject,
+            startDate : startDateObject,
+            startOfCurrentPeriod : startOfCurrentPeriodObject,
+            endOfCurrentPeriod : endOfCurrentPeriodObject,
+            goalName : goalName
           },
         },
       }

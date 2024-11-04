@@ -94,6 +94,9 @@ export default function PostCard({ post }: PostCardProps) {
           {expanded && (
             <div className="flex gap-3 border-red-200 my-3">
               <div className="bg-lightGray rounded-2xl px-3">
+                {post.userGoalName}
+              </div>
+              <div className="bg-lightGray rounded-2xl px-3">
                 {post.frequencyCount} times {post.frequencyPeriod}
               </div>
               <div className="bg-lightGray rounded-2xl px-3 flex gap-1">

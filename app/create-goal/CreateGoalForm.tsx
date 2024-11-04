@@ -17,7 +17,7 @@ import Message from "@/app/lib/message/Message";
 import SecondaryButton from "@/components/buttons/SecondaryButton";
 import CreateMoreGoalDialog from "./CreateMoreGoalDialog";
 import Link from "next/link";
-import { Info, SettingsBackupRestore } from "@mui/icons-material";
+import { Info } from "@mui/icons-material";
 
 export type CreateGoalInputs = {
   name: string;

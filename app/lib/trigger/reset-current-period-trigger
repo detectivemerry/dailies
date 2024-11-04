@@ -1,0 +1,96 @@
+// altas function syntax
+exports = async function() {
+  // A Scheduled Trigger will always call a function without arguments.
+  // Documentation on Triggers: https://www.mongodb.com/docs/atlas/atlas-ui/triggers
+
+  // Functions run by Triggers are run as System users and have full access to Services, Functions, and MongoDB Data.
+
+  // Get the MongoDB service you want to use (see "Linked Data Sources" tab)
+  const serviceName = "DailiesTest";
+  const databaseName = "Dailies";
+  const collectionName = "Users";
+  const collection = context.services.get(serviceName).db(databaseName).collection(collectionName);
+  
+const frequencyMapping = {
+  "per day": 1,
+  "per week": 7,
+  "per month": 30,  // Approximate month as 30 days; adjust as needed
+  "per year": 365
+};
+  
+  try {
+    // const doc = await collection.findOne({ name: "mongodb" });
+    const today = new Date();
+    console.log(typeof today)
+    //const filter = {"goals.$.inactive" : false, "goals.$.endOfCurrentPeriod" : { "$lte" : today }}
+    const filter = { goals : { $elemMatch : { inactive : false }}}
+    //const users = collection.find(filter).toArray();""
+    
+    const updates = await collection.updateMany(filter, [{
+      $set : {
+        goals : {
+          $map : {
+            input : "$goals",
+            in  : {
+              $cond : {
+                // if end of current period is earlier than today, update streak and current period
+                if : { $and : [{$lt: ["$$this.endOfCurrentPeriod", today]}, {$eq : ["$$this.inactive", false]}] },
+                then : {
+                  $mergeObjects : [
+                    "$$this", {
+                      startOfCurrentPeriod : today, 
+                      endOfCurrentPeriod : {
+                        $switch : {
+                          branches : [
+                            {case : {$eq : ["$$this.frequencyPeriod","per day"]}, then : {
+                              $dateAdd : { 
+                                startDate : "$$this.endOfCurrentPeriod",
+                                unit : "day", amount : 1
+                             }
+                            }},
+                            {case : {$eq : ["$$this.frequencyPeriod","per week"]}, then : {
+                              $dateAdd : {
+                                startDate : "$$this.endOfCurrentPeriod",
+                                unit : "day",
+                                amount : 7
+                              }
+                            }},
+                            {case : {$eq : ["$$this.frequencyPeriod","per month"]}, then : {
+                              $dateAdd : {
+                                startDate : "$$this.endOfCurrentPeriod",
+                                unit : "day",
+                                amount : 30,
+                              }
+                            }},
+                            {case : {$eq : ["$$this.frequencyPeriod","per year"]}, then : {
+                              $dateAdd : {
+                                startDate : "$$this.endOfCurrentPeriod",
+                                unit : "day",
+                                amount : 365
+                              }
+                            }},
+                          ]
+                        }
+                      },
+                      streak : {$cond : {
+                        if : { $gte : ["$$this.timesPostedCurrentPeriod", "$$this.frequencyCount"] },
+                        then : "$$this.streak",
+                        else : 0
+                      }},
+                      timesPostedCurrentPeriod : 0,
+                    }
+                  ]
+                },
+                else : "$$this"
+
+              }
+            }
+          }
+        }
+      }
+    }])                                       
+   
+  } catch (err) {
+    console.log("error performing mongodb findOne: ", err.message);
+  }
+};

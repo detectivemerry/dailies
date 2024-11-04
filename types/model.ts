@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { Date } from "mongoose";
 
 export interface Collections {
     Users : User[];
@@ -31,8 +32,8 @@ export type Goal = {
 
 export type UserGoal = {
     name : string; //running
-    endDate : string; //"2024-09-18T16:00:00.000Z"
-    startDate : string; //"2024-09-18T16:00:00.000Z"
+    endDate : Date; //"2024-09-18T16:00:00.000Z"
+    startDate : Date; //"2024-09-18T16:00:00.000Z"
     frequencyCount : number; //3
     frequencyPeriod : string; //per week
     _id : ObjectId; //'1a2b3c4d5e'
@@ -41,8 +42,8 @@ export type UserGoal = {
     goalName : string;
     streak : number;
     timesPostedCurrentPeriod : number;
-    startOfCurrentPeriod : string;
-    endOfCurrentPeriod : string;
+    startOfCurrentPeriod : Date;
+    endOfCurrentPeriod : Date;
 }
 
 export type Post = {
@@ -64,6 +65,7 @@ export type Post = {
     goalStartDate : string;
     goalEndDate : string;
     editedDateTime : string;
+    userGoalName : String;
 }
 
 
