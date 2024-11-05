@@ -13,7 +13,7 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post }: PostCardProps) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const { data: session } = useSession();
   const displayDate = post.editedDateTime
     ? dayjs(post.editedDateTime).format("DD MMM YYYY")
@@ -52,7 +52,7 @@ export default function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <div className="flex flex-col px-2">
+    <div className="flex flex-col px-2 border-b">
       <div className="flex justify-between px-2">
         <div className="flex gap-3 my-3">
           <Link href={`/profile/${post.username}`} className="no-underline">
@@ -86,48 +86,50 @@ export default function PostCard({ post }: PostCardProps) {
           <div className="flex pt-3" onClick={handleExpand}>
             <span className={`${expanded ? "" : "truncate"} px-2`}>
               <Link href={`/profile/${post.username}`} className="no-underline">
-                <span className="font-400 text-main">{post.username}</span>{" "}
+                <span className="font-bold text-main">{post.username}</span>{" "}
               </Link>
               {post.caption}
             </span>
           </div>
           {expanded && (
-            <div className="flex gap-3 border-red-200 my-3">
-              <div className="bg-lightGray rounded-2xl px-3">
-                {post.userGoalName}
-              </div>
-              <div className="bg-lightGray rounded-2xl px-3">
-                {post.frequencyCount} times {post.frequencyPeriod}
-              </div>
-              <div className="bg-lightGray rounded-2xl px-3 flex gap-1">
-                <div>
-                  {displayTimeLeftForGoal() === "finished" ? (
-                    <CheckCircle
-                      sx={{
-                        color: "#1D5D9B",
-                        fontSize: "1rem",
-                        marginTop: "-3px",
-                      }}
-                    />
-                  ) : post.goalEndDate ? (
-                    <AccessTime
-                      sx={{
-                        color: "#1D5D9B",
-                        fontSize: "1rem",
-                        marginTop: "-3px",
-                      }}
-                    />
-                  ) : (
-                    <Replay
-                      sx={{
-                        color: "#1D5D9B",
-                        fontSize: "1rem",
-                        marginTop: "-3px",
-                      }}
-                    />
-                  )}
+            <div className="flex flex-col gap-3 m-3 mb-0 p-3 pb-4 border border-mainDisabled rounded-xl">
+              <Link href = {`/profile/${post.username}`} className = "no-underline">
+                <div className="text-main">{post.userGoalName}</div>
+              </Link>
+              <div className="flex gap-3">
+                <div className="bg-lightGray rounded-2xl px-3 flex gap-1">
+                  <div>
+                    {displayTimeLeftForGoal() === "finished" ? (
+                      <CheckCircle
+                        sx={{
+                          color: "#1D5D9B",
+                          fontSize: "1rem",
+                          marginTop: "-3px",
+                        }}
+                      />
+                    ) : post.goalEndDate ? (
+                      <AccessTime
+                        sx={{
+                          color: "#1D5D9B",
+                          fontSize: "1rem",
+                          marginTop: "-3px",
+                        }}
+                      />
+                    ) : (
+                      <Replay
+                        sx={{
+                          color: "#1D5D9B",
+                          fontSize: "1rem",
+                          marginTop: "-3px",
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div>{displayTimeLeftForGoal()}</div>
                 </div>
-                <div>{displayTimeLeftForGoal()}</div>
+                <div className="bg-lightGray rounded-2xl px-3">
+                  {post.frequencyCount} times {post.frequencyPeriod}
+                </div>
               </div>
             </div>
           )}

@@ -7,6 +7,8 @@ import ProfileModeMenu from "./ProfileModeMenu";
 import PostCard from "@/components/post/PostCard";
 import UserGoalCard from "./UserGoalCard";
 import ProfileGoalHeader from "./ProfileGoalHeader";
+import NoGoals from "./NoGoals";
+import NoPosts from "./NoPosts";
 
 interface ProfileContentProps {
   userGoals: UserGoal[];
@@ -19,9 +21,10 @@ export default function ProfileContent({
   const [mode, setMode] = useState<string>("Goals");
 
   return (
-    <div className={`flex flex-col mb-20`}>
+    <div className={`flex flex-col mb-20 h-full`}>
       <ProfileModeMenu mode={mode} setMode={setMode} />
       {mode === "Goals" && <ProfileGoalHeader />}
+
       {userGoals && mode === "Goals" && (
         <div className = "flex flex-col gap-3">
           {userGoals.map((userGoal) => (
@@ -29,6 +32,11 @@ export default function ProfileContent({
           ))}
         </div>
       )}
+
+      {!userGoals && mode === "Goals" && 
+        <NoGoals />
+      }
+
       {posts && mode === "Posts" && (
         <div>
           {posts.map((post) => (
@@ -36,6 +44,11 @@ export default function ProfileContent({
           ))}
         </div>
       )}
+
+      {
+        posts && mode === "Posts" && posts.length === 0 &&
+        <NoPosts/>
+      }
     </div>
   );
 }

@@ -5,7 +5,7 @@ import SecondaryButton from "@/components/buttons/SecondaryButton";
 export default function ProfileGoalHeader() {
   const router = useRouter();
   return (
-    <div className="flex justify-end my-3 w-full">
+    <div className="flex justify-end my-3 w-full z-0">
       <SecondaryButton
         text="Add new Goal"
         onClick={() => {

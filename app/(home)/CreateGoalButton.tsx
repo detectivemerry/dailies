@@ -9,5 +9,5 @@ export default function CreateGoalButton() {
   const handleCreateGoal = () => {
     router.push('/create-goal')
   };
-  return <Button onClick = {handleCreateGoal}>Click here to add goals</Button>;
+  return <Button onClick = {handleCreateGoal}>Add goals</Button>;
 }

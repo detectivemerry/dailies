@@ -15,6 +15,10 @@ export async function GET(req: Request, res: NextApiResponse) {
       .find({ username : username })
       .toArray();
 
+      if(!listOfPosts){
+        return NextResponse.json({message : `Posts for ${username} not found.`}, {status : 400})
+      }
+
     return NextResponse.json({ data: listOfPosts }, { status: 200 });
   } catch (error) {
     console.error(error)

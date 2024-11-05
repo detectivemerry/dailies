@@ -43,6 +43,7 @@ export async function POST(req: Request, res: NextApiResponse) {
       goalName: data.goalName,
       goalStartDate: data.goalStartDate,
       goalEndDate: data.goalEndDate,
+      userGoalName : data.userGoalName,
     });
 
     let updateFields: {

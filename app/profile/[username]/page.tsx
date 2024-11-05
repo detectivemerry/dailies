@@ -1,6 +1,8 @@
 import React from 'react'
 import ProfileTitleHeader from "./ProfileTitleHeader"
 import ProfileContent from './ProfileContent'
+import { ConstructionOutlined } from '@mui/icons-material'
+import { notFound } from 'next/navigation'
 
 interface ProfilePageProps {
   params : {
@@ -9,14 +11,28 @@ interface ProfilePageProps {
 }
 
 export default async function page({ params } : ProfilePageProps) {
-  const userGoalsResponse = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/goals/user`, {
-    method: "GET",
+
+  const userResponse = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/user`, {
+    method : "GET",
     headers : {"username" : params.username},
     cache: "no-store",
-  });
+  })
 
-  const { data : userGoalsData } = await userGoalsResponse.json();
-  const userGoals = userGoalsData?.goals.reverse();
+  if(!userResponse.ok){
+    notFound();
+  }
+
+  const { data : userData } = await userResponse.json();
+  const userGoals = userData?.goals.reverse();
+
+  //const userGoalsResponse = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/goals/user`, {
+    //method: "GET",
+    //headers : {"username" : params.username},
+    //cache: "no-store",
+  //});
+
+  //const { data : userGoalsData } = await userGoalsResponse.json();
+  //const userGoals = userGoalsData?.goals.reverse();
 
   const postsResponse = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/posts/user`, {
     method: "GET",

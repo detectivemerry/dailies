@@ -13,7 +13,6 @@ export async function GET(req: Request, res: NextApiResponse) {
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
 
-    const session = await getServerSession(authOptions);
     const filter = { username: username };
     const userDoc = await db
       .collection("Users")
@@ -21,8 +20,8 @@ export async function GET(req: Request, res: NextApiResponse) {
 
     if (!userDoc) {
       return NextResponse.json(
-        { message: ApiMessage.Error.General },
-        { status: 500 }
+        { message: `Goals for ${username} not found.` },
+        { status: 400 }
       );
     }
 
