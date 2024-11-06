@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import { ChevronLeft } from "@mui/icons-material";
 import { Button } from "@mui/material";
 

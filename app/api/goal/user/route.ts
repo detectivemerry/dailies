@@ -24,7 +24,7 @@ export async function GET(req: Request, res: NextApiResponse) {
 
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
-
+    
     const goalDoc = await db
       .collection("Users")
       .findOne({ goals: { $elemMatch : {_id : objectId}} },

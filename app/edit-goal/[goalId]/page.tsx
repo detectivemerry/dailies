@@ -1,25 +1,32 @@
-import React from 'react'
-import EditGoalForm from './EditGoalForm'
+import React from "react";
+import EditGoalForm from "./EditGoalForm";
+import { notFound } from "next/navigation";
 
 interface EditGoalPageProps {
-  params : {
-    goalId : string
-  }
+  params: {
+    goalId: string;
+  };
 }
 
-export default async function page({params} : EditGoalPageProps) {
-
+export default async function page({ params }: EditGoalPageProps) {
+  
+  console.log("hello please show up")
   const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/goal/user`, {
-    method : "GET",
-    headers : {"goalId" : params.goalId},
-    cache : "no-store",
-  })
+    method: "GET",
+    headers: { goalId: params.goalId },
+    cache: "no-store",
+  });
 
-  const {data : userGoal} = await response.json();
+  const { data: userData } = await response.json();
+  console.log(response.status)
+  console.log(userData)
+  //if (!userData) notFound();
 
   return (
-    <div className = "w-screen lg:w-[24.5rem]">
-        <EditGoalForm userGoal = {userGoal}/>
+    <div className="w-screen lg:w-[24.5rem]">
+      {userData.goals.length > 0 && (
+        <EditGoalForm userGoal={userData.goals[0]} />
+      )}
     </div>
-  )
+  );
 }

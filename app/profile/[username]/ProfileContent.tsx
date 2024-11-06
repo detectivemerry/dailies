@@ -1,7 +1,7 @@
 "use client";
 
 import { Post, UserGoal } from "@/types/model";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import ProfileModeMenu from "./ProfileModeMenu";
 import PostCard from "@/components/post/PostCard";
@@ -33,7 +33,7 @@ export default function ProfileContent({
         </div>
       )}
 
-      {!userGoals && mode === "Goals" && 
+      {(!userGoals || userGoals.length === 0) && mode === "Goals" && 
         <NoGoals />
       }
 

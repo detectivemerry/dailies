@@ -3,7 +3,7 @@ import { Close } from "@mui/icons-material";
 import React from "react";
 import { useRouter } from "next/navigation";
 
-export default function PostTitleHeader({title} : {title : string}) {
+export default function TitleHeaderWithClose({title} : {title : string}) {
   const router = useRouter();
   return (
     <>

@@ -15,7 +15,7 @@ import {
 import dayjs, { Dayjs } from "dayjs";
 import { useSession } from "next-auth/react";
 
-import PostTitleHeader from "@/components/title/PostTitleHeader";
+import TitleHeaderWithClose from "@/components/header/TitleHeaderWithClose";
 import AlertDialog from "@/components/dialogs/AlertDialog"
 import NoImageSelected from "@/components/placeholders/NoImageSelected";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
@@ -127,7 +127,7 @@ export default function PostForm({userGoals} : PostFormProps) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col justify-between h-screen">
           <div>
-            <PostTitleHeader title = "New Post" />
+            <TitleHeaderWithClose title = "New Post" />
             <div className="flex flex-col gap-3">
               {Boolean(alertMessage.message) && (
                 <Alert severity={alertMessage.error ? "error" : "success"}>

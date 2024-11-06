@@ -15,7 +15,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useSession } from "next-auth/react";
 import revalidatePage from "@/app/lib/actions/revalidatePage/revalidatePage";
 
-import PostTitleHeader from "@/components/title/PostTitleHeader";
+import TitleHeaderWithClose from "@/components/header/TitleHeaderWithClose";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 import { Post, UserGoal } from "@/types/model";
 import Message from "@/app/lib/message/Message";
@@ -112,7 +112,7 @@ export default function EditPostForm({ post }: EditPostPageProps) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col justify-between h-screen">
           <div>
-            <PostTitleHeader title="Edit goal" />
+            <TitleHeaderWithClose title="Edit post" />
             <div className="flex flex-col gap-3">
               {Boolean(alertMessage.message) && (
                 <Alert severity={alertMessage.error ? "error" : "success"}>
