@@ -6,8 +6,6 @@ import {
   AccessTime,
   CheckCircle,
   Edit,
-  EditAttributesOutlined,
-  Height,
   Replay,
   Whatshot,
 } from "@mui/icons-material";
