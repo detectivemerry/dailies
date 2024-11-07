@@ -126,9 +126,7 @@ export async function GET(req: Request, res: NextApiResponse) {
         { status: 404 }
       );
 
-    const decoded = decodeURIComponent(postId);
-    const decryptedId = await decryptData(decoded);
-    const objectId = new ObjectId(decryptedId);
+    const objectId = new ObjectId(postId);
 
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);

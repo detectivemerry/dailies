@@ -5,7 +5,6 @@ import { AccessTime, CheckCircle, Edit, Replay } from "@mui/icons-material";
 import { useSession } from "next-auth/react";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import { encryptData } from "@/app/lib/encryption/encryption";
 import Link from "next/link";
 
 interface PostCardProps {
@@ -33,8 +32,7 @@ export default function PostCard({ post }: PostCardProps) {
 
   const handleNavigateToEditPost = async (e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const postId = await encryptData(String(post._id));
-    router.push(`/edit-post/${postId}`);
+    router.push(`/edit-post/${post._id}`);
   };
 
   const displayTimeLeftForGoal = (): string => {

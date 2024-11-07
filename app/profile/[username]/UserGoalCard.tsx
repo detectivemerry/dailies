@@ -16,9 +16,10 @@ import { UserGoal } from "@/types/model";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 
 import {
-  computePercentCompleted,
-  getPieChartData,
-} from "@/app/lib/display/computePercent";
+  computePieChartData,
+  computeTimeLeftForGoal,
+  isDefaultDate,
+} from "@/app/lib/display/userGoalCardDisplay";
 
 interface UserGoalCardProps {
   userGoal: UserGoal;
@@ -27,40 +28,7 @@ interface UserGoalCardProps {
 export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
   const router = useRouter();
 
-  const percentCompleted = computePercentCompleted(userGoal);
-  const pieChartData = getPieChartData(userGoal);
-
-  const displayTimeLeftForGoal = (userGoal: UserGoal): string => {
-    const endDate = new Date(String(userGoal.endDate));
-    const startDate = new Date(String(userGoal.startDate));
-    const DEFAULT_DATE = new Date("1970-01-01T00:00:00.000Z");
-
-    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-    const _MS_PER_MONTH = 1000 * 60 * 60 * 24 * 30;
-    const _MS_PER_YEAR = 1000 * 60 * 60 * 24 * 30 * 12;
-
-    if (endDate.getTime() === DEFAULT_DATE.getTime()) return "Lifelong goal";
-
-    const utc1 = Date.UTC(
-      endDate.getFullYear(),
-      endDate.getMonth(),
-      endDate.getDate()
-    );
-    const utc2 = Date.UTC(
-      startDate.getFullYear(),
-      startDate.getMonth(),
-      startDate.getDate()
-    );
-
-    const diffInDays = Math.floor((utc1 - utc2) / _MS_PER_DAY);
-    const diffInMonths = Math.floor((utc1 - utc2) / _MS_PER_MONTH);
-    const diffInYears = Math.floor((utc1 - utc2) / _MS_PER_YEAR);
-
-    if (diffInDays < 0) return `finished`;
-    if (diffInDays < 30) return `${diffInDays} days left`;
-    if (diffInMonths < 12) return `${diffInMonths} months left`;
-    return `${diffInYears} years left`;
-  };
+  const { data : pieChartData, percentCompleted } = computePieChartData(userGoal);
 
   return (
     <div className="flex flex-col border p-3 mx-3">
@@ -81,7 +49,7 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
         </div>
         <div className="bg-lightGray rounded-2xl px-3 flex">
           <div className="pr-[3px]">
-            {displayTimeLeftForGoal(userGoal) === "finished" ? (
+            {computeTimeLeftForGoal(userGoal) === "finished" ? (
               <CheckCircle
                 sx={{
                   color: "#1D5D9B",
@@ -107,7 +75,7 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
               />
             )}
           </div>
-          <div>{displayTimeLeftForGoal(userGoal)}</div>
+          <div>{computeTimeLeftForGoal(userGoal)}</div>
         </div>
       </div>
 
@@ -120,7 +88,7 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
             <span className="text-main">{userGoal.streak} streak</span>
           )}
         </div>
-        {userGoal.endDate && (
+        {!isDefaultDate(dayjs(String(userGoal.endDate))) && (
           <div className="flex gap-1">
             <div>
               <PieChart data={pieChartData} style={{ height: "25px" }} />
