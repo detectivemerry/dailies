@@ -14,13 +14,14 @@ import { useSession } from "next-auth/react";
 import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import GoalTag from "@/components/goal/GoalTag";
 
 interface PostCardProps {
   post: Post;
 }
 
 export default function PostCard({ post }: PostCardProps) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const { data: session } = useSession();
   const displayDate = post.editedDateTime
     ? dayjs(post.editedDateTime).format("DD MMM YYYY")
@@ -73,21 +74,13 @@ export default function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <div className="flex flex-col px-2 border-b text-xs">
+    <div className="flex flex-col px-2 border-b text-sm">
       <div className="flex justify-between px-2">
         <div className="flex gap-2 my-3">
           <Link href={`/profile/${post.username}`} className="no-underline">
             <div className="font-bold text-main">{post.username}</div>
           </Link>
-          <Link href={`/community/${post.goalName}`} className="no-underline">
-            <div className="bg-secondaryDark rounded-2xl px-3 text-main">
-              {post.goalName}
-            </div>
-          </Link>
-          <div className="text-secondaryText flex gap-2 items-center">
-            <Circle sx={{ color: "#838383", fontSize: "0.25rem" }} />
-            {computeTimeSincePosted(dayjs(post.postedDateTime))}
-          </div>
+          <GoalTag goalName={post.goalName} />
         </div>
         {session?.user.username === post.username && (
           <div className="px-3 py-2" onClick={handleNavigateToEditPost}>
@@ -109,18 +102,14 @@ export default function PostCard({ post }: PostCardProps) {
       <div>
         <div className="flex flex-col">
           <div className="flex pt-3 px-3" onClick={handleExpand}>
-            <span className={`${expanded ? "" : "truncate"} px-2`}>
+            <div className="text-main">Goal: {post.userGoalName}</div>
+            <div className={`${expanded ? "" : "truncate"} px-2`}>
               {post.caption}
-            </span>
+            </div>
           </div>
           {!expanded && (
             <>
-              {/* <div className="bg-lightGray rounded-2xl px-3 flex gap-1"> */}
-
-              <div
-                className="flex flex-col gap-3 m-3 px-3 py-2 border border-mainDisabled rounded-2xl"
-                onClick={handleExpand}
-              >
+              <div className="flex flex-col gap-3 m-3 mb-0 p-3 pb-4 rounded-xl">
                 <Link
                   href={`/profile/${post.username}`}
                   className="no-underline"
@@ -128,7 +117,7 @@ export default function PostCard({ post }: PostCardProps) {
                   <div className="text-main">Goal: {post.userGoalName}</div>
                 </Link>
               </div>
-              <div className="flex justify-center mb-3" onClick={handleExpand}>
+              <div className="flex justify-center m-3" onClick={handleExpand}>
                 <KeyboardArrowDown
                   sx={{ fontSize: "1.75rem", color: "#98aacd" }}
                 />
@@ -137,7 +126,7 @@ export default function PostCard({ post }: PostCardProps) {
           )}
           {expanded && (
             <>
-              <div className="flex flex-col gap-3 m-3 mb-0 px-3 py-2 border border-mainDisabled rounded-2xl">
+              <div className="flex flex-col gap-3 m-3 mb-0 p-3 pb-4 rounded-xl">
                 <Link
                   href={`/profile/${post.username}`}
                   className="no-underline"
@@ -183,7 +172,7 @@ export default function PostCard({ post }: PostCardProps) {
               <div className="text-secondaryText pt-3 pl-3">
                 {displayDate} {post.editedDateTime ? "(edited)" : ""}
               </div>
-              <div className="flex justify-center mb-3" onClick={handleExpand}>
+              <div className="flex justify-center m-3" onClick={handleExpand}>
                 <KeyboardArrowUp
                   sx={{ fontSize: "1.75rem", color: "#98aacd" }}
                 />
