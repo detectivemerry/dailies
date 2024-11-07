@@ -5,7 +5,6 @@ import { headers } from "next/headers";
 
 import connectDB from "@/app/lib/mongodb";
 import ApiMessage from "@/app/lib/message/ApiMessage";
-import { decryptData } from "@/app/lib/encryption/encryption";
 
 export async function GET(req: Request, res: NextApiResponse) {
   try {
@@ -17,10 +16,7 @@ export async function GET(req: Request, res: NextApiResponse) {
         { message: ApiMessage.Error.General },
         { status: 404 }
       );
-
-    const decoded = decodeURIComponent(goalId);
-    const decryptedId = await decryptData(decoded);
-    const objectId = new ObjectId(decryptedId);
+    const objectId = new ObjectId(goalId);
 
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);

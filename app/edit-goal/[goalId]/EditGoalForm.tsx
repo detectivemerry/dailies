@@ -16,6 +16,8 @@ import SecondaryButton from "@/components/buttons/SecondaryButton";
 import { Info } from "@mui/icons-material";
 import TitleHeaderWithClose from "@/components/header/TitleHeaderWithClose";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
+import AlertDialog from "@/components/dialogs/AlertDialog";
+import revalidatePage from "@/app/lib/actions/revalidatePage/revalidatePage";
 
 export type EditGoalInputs = {
   name: string;
@@ -33,20 +35,23 @@ interface EditGoalFormProps {
   userGoal: UserGoal;
 }
 
-export default function EditGoalForm({
-  userGoal,
-}: EditGoalFormProps) {
+export default function EditGoalForm({ userGoal }: EditGoalFormProps) {
   const [startDateObj, setStartDateObj] = useState<Dayjs | null>(
     dayjs(String(userGoal.startDate))
   );
   const [endDateObj, setEndDateObj] = useState<Dayjs | null>(
-    dayjs(String(userGoal.endDate))
+    dayjs(String(userGoal.endDate)).isSame(
+      dayjs("1970-01-01T00:00:00.000+00:00")
+    )
+      ? null
+      : dayjs(String(userGoal.endDate))
   );
   const [alertMessage, setAlertMessage] = useState({
     error: false,
     message: "",
   });
-  const [isGoalCreated, setIsGoalCreated] = useState<boolean>(false);
+
+  const [isGoalEdited, setIsGoalEdited] = useState<boolean>(false);
   const [pending, setPending] = useState<boolean>(false);
   const { data: session } = useSession();
   const [readMore, setReadMore] = useState<boolean>(false);
@@ -64,6 +69,7 @@ export default function EditGoalForm({
     let startDateStr = "";
     let endDateStr = "";
 
+    try{
     if (
       data.startDateObj &&
       data.endDateObj &&
@@ -87,25 +93,25 @@ export default function EditGoalForm({
     data.endDate = endDateStr;
 
     if (data.frequencyPeriod === "per day") {
-      data.startOfCurrentPeriod = dayjs().toISOString();
-      data.endOfCurrentPeriod = dayjs().hour(23).minute(59).toISOString();
+      data.startOfCurrentPeriod = dayjs(data.startDate).toISOString();
+      data.endOfCurrentPeriod = dayjs(data.startDate).hour(23).minute(59).toISOString();
     } else if (data.frequencyPeriod === "per week") {
-      data.startOfCurrentPeriod = dayjs().toISOString();
-      data.endOfCurrentPeriod = dayjs()
+      data.startOfCurrentPeriod = dayjs(data.startDate).toISOString();
+      data.endOfCurrentPeriod = dayjs(data.startDate)
         .add(6, "day")
         .hour(23)
         .minute(59)
         .toISOString();
     } else if (data.frequencyPeriod === "per month") {
-      data.startOfCurrentPeriod = dayjs().toISOString();
-      data.endOfCurrentPeriod = dayjs()
+      data.startOfCurrentPeriod = dayjs(data.startDate).toISOString();
+      data.endOfCurrentPeriod = dayjs(data.startDate)
         .add(29, "day")
         .hour(23)
         .minute(59)
         .toISOString();
     } else if (data.frequencyPeriod === "per year") {
-      data.startOfCurrentPeriod = dayjs().toISOString();
-      data.endOfCurrentPeriod = dayjs()
+      data.startOfCurrentPeriod = dayjs(data.startDate).toISOString();
+      data.endOfCurrentPeriod = dayjs(data.startDate)
         .add(364, "day")
         .hour(23)
         .minute(59)
@@ -130,13 +136,30 @@ export default function EditGoalForm({
     });
 
     const result = await response.json();
-    if (response.ok) setIsGoalCreated(true);
+    if (response.ok){
+      revalidatePage(`/profile/${session?.user?.username}`);
+      setIsGoalEdited(true);
+    }
     else setAlertMessage({ error: true, message: result.message });
-    setPending(false);
+    }
+    catch(error){
+      if(error instanceof Error)
+        setAlertMessage({error : true, message : error.message})
+    }
+    finally{
+      setPending(false);
+    }
   };
 
   return (
     <>
+      <AlertDialog
+        showDialog={isGoalEdited}
+        title="Goal edited"
+        content=" You  have successfully edited your goal. View it in your profile."
+        buttonText="View profile"
+        path={`/profile/${session?.user?.username as string}`}
+      />
       <TitleHeaderWithClose title="Edit Goal" />
       <div className="mx-8 mt-14">
         <form onSubmit={handleSubmit(onSubmit)}>

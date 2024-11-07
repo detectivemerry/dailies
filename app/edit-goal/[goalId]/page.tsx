@@ -10,7 +10,6 @@ interface EditGoalPageProps {
 
 export default async function page({ params }: EditGoalPageProps) {
   
-  console.log("hello please show up")
   const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/goal/user`, {
     method: "GET",
     headers: { goalId: params.goalId },
@@ -18,9 +17,6 @@ export default async function page({ params }: EditGoalPageProps) {
   });
 
   const { data: userData } = await response.json();
-  console.log(response.status)
-  console.log(userData)
-  //if (!userData) notFound();
 
   return (
     <div className="w-screen lg:w-[24.5rem]">

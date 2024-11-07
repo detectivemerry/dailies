@@ -14,7 +14,7 @@ import { PieChart } from "react-minimal-pie-chart";
 
 import { UserGoal } from "@/types/model";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
-import { encryptData } from "@/app/lib/encryption/encryption";
+
 import {
   computePercentCompleted,
   getPieChartData,
@@ -68,8 +68,7 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
         <div className="text-main font-bold pb-3">{userGoal.name}</div>
         <div
           onClick={async () => {
-            const encryptedId = await encryptData(String(userGoal._id));
-            router.push(`/edit-goal/${encryptedId}`);
+            router.push(`/edit-goal/${userGoal._id}`);
           }}
         >
           <Edit sx={{ color: "#1D5D9B", fontSize: "1rem" }} />
