@@ -14,6 +14,7 @@ import { useSession } from "next-auth/react";
 import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import GoalTag from "@/components/goal/GoalTag";
 
 interface PostCardProps {
   post: Post;
@@ -79,15 +80,7 @@ export default function PostCard({ post }: PostCardProps) {
           <Link href={`/profile/${post.username}`} className="no-underline">
             <div className="font-bold text-main">{post.username}</div>
           </Link>
-          <Link href={`/community/${post.goalName}`} className="no-underline">
-            <div className="bg-secondaryDark rounded-2xl px-3 text-main">
-              {post.goalName}
-            </div>
-          </Link>
-          <div className="text-secondaryText flex gap-2 items-center">
-            <Circle sx={{ color: "#838383", fontSize: "0.25rem" }} />
-            {computeTimeSincePosted(dayjs(post.postedDateTime))}
-          </div>
+          <GoalTag goalName={post.goalName}/>
         </div>
         {session?.user.username === post.username && (
           <div className="px-3 py-2" onClick={handleNavigateToEditPost}>
