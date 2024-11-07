@@ -15,7 +15,7 @@ import GoalTypeMenu from "./GoalTypeMenu";
 import { GoalType, Goal, Post } from "@/types/model";
 import Message from "@/app/lib/message/Message";
 import SecondaryButton from "@/components/buttons/SecondaryButton";
-import CreateMoreGoalDialog from "./CreateMoreGoalDialog";
+import AlertDialog from "@/components/dialogs/AlertDialog";
 import Link from "next/link";
 import { Info } from "@mui/icons-material";
 
@@ -152,11 +152,11 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
 
   return (
     <div className="mx-8">
-      <CreateMoreGoalDialog
-        isGoalCreated={isGoalCreated}
-        setIsGoalCreated={setIsGoalCreated}
-        reset={reset}
-        setGoal={setGoal}
+      <AlertDialog
+        showDialog={isGoalCreated}
+        title="Goal Added!"
+        buttonText="View in profile"
+        path={`/profile/${session?.user.username}`}
       />
       {viewGoalTypes ? (
         <>

@@ -119,8 +119,7 @@ export default function PostForm({userGoals} : PostFormProps) {
     <>
       <AlertDialog
         showDialog={postCreated}
-        title="Post successfully posted"
-        content="Post has been created, view the new post in profile."
+        title="Post created"
         buttonText="View in profile"
         path={`/profile/${username}`}
        />

@@ -7,15 +7,15 @@ import { useRouter } from "next/navigation";
 
 import PrimaryButton from "@/components/buttons/PrimaryButton";
 
-interface PostCreatedDialogProps {
+interface AlertDialogProps {
   showDialog : boolean;
   title : string;
-  content : string;
+  content? : string;
   buttonText : string;
   path : string;
 }
 
-export default function AlertDialog({ showDialog, title, content, buttonText, path } : PostCreatedDialogProps) {
+export default function AlertDialog({ showDialog, title, content, buttonText, path } : AlertDialogProps) {
   const router = useRouter();
   
   return (
@@ -25,9 +25,11 @@ export default function AlertDialog({ showDialog, title, content, buttonText, pa
           <CheckBox sx={{ fontSize: "3rem" }} color="primary" />
         </div>
         <div className="text-main text-2xl font-bold">{title}</div>
-        <div className="text-secondaryText text-center">
-          {content}<br />
-        </div>
+        {content && 
+          <div className="text-secondaryText text-center">
+            {content}<br />
+          </div>
+        }
         <div className="mt-8 flex flex-col gap-2">
           <div>
             <PrimaryButton
