@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import Message from "@/app/lib/message/Message";
 
 type Inputs = {
-  username: string;
+  email: string;
   password: string;
 };
 
@@ -33,7 +33,7 @@ export default function LoginForm() {
     setErrorMessage("");
     
     const result = await signIn("credentials", {
-      email: data.username,
+      email: data.email,
       password: data.password,
       redirect: false,
     });
@@ -54,11 +54,11 @@ export default function LoginForm() {
       </div>
       <div>
         <TextField
-          label="Username"
+          label="Email"
           variant="standard"
           sx={{ width: "20rem" }}
           className="input-field"
-          {...register("username")}
+          {...register("email")}
           required
         />
       </div>
