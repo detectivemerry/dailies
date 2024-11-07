@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { ArrowBack } from "@mui/icons-material";
 import React from "react";
 import { useRouter } from "next/navigation";
 
@@ -10,7 +10,7 @@ export default function TitleHeaderWithClose({title} : {title : string}) {
       <div className="flex justify-between border-b py-3">
         <div className="">
           <Button onClick = {() => {router.back()}}>
-            <Close />
+            <ArrowBack />
           </Button>
         </div>
       </div>
