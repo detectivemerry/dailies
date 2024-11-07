@@ -15,6 +15,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import GoalTag from "@/components/goal/GoalTag";
+import GoalTag from "@/components/goal/GoalTag";
 
 interface PostCardProps {
   post: Post;
