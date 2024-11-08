@@ -10,9 +10,10 @@ import {
   Person,
   SearchOutlined,
 } from "@mui/icons-material";
-import { Button } from "@mui/material";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
+import revalidatePage from "@/app/lib/actions/revalidatePage/revalidatePage";
 
 export default function Navbar() {
   const pagesWithoutNavbar = [
@@ -25,39 +26,37 @@ export default function Navbar() {
   const pathName = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
+  const [selectedIcon, setSelectedIcon] = useState<string>("");
 
   return (
     <>
       {!pagesWithoutNavbar.includes(pathName) && (
-        <div className="fixed bottom-0 w-[26.85rem] bg-secondary h-min-screen py-2 rounded-t-2xl">
+        <div className="fixed bottom-0 w-[26.85rem] bg-secondary h-min-screen py-2 rounded-t-2xl pb-4">
           <div className="flex justify-around gap-8">
-            <div className="flex gap-4">
-              <div>
-                <Button
-                  onClick={() => {
-                    router.push("/");
-                  }}
-                >
-                  {pathName === "/" ? (
-                    <>
-                      <Home sx={{ color: "#1D5D9B", fontSize: "1.75rem" }} />
-                    </>
-                  ) : (
-                    <>
-                      <HomeOutlined
-                        sx={{ color: "#1D5D9B", fontSize: "1.75rem" }}
-                      />
-                    </>
-                  )}
-                </Button>
+            <div className="flex gap-11">
+              <div
+                onClick={() => {
+                  setSelectedIcon("home")
+                  router.push("/");
+                }}
+              >
+                {selectedIcon === "home" ? (
+                  <>
+                    <Home sx={{ color: "#1D5D9B", fontSize: "1.75rem" }} />
+                  </>
+                ) : (
+                  <>
+                    <HomeOutlined
+                      sx={{ color: "#1D5D9B", fontSize: "1.75rem" }}
+                    />
+                  </>
+                )}
               </div>
-              <div>
-                <Button
-                  onClick={() => {
-                    router.push("/explore");
-                  }}
-                >
-                  {pathName === "/explore" ? (
+              <div 
+              onClick={()=>{
+                setSelectedIcon("explore")
+                router.push("/explore")}}>
+                  {selectedIcon === "explore" ? (
                     <>
                       <SearchOutlined
                         sx={{
@@ -73,75 +72,72 @@ export default function Navbar() {
                       sx={{ color: "#1D5D9B", fontSize: "1.75rem" }}
                     />
                   )}
-                </Button>
               </div>
             </div>
-            <div className="bg-secondaryDark fixed bottom-4 rounded-full py-2">
-              <Button
+            <div
+              className="bg-secondaryDark fixed bottom-4 rounded-full p-2"
+              onClick={() => {
+                setSelectedIcon("post")
+                router.push("/post");
+              }}
+            >
+              {selectedIcon === "post" ? (
+                <>
+                  <AddOutlined
+                    sx={{
+                      color: "#1D5D9B",
+                      fontSize: "2.25rem",
+                      stroke: "#1D5D9B",
+                      strokeWidth: 1,
+                    }}
+                  />
+                </>
+              ) : (
+                <>
+                  <AddOutlined sx={{ color: "#1D5D9B", fontSize: "2.25rem" }} />
+                </>
+              )}
+            </div>
+            <div className="flex gap-11">
+              <div
                 onClick={() => {
-                  router.push("/post");
+                  setSelectedIcon("notification")
+                  revalidatePage("/notification")
+                  router.push("/notification");
                 }}
               >
-                {pathName === "/post" ? (
+                {selectedIcon === 'notification' ? (
                   <>
-                    <AddOutlined
-                      sx={{
-                        color: "#1D5D9B",
-                        fontSize: "2.25rem",
-                        stroke: "#1D5D9B",
-                        strokeWidth: 1,
-                      }}
+                    <Notifications
+                      sx={{ color: "#1D5D9B", fontSize: "1.75rem" }}
                     />
                   </>
                 ) : (
                   <>
-                    <AddOutlined
-                      sx={{ color: "#1D5D9B", fontSize: "2.25rem" }}
+                    <NotificationsOutlined
+                      sx={{ color: "#1D5D9B", fontSize: "1.75rem" }}
                     />
                   </>
                 )}
-              </Button>
-            </div>
-            <div className="flex gap-4">
-              <div>
-                <Button
-                  onClick={() => {
-                    router.push("/notification");
-                  }}
-                >
-                  {pathName === "/notification" ? (
-                    <>
-                      <Notifications
-                        sx={{ color: "#1D5D9B", fontSize: "1.75rem" }}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <NotificationsOutlined
-                        sx={{ color: "#1D5D9B", fontSize: "1.75rem" }}
-                      />
-                    </>
-                  )}
-                </Button>
               </div>
-              <div>
-                <Button
-                  onClick={() => {
-                    router.push(`/profile/${session?.user.username}`);
-                  }}
-                >
-                  {pathName === `/profile/${session?.user.username}` ? (
-                    <>
-                      <Person sx={{ color: "#1D5D9B", fontSize: "1.75rem" }} />
-                    </>
-                  ) : (
-                    <>
-                      <PersonOutlined
-                        sx={{ color: "#1D5D9B", fontSize: "1.75rem" }}
-                      />
-                    </>
-                  )}
-                </Button>
+              <div
+                onClick={() => {
+                  setSelectedIcon("profile")
+                  revalidatePage(`profile/${session?.user.username}`)
+                  router.push(`profile/${session?.user.username}`);
+                }}
+              >
+                {selectedIcon === 'profile' ? (
+                  <>
+                    <Person sx={{ color: "#1D5D9B", fontSize: "1.75rem" }} />
+                  </>
+                ) : (
+                  <>
+                    <PersonOutlined
+                      sx={{ color: "#1D5D9B", fontSize: "1.75rem" }}
+                    />
+                  </>
+                )}
               </div>
             </div>
           </div>

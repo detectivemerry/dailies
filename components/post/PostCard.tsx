@@ -33,12 +33,6 @@ export default function PostCard({ post }: PostCardProps) {
     setExpanded((prev) => !prev);
   };
 
-  //const handleNavigateToCommuntiy = (e: MouseEvent<HTMLDivElement>) => {
-  //e.preventDefault();
-  //const target = e.target as HTMLDivElement;
-  //router.push(`/community/${target.innerHTML}`);
-  //};
-
   const handleNavigateToEditPost = async (e: MouseEvent<HTMLDivElement>) => {
     e.preventDefault();
     router.push(`/edit-post/${post._id}`);
