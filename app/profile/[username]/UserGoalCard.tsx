@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import dayjs from "dayjs";
 import {
   AccessTime,
@@ -11,6 +11,7 @@ import {
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { PieChart } from "react-minimal-pie-chart";
+import {useState} from "react"
 
 import { UserGoal } from "@/types/model";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
@@ -27,18 +28,31 @@ interface UserGoalCardProps {
 
 export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
   const router = useRouter();
+  const [clickedEdit, setClickedEdit] = useState<boolean>(false);
 
   const { data : pieChartData, percentCompleted } = computePieChartData(userGoal);
+
+  useEffect(()=> {
+    if(clickedEdit){
+      const intervalId = setInterval(() => {
+        setClickedEdit(false)
+      },1000)
+
+      return () => clearInterval(intervalId);
+    }
+  }, [clickedEdit])
 
   return (
     <div className="flex flex-col border p-3 mx-3">
       <div className="flex justify-between">
         <div className="text-main font-bold pb-3">{userGoal.name}</div>
         <div
+          className={`${clickedEdit && 'bg-lightGray'} mb-[7px] px-2`}
           onClick={async () => {
+            setClickedEdit(true)
             router.push(`/edit-goal/${userGoal._id}`);
           }}
-        >
+        > 
           <Edit sx={{ color: "#1D5D9B", fontSize: "1rem" }} />
         </div>
       </div>

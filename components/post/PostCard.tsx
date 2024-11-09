@@ -22,6 +22,7 @@ interface PostCardProps {
 
 export default function PostCard({ post }: PostCardProps) {
   const [expanded, setExpanded] = useState(false);
+  const [clickedEdit, setClickedEdit] = useState(false);
   const { data: session } = useSession();
   const displayDate = post.editedDateTime
     ? dayjs(post.editedDateTime).format("DD MMM YYYY")
@@ -67,8 +68,18 @@ export default function PostCard({ post }: PostCardProps) {
     }
   };
 
+  useEffect(()=> {
+    if(clickedEdit){
+      const intervalId = setInterval(() => {
+        setClickedEdit(false)
+      },1000)
+
+      return () => clearInterval(intervalId);
+    }
+  }, [clickedEdit])
+
   return (
-    <div className="flex flex-col px-2 border-b text-sm pb-4">
+    <div className="flex flex-col px-2 text-sm pb-4">
       <div className="flex justify-between px-2">
         <div className="flex gap-2 my-3">
           <Link href={`/profile/${post.username}`} className="no-underline">
@@ -81,7 +92,12 @@ export default function PostCard({ post }: PostCardProps) {
           </div>
         </div>
         {session?.user.username === post.username && (
-          <div className="px-3 py-2" onClick={handleNavigateToEditPost}>
+          <div 
+          className={`${clickedEdit && 'bg-lightGray'} my-[7px] pt-[2px] rounded px-2`}
+          onClick={() => {
+              setClickedEdit(true);
+              router.push(`/edit-post/${post._id}`);
+          }}>
             <Edit sx={{ color: "#1D5D9B", fontSize: "1rem" }} />
           </div>
         )}
