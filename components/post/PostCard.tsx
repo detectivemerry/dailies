@@ -6,8 +6,6 @@ import {
   CheckCircle,
   Circle,
   Edit,
-  KeyboardArrowDown,
-  KeyboardArrowUp,
   Replay,
 } from "@mui/icons-material";
 import { useSession } from "next-auth/react";
@@ -32,11 +30,6 @@ export default function PostCard({ post }: PostCardProps) {
 
   const handleExpand = () => {
     setExpanded((prev) => !prev);
-  };
-
-  const handleNavigateToEditPost = async (e: MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    router.push(`/edit-post/${post._id}`);
   };
 
   const displayTimeLeftForGoal = (): string => {
@@ -79,7 +72,7 @@ export default function PostCard({ post }: PostCardProps) {
   }, [clickedEdit])
 
   return (
-    <div className="flex flex-col px-2 text-sm pb-4">
+    <div className="flex flex-col px-2 text-sm pb-4 border-t">
       <div className="flex justify-between px-2">
         <div className="flex gap-2 my-3">
           <Link href={`/profile/${post.username}`} className="no-underline">

@@ -322,7 +322,7 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
                   )}
                 />
               </div>
-              <div className="flex flex-col items-center gap-2 mb-20 fixed bottom-0 flex justify-center h-min-screen">
+              <div className="flex flex-col items-center gap-2 flex justify-center mt-5">
                 <PrimaryButton text="Create" pending={pending} />
                 {fromRegister === "true" ? (
                   <Link href="/">

@@ -14,6 +14,7 @@ const Message = {
     AlphaNumericOnly : "Please enter only letters and numbers.",
     EmailOnly : "Please enter a valid email.",
     InvalidPassword : "Please ensure that you have at least one lower and upper case character, one numeric character and one special character.",
+    NewStartDateIsBeforeCurrent : "Please ensure that your new starting date is not before the current date.",
     EndDateBeforeStartDate : "Please ensure that the end date is after the start date",
     UnsuccessfulImageUpload : "Image upload has failed, please try again later.",
     UnsuccessfulPostCreation : "Failed to create post, please try again later.",

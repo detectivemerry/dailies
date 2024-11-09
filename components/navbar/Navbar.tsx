@@ -12,7 +12,7 @@ import {
 } from "@mui/icons-material";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import revalidatePage from "@/app/lib/actions/revalidatePage/revalidatePage";
 
 export default function Navbar() {
@@ -28,6 +28,16 @@ export default function Navbar() {
   const { data: session } = useSession();
   const [selectedIcon, setSelectedIcon] = useState<string>("");
 
+  useEffect(() => {
+    if(selectedIcon){
+      const intervalId = setInterval(() => {
+        setSelectedIcon("")
+      },500)
+
+      return () => clearInterval(intervalId);
+    }
+  }, [selectedIcon])
+
   return (
     <>
       {!pagesWithoutNavbar.includes(pathName) && (
@@ -35,12 +45,13 @@ export default function Navbar() {
           <div className="flex justify-around gap-8">
             <div className="flex gap-11">
               <div
+                className = {`${selectedIcon === "home" && "bg-secondaryDark"} rounded p-1`}
                 onClick={() => {
                   setSelectedIcon("home")
                   router.push("/");
                 }}
               >
-                {selectedIcon === "home" ? (
+                {pathName === "/" ? (
                   <>
                     <Home sx={{ color: "#1D5D9B", fontSize: "1.75rem" }} />
                   </>
@@ -53,10 +64,11 @@ export default function Navbar() {
                 )}
               </div>
               <div 
+              className = {`${selectedIcon === "explore" && "bg-secondaryDark"} rounded p-1`}
               onClick={()=>{
                 setSelectedIcon("explore")
                 router.push("/explore")}}>
-                  {selectedIcon === "explore" ? (
+                  {pathName === "/explore" ? (
                     <>
                       <SearchOutlined
                         sx={{
@@ -81,7 +93,7 @@ export default function Navbar() {
                 router.push("/post");
               }}
             >
-              {selectedIcon === "post" ? (
+              {pathName === "/post" ? (
                 <>
                   <AddOutlined
                     sx={{
@@ -100,13 +112,14 @@ export default function Navbar() {
             </div>
             <div className="flex gap-11">
               <div
+                className = {`${selectedIcon === "notification" && "bg-secondaryDark"} rounded p-1`}
                 onClick={() => {
                   setSelectedIcon("notification")
                   revalidatePage("/notification")
                   router.push("/notification");
                 }}
               >
-                {selectedIcon === 'notification' ? (
+                {pathName === "/notification" ? (
                   <>
                     <Notifications
                       sx={{ color: "#1D5D9B", fontSize: "1.75rem" }}
@@ -121,13 +134,14 @@ export default function Navbar() {
                 )}
               </div>
               <div
+                className = {`${selectedIcon === "profile" && "bg-secondaryDark"} rounded p-1`}
                 onClick={() => {
                   setSelectedIcon("profile")
                   revalidatePage(`profile/${session?.user.username}`)
                   router.push(`profile/${session?.user.username}`);
                 }}
               >
-                {selectedIcon === 'profile' ? (
+                {pathName === `/profile/${session?.user.username}` ? (
                   <>
                     <Person sx={{ color: "#1D5D9B", fontSize: "1.75rem" }} />
                   </>

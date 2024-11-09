@@ -8,9 +8,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
-import { GoalType, Goal, Post, UserGoal } from "@/types/model";
+import { UserGoal } from "@/types/model";
 import Message from "@/app/lib/message/Message";
 import SecondaryButton from "@/components/buttons/SecondaryButton";
 import { Info } from "@mui/icons-material";
@@ -55,7 +54,6 @@ export default function EditGoalForm({ userGoal }: EditGoalFormProps) {
   const [pending, setPending] = useState<boolean>(false);
   const { data: session } = useSession();
   const [readMore, setReadMore] = useState<boolean>(false);
-  const router = useRouter();
 
   const {
     register,
@@ -66,9 +64,21 @@ export default function EditGoalForm({ userGoal }: EditGoalFormProps) {
 
   const onSubmit: SubmitHandler<EditGoalInputs> = async (data) => {
     setAlertMessage({ error: false, message: "" });
+
+    // new start date should not be before original start date
+    if(dayjs(startDateObj).isBefore(dayjs(String(userGoal.startDate)))){
+      setAlertMessage({
+        error : true,
+        message : Message.Error.NewStartDateIsBeforeCurrent
+      })
+      return;
+    }
+
+    
     let startDateStr = "";
     let endDateStr = "";
 
+    // end date should not be before start date
     try{
     if (
       data.startDateObj &&
@@ -272,7 +282,6 @@ export default function EditGoalForm({ userGoal }: EditGoalFormProps) {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       label="Start Date"
-                      disablePast
                       format="DD/MM/YYYY"
                       onChange={(event) => {
                         onChange(event);
