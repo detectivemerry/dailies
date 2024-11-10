@@ -86,6 +86,20 @@ export async function POST(req: Request, res: NextApiResponse) {
     );
 
     if (relatedGoals.length === 1) {
+      const updateUserSubscribedCommunity = await db.collection("Users").updateOne(
+        { email : user.email, },
+        { $push : {
+          subscribedCommunity : {
+            _id : new ObjectId(),
+            subscribedDateTime : new Date(),
+            goalId : goalIdObject
+          }
+        } },
+        { upsert : true }
+      )
+      if (updateUserSubscribedCommunity.modifiedCount != 1)
+        console.error(`subscribedCommunity not added`);
+
       const updateNoOfMembersResult = await db
         .collection("GoalTypes")
         .updateOne(
@@ -95,6 +109,7 @@ export async function POST(req: Request, res: NextApiResponse) {
 
       if (updateNoOfMembersResult.modifiedCount != 1)
         console.error(`${goalId}: no_of_members not incremented`);
+  
     }
 
     if (acknowledged && modifiedCount === 1)
@@ -211,9 +226,6 @@ export async function PATCH(req: Request, res: NextApiResponse) {
         },
       ]);
 
-    console.log("yo we done update or wat AHAHHAHA");
-    console.log(updatedUserGoal);
-
     return NextResponse.json(
       { message: ApiMessage.Success.General },
       { status: 200 }
@@ -227,3 +239,5 @@ export async function PATCH(req: Request, res: NextApiResponse) {
     );
   }
 }
+
+

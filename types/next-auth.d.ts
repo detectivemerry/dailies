@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import { Goal } from "./model";
+import { Goal, UserSubscribedCommunity } from "./model";
 
 declare module "next-auth" {
   /**
@@ -11,6 +11,7 @@ declare module "next-auth" {
     email: string | undefined | null;
     goals: Array<Goal> | unknown;
     token: string | unknown;
+    subscribedCommunities : Array<UserSubscribedCommunity> | unknown;
   }
 
   interface Session {
@@ -20,7 +21,7 @@ declare module "next-auth" {
       email: string | unknown;
       goals: Array<Goal> | unknown;
       token : string | unknown;
-      testing : string;
+      subscribedCommunities : Array<UserSubscribedCommunity> | unknown;
     };
   }
 }

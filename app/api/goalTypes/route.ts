@@ -9,6 +9,9 @@ export async function GET(req: Request, res: NextApiResponse) {
 
     const goalTypes = await db.collection("GoalTypes").find().toArray();
 
+    // console.log("goal types:")
+    // console.log(goalTypes)
+
     if(!goalTypes){
       return NextResponse.json({message : "No goal types found."}, {status : 500})
     }

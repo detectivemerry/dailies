@@ -14,7 +14,14 @@ export interface User {
     email : string; //"js1909@gmail.com"
     password : string; //"!@Qw#$5rer234cw5#$%regtg2"
     goals : Goal[]
+    subscribedCommunities : UserSubscribedCommunity[]
 }
+
+export interface UserSubscribedCommunity {
+    _id : ObjectId,
+    goalId : ObjectId,
+    subscribeddDateTime : Date,
+} 
 
 export interface GoalType {
     _id : ObjectId; //'1a2b3c4d5e'

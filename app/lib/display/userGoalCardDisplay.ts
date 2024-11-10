@@ -16,6 +16,9 @@ const computePieChartData = (userGoal: UserGoal): PieChartData => {
   const startDate = dayjs(String(userGoal.startDate));
   const endDate = dayjs(String(userGoal.endDate));
 
+  const totalDiff = Math.abs(startDate.diff(endDate, "days"));
+  const currentDiff = Math.abs(dayjs().diff(endDate, "days"));
+
   if (startDate.isAfter(dayjs())) {
     return {
       data: [
@@ -25,9 +28,6 @@ const computePieChartData = (userGoal: UserGoal): PieChartData => {
       percentCompleted: "0 %",
     };
   }
-
-  const totalDiff = Math.abs(startDate.diff(endDate, "days"));
-  const currentDiff = Math.abs(dayjs().diff(endDate, "days"));
 
   return {
     data: [

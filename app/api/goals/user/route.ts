@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/app/lib/mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import ApiMessage from "@/app/lib/message/ApiMessage";
 import { headers } from 'next/headers'
 

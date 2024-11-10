@@ -2,19 +2,19 @@ import { NextResponse } from "next/server";
 import connectDB from "@/app/lib/mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import ApiMessage from "@/app/lib/message/ApiMessage";
-import { decryptData } from "@/app/lib/encryption/encryption";
+import { headers } from "next/headers";
 
 export async function GET(req: Request, res: NextApiResponse) {
   try {
+
+    const headerList = headers();
+    const communityName = decodeURI(String(headerList.get("community-name")));
+    console.log(` name : ${communityName}`)
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
-
-    const encryptedGoalId: string = await req.json();
-    const goalId = decryptData(encryptedGoalId);
-
     const listOfPosts = await db
       .collection("Posts")
-      .find({ goalId: goalId })
+      .find({ goalName: communityName })
       .toArray();
 
     return NextResponse.json({ data: listOfPosts }, { status: 200 });

@@ -34,6 +34,7 @@ export async function POST(req: Request, res: NextApiResponse) {
     const hashedPassword = await hash(data.password, salt);
     data.password = hashedPassword;
     data.goals = [];
+    data.subscribedCommunities = [];
 
     await db.collection("Users").insertOne(data);
 
