@@ -2,11 +2,11 @@ import { Goal, UserSubscribedCommunity } from "@/types/model";
 import React, { useEffect, useState } from "react";
 import { ChevronLeft } from "@mui/icons-material";
 import { Button } from "@mui/material";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import SecondaryButton from "@/components/buttons/SecondaryButton";
 
 interface CommunityHeaderProps {
-  community: Goal;
+  community: Goal | undefined;
   subscribedCommunities: UserSubscribedCommunity[] | unknown;
 }
 
@@ -27,8 +27,8 @@ export default function CommunityHeader({
         (subscribedCommunity: UserSubscribedCommunity) => {
           console.log("communities!");
           console.log(subscribedCommunity.goalId);
-          console.log(community._id);
-          if (subscribedCommunity.goalId === community._id) {
+          console.log(community?._id);
+          if (subscribedCommunity.goalId === community?._id) {
             setSubscribed(true);
           }
         }
@@ -36,7 +36,8 @@ export default function CommunityHeader({
     }
   }, []);
 
-  const formatMembersCount = (number: number) => {
+  const formatMembersCount = (number: number | undefined) => {
+    if (!number) return 0;
     if (number < 1000) {
       return number.toString(); // Show the full number if below 1000
     } else if (number < 1_000_000) {
@@ -48,7 +49,7 @@ export default function CommunityHeader({
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex justify-start w-screen mt-2">
+      <div className="flex flex-1 justify-start mt-2 w-full mb-[-10px]">
         <Button
           sx={{ textTransform: "none" }}
           onClick={() => {
@@ -58,28 +59,31 @@ export default function CommunityHeader({
           <div>
             <ChevronLeft sx={{ fontSize: "2rem" }} />
           </div>
-          <div className="text-lg">Back</div>
+          <div className="">Back</div>
         </Button>
       </div>
-      <div className="flex">
+      <div className="flex w-full">
+        <div className = "flex-1"></div>
         <div>
-          <div className="text-3xl font-semibold text-main my-2 flex flex-col items-center">
-            {community.name}
-          </div>
-          <div className="text-secondaryText">
-            {formatMembersCount(community.no_of_members)} members
+          <div className="flex-1 text-lg font-semibold text-main mb-2 flex flex-col items-center">
+            {community?.name}
+            <div className="text-secondaryText text-xs font-normal">
+              {formatMembersCount(community?.no_of_members)} members
+            </div>
           </div>
         </div>
-        <div>
+        <div className="flex-1 flex justify-center pt-1 pb-5 text-sm">
           <SecondaryButton
             text={subscribed ? "Subscribed" : "Join"}
             onClick={() => {
               console.log("clicked subscribed!");
             }}
-            sx = {{
+            sx={{
               borderRadius: "25px",
-              textTransform : "none",
-              backgroundColor : "#6D6D6D"
+              textTransform: "none",
+              color: "#B3B3B3",
+              borderColor: "#B3B3B3",
+              fontSize : "0.75rem",
             }}
           />
         </div>

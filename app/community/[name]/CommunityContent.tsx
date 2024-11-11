@@ -16,15 +16,9 @@ export default function CommunityContent({posts, community} : CommunityContentPr
 
   const { data: session } = useSession();
 
-  useEffect(() => {
-    console.log("effects:")
-    console.log(posts)
-    console.log(community)
-  }, [])
   return (
     <div>
-        hello this is community
-        {/* <CommunityHeader community = {community} subscribedCommunities = {session?.user.subscribedCommunities}/> */}
+        <CommunityHeader community = {community} subscribedCommunities = {session?.user.subscribedCommunities}/>
     </div>
   )
 }
