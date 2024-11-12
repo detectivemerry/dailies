@@ -1,13 +1,14 @@
 import React, { FC } from "react";
 import { Button, ButtonProps, Typography } from "@mui/material";
-import { PropaneSharp } from "@mui/icons-material";
+import ButtonSpinner from "../loading/ButtonSpinner";
 
 interface SecondaryButtonProps extends ButtonProps {
   text: string;
   onClick?: () => void;
+  pending?: boolean
 }
 
-const SecondaryButton: FC<SecondaryButtonProps> = ({ text, onClick, ...props }) => {
+const SecondaryButton: FC<SecondaryButtonProps> = ({ text, onClick, pending, ...props }) => {
   return (
     <Button
       variant="outlined"
@@ -20,7 +21,7 @@ const SecondaryButton: FC<SecondaryButtonProps> = ({ text, onClick, ...props }) 
       onClick={onClick}
       {...props}
     >
-      {text}
+      {pending? <ButtonSpinner size = {"1rem"} /> : <>{text}</>}
     </Button>
   );
 };

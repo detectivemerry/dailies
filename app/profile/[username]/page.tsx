@@ -1,7 +1,6 @@
 import React from 'react'
 import ProfileTitleHeader from "./ProfileTitleHeader"
 import ProfileContent from './ProfileContent'
-import { ConstructionOutlined } from '@mui/icons-material'
 import { notFound } from 'next/navigation'
 
 interface ProfilePageProps {

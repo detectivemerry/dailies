@@ -55,8 +55,10 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email;
         token.goals = user.goals;
         token.token = user.token;
+        token.subscribedCommunities = user.subscribedCommunities;
         console.log(`token : ${token.token}`);
       }
+
       return token;
     },
 
@@ -66,10 +68,14 @@ export const authOptions: NextAuthOptions = {
       session.user.email = token.email;
       session.user.goals = token.goals;
       session.user.token = token.token;
+      session.user.subscribedCommunities = token.subscribedCommunities;
 
-      if(trigger === "update" &&  newSession?.goals){
-        session.user.goals = newSession.goals;
-      }
+      // if (trigger === "update" && newSession?.goals) {
+      //   session.user.goals = newSession.goals;
+      // }
+      // if (trigger === "update" && newSession?.subscribedCommunities) {
+      //   session.user.subscribedCommunities = newSession.subscribedCommunities;
+      // }
       return session;
     },
   },

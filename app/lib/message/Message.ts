@@ -19,6 +19,7 @@ const Message = {
     UnsuccessfulImageUpload : "Image upload has failed, please try again later.",
     UnsuccessfulPostCreation : "Failed to create post, please try again later.",
     UnsuccessfulPostEdit : "Failed to edit post, please try again later.",
+    UnsuccessfulSubscribe : "Failed to subscribe to community, please try again later."
   },
 };
 

@@ -1,40 +1,56 @@
 import { Goal, UserSubscribedCommunity } from "@/types/model";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ChevronLeft } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
-import SecondaryButton from "@/components/buttons/SecondaryButton";
+import Message from "@/app/lib/message/Message";
+import ButtonSpinner from "@/components/loading/ButtonSpinner";
 
 interface CommunityHeaderProps {
   community: Goal | undefined;
-  subscribedCommunities: UserSubscribedCommunity[] | unknown;
+  setErrorMessage: Dispatch<SetStateAction<string>>;
+  subscribed: boolean;
+  setSubscribed: Dispatch<SetStateAction<boolean>>;
+  subscribedCommunities: Array<UserSubscribedCommunity> | unkown;
 }
 
 export default function CommunityHeader({
   community,
+  setErrorMessage,
+  subscribed,
+  setSubscribed,
   subscribedCommunities,
 }: CommunityHeaderProps) {
-  const [subscribed, setSubscribed] = useState<boolean>(false);
+  const [pending, setPending] = useState<boolean>(false);
   const router = useRouter();
 
   const subscribeCommunity = async () => {
-    const subscribeResponse = await fetch("/api/community/subscribe");
+    setPending(true);
+    const subscribeResponse = await fetch("/api/subscribe", {
+      method: "POST",
+      body: JSON.stringify({ communityId: community?._id }),
+    });
+
+    if (subscribeResponse.ok) {
+      setSubscribed(true);
+    } else {
+      setErrorMessage(Message.Error.UnsuccessfulSubscribe);
+    }
+
+    setPending(false);
   };
 
   useEffect(() => {
     if (Array.isArray(subscribedCommunities)) {
-      subscribedCommunities?.forEach(
+      subscribedCommunities.forEach(
         (subscribedCommunity: UserSubscribedCommunity) => {
-          console.log("communities!");
-          console.log(subscribedCommunity.goalId);
-          console.log(community?._id);
           if (subscribedCommunity.goalId === community?._id) {
             setSubscribed(true);
           }
         }
       );
     }
-  }, []);
+  }, [subscribedCommunities]);
 
   const formatMembersCount = (number: number | undefined) => {
     if (!number) return 0;
@@ -63,7 +79,7 @@ export default function CommunityHeader({
         </Button>
       </div>
       <div className="flex w-full">
-        <div className = "flex-1"></div>
+        <div className="flex-1"></div>
         <div>
           <div className="flex-1 text-lg font-semibold text-main mb-2 flex flex-col items-center">
             {community?.name}
@@ -73,19 +89,30 @@ export default function CommunityHeader({
           </div>
         </div>
         <div className="flex-1 flex justify-center pt-1 pb-5 text-sm">
-          <SecondaryButton
-            text={subscribed ? "Subscribed" : "Join"}
-            onClick={() => {
-              console.log("clicked subscribed!");
+          <Button
+            onClick={async () => {
+              await subscribeCommunity();
             }}
+            variant = "outlined"
             sx={{
               borderRadius: "25px",
               textTransform: "none",
-              color: "#B3B3B3",
-              borderColor: "#B3B3B3",
-              fontSize : "0.75rem",
+              backgroundColor: !subscribed && "#FBEEAC",
+              color: subscribed ? "#B3B3B3" : "#1D5D9B",
+              borderColor: subscribed ? "#B3B3B3" : "#1D5D9B",
+              fontSize: "0.75rem",
+              fontWeight: !subscribed && "700",
             }}
-          />
+            disabled={subscribed}
+          >
+            {pending ? (
+              <ButtonSpinner size={"1.15rem"} />
+            ) : subscribed ? (
+              "Subscribed"
+            ) : (
+              "Join"
+            )}
+          </Button>
         </div>
       </div>
       <div className="border-t w-screen mb-8"></div>

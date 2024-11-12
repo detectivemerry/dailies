@@ -8,7 +8,6 @@ import { authOptions } from "../auth/[...nextauth]/auth";
 import ApiMessage from "@/app/lib/message/ApiMessage";
 import { Post, UserGoal } from "@/types/model";
 import { headers } from "next/headers";
-import { decryptData } from "@/app/lib/encryption/encryption";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {

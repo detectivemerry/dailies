@@ -8,7 +8,6 @@ import ApiMessage from "@/app/lib/message/ApiMessage";
 // moved to goals/user/ api
 export async function GET(req: Request, res: NextApiResponse) {
   try {
-    const { searchParams } = new URL(req.url);
     const headerList = headers();
     const username = headerList.get('username')
     const client = await connectDB();
