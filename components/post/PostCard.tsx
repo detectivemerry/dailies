@@ -72,8 +72,8 @@ export default function PostCard({ post }: PostCardProps) {
   }, [clickedEdit])
 
   return (
-    <div className="flex flex-col px-2 text-sm pb-4 border-t">
-      <div className="flex justify-between px-2">
+    <div className="flex flex-col px-2 text-xs pb-4 border-t border-gray-150 pt-3">
+      <div className="flex justify-between px-3">
         <div className="flex gap-2 my-3">
           <Link href={`/profile/${post.username}`} className="no-underline">
             <div className="font-bold text-main">{post.username}</div>
@@ -95,7 +95,7 @@ export default function PostCard({ post }: PostCardProps) {
           </div>
         )}
       </div>
-      <div onClick={handleExpand} className="flex justify-center">
+      <div onClick={handleExpand} className="flex justify-center border-gray-150 border mx-3">
         {post.imageUrl ? (
           <>
             <img src={post.imageUrl} className="max-h-[40vh]" />
@@ -150,7 +150,7 @@ export default function PostCard({ post }: PostCardProps) {
             <div className={`px-3 ${expanded ? "" : "truncate"}`}>
               {post.caption}
             </div>
-            <div className="flex justify-end text-main px-8">
+            <div className="flex justify-end text-main px-3">
               {expanded ? "see less" : "see more"}
             </div>
           </div>

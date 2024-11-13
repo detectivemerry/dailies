@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import CommunityContent from "./CommunityContent";
-import { Goal, GoalType, User } from "@/types/model";
+import { Goal, GoalType } from "@/types/model";
 
 interface CommunityPageProps {
   params: {

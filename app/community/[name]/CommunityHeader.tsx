@@ -115,7 +115,6 @@ export default function CommunityHeader({
           </Button>
         </div>
       </div>
-      <div className="border-t w-screen mb-8"></div>
     </div>
   );
 }

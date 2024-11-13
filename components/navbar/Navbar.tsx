@@ -137,8 +137,8 @@ export default function Navbar() {
                 className = {`${selectedIcon === "profile" && "bg-secondaryDark"} rounded p-1`}
                 onClick={() => {
                   setSelectedIcon("profile")
-                  revalidatePage(`profile/${session?.user.username}`)
-                  router.push(`profile/${session?.user.username}`);
+                  revalidatePage(`/profile/${session?.user.username}`)
+                  router.push(`/profile/${session?.user.username}`);
                 }}
               >
                 {pathName === `/profile/${session?.user.username}` ? (
