@@ -18,6 +18,7 @@ import SecondaryButton from "@/components/buttons/SecondaryButton";
 import AlertDialog from "@/components/dialogs/AlertDialog";
 import Link from "next/link";
 import { Info } from "@mui/icons-material";
+import revalidatePage from "../lib/actions/revalidatePage/revalidatePage";
 
 export type CreateGoalInputs = {
   name: string;
@@ -145,8 +146,10 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
     });
 
     const result = await response.json();
-    if (response.ok) setIsGoalCreated(true);
-    else setAlertMessage({ error: true, message: result.message });
+    if (response.ok) {
+      revalidatePage(`/profile/${session?.user?.username}`);
+      setIsGoalCreated(true);
+    } else setAlertMessage({ error: true, message: result.message });
     setPending(false);
   };
 
@@ -267,9 +270,11 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
                       </span>
                     )}
                     {readMore && (
-                      <span> {" "}
-                        e.g if you have a weekly goal and the start date is a Monday, 
-                        your week for this goal would start on Monday and end on Sunday. {" "}
+                      <span>
+                        {" "}
+                        e.g if you have a weekly goal and the start date is a
+                        Monday, your week for this goal would start on Monday
+                        and end on Sunday.{" "}
                         <span
                           className="text-blue-400 underline"
                           onClick={() => setReadMore(false)}

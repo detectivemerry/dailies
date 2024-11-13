@@ -29,14 +29,14 @@ export async function POST(req: Request, res: NextApiResponse) {
       .find({ email: user.email })
       .next();
 
-    console.log("user dog suubscribed communities")
-    console.log(userDoc?.subscribedCommunities)
+    // console.log("user dog suubscribed communities")
+    // console.log(userDoc?.subscribedCommunities)
 
     const subscribedCommunities = userDoc?.subscribedCommunities.filter(
       (community) => String(community.goalId) === String(goalId)
     );
 
-    console.log(subscribedCommunities)
+    // console.log(subscribedCommunities)
 
     if (subscribedCommunities.length === 0) {
       // add community to user subscribedCommunities
@@ -56,8 +56,8 @@ export async function POST(req: Request, res: NextApiResponse) {
         { upsert: true }
       );
 
-      console.log("add community");
-      console.log(addCommunity);
+      // console.log("add community");
+      // console.log(addCommunity);
 
       // increment no_of_members
       const updateNoOfMembersResult = await db

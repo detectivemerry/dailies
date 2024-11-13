@@ -53,10 +53,6 @@ export async function POST(req: Request, res: NextApiResponse) {
       {
         $push: {
           goals: {
-            // endDate: endDate,
-            // startDate: startDate,
-            // startOfCurrentPeriod : startOfCurrentPeriod,
-            // endOfCurrentPeriod :  endOfCurrentPeriod,
             _id: new ObjectId(),
             frequencyCount: Number(frequencyCount),
             frequencyPeriod: frequencyPeriod,
@@ -81,15 +77,20 @@ export async function POST(req: Request, res: NextApiResponse) {
       .collection("Users")
       .find({ email: user.email }, { goals: 1 })
       .next();
-    const relatedGoals = userDoc?.goals.filter(
-      (userGoal) => String(userGoal._id) === String(goalId)
+
+    // const relatedGoals = userDoc?.goals.filter(
+    //   (userGoal) => String(userGoal._id) === String(goalId)
+    // );
+
+    const subscribedCommunities = userDoc?.subscribedCommunities.filter(
+      (community) => String(community.goalId) === String(goalId)
     );
 
-    if (relatedGoals.length === 1) {
+    if (subscribedCommunities.length === 0) {
       const updateUserSubscribedCommunity = await db.collection("Users").updateOne(
         { email : user.email, },
         { $push : {
-          subscribedCommunity : {
+          subscribedCommunities : {
             _id : new ObjectId(),
             subscribedDateTime : new Date(),
             goalId : goalIdObject
@@ -103,7 +104,7 @@ export async function POST(req: Request, res: NextApiResponse) {
       const updateNoOfMembersResult = await db
         .collection("GoalTypes")
         .updateOne(
-          { "goals._id": goalId },
+          { "goals._id": goalIdObject },
           { $inc: { "goals.$.no_of_members": 1 } }
         );
 
@@ -146,19 +147,6 @@ export async function PATCH(req: Request, res: NextApiResponse) {
       endOfCurrentPeriod,
       originalUserGoal,
     } = await req.json();
-
-    //let updateFields: {
-    //"goals.$.name": string;
-    //"goals.$.endDate"? : Date;
-    //"goals.$.startDate"? : Date
-    //"goals.$.frequencyCount"? : number;
-    //"goals.$.frequencyPeriod"? : string;
-    //"goals.$.startOfCurrentPeriod"? : Date;
-    //"goals.$.endOfCurrentPeriod"? : Date;
-    //"goals.$.streak"? : number;
-    //} = {
-    //"goals.$.name": name,
-    //};
 
     // check if name was the only field changed, do not reset streak if true
     let updatedFrequency =
