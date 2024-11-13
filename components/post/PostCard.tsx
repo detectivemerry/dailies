@@ -13,6 +13,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import GoalTag from "@/components/goal/GoalTag";
+import { computeTimeLeftForGoal } from "@/app/lib/display/userGoalCardDisplay";
 
 interface PostCardProps {
   post: Post;
@@ -22,9 +23,6 @@ export default function PostCard({ post }: PostCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [clickedEdit, setClickedEdit] = useState(false);
   const { data: session } = useSession();
-  const displayDate = post.editedDateTime
-    ? dayjs(post.editedDateTime).format("DD MMM YYYY")
-    : dayjs(post.postedDateTime).format("DD MMM YYYY");
 
   const router = useRouter();
 
@@ -32,19 +30,8 @@ export default function PostCard({ post }: PostCardProps) {
     setExpanded((prev) => !prev);
   };
 
-  const displayTimeLeftForGoal = (): string => {
-    if (post.goalEndDate === "") return "Lifelong goal";
-
-    const startDate = dayjs(post.goalStartDate);
-    const endDate = dayjs(post.goalEndDate);
-    const diffInDays = startDate.diff(endDate, "days") * -1;
-    if (diffInDays < 0) return `finished`;
-    if (diffInDays < 30) return `${diffInDays} days left`;
-    const diffInMonths = startDate.diff(endDate, "months") * -1;
-    if (diffInMonths < 12) return `${diffInMonths} months left`;
-    const diffInYears = startDate.diff(endDate, "years") * -1;
-    return `${diffInYears} years left`;
-  };
+  const displayDate = computeTimeLeftForGoal(
+    {endDate : new Date(post.goalEndDate), startDate : new Date(post.goalStartDate)})
 
   const computeTimeSincePosted = (time: Dayjs): string => {
     const now = dayjs();
@@ -114,7 +101,8 @@ export default function PostCard({ post }: PostCardProps) {
                 <div className="flex gap-3 px-3 pb-3 justify-center">
                   <div className="bg-lightGray rounded-2xl px-9 flex gap-1 py-[2px]">
                     <div>
-                      {displayTimeLeftForGoal() === "finished" ? (
+                      {/* {displayTimeLeftForGoal() === "finished" ? ( */}
+                      {displayDate === "finished" ? (
                         <CheckCircle
                           sx={{
                             color: "#1D5D9B",
@@ -140,7 +128,7 @@ export default function PostCard({ post }: PostCardProps) {
                         />
                       )}
                     </div>
-                    <div>{displayTimeLeftForGoal()}</div>
+                    <div>{displayDate}</div>
                   </div>
                   <div className="bg-lightGray rounded-2xl px-9 py-[2px]">
                     {post.frequencyCount} times {post.frequencyPeriod}

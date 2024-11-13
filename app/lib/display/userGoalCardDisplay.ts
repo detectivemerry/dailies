@@ -44,9 +44,9 @@ const computePieChartData = (userGoal: UserGoal): PieChartData => {
   //];
 };
 
-const computeTimeLeftForGoal = (userGoal: UserGoal): string => {
-  const endDate = new Date(String(userGoal.endDate));
-  const startDate = new Date(String(userGoal.startDate));
+const computeTimeLeftForGoal = (dateRange : { endDate : Date, startDate : Date}): string => {
+  const endDate = new Date(String(dateRange.endDate));
+  const startDate = new Date(String(dateRange.startDate));
   const DEFAULT_DATE = new Date("1970-01-01T00:00:00.000Z");
 
   const _MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -71,8 +71,11 @@ const computeTimeLeftForGoal = (userGoal: UserGoal): string => {
   const diffInYears = Math.floor((utc1 - utc2) / _MS_PER_YEAR);
 
   if (diffInDays < 0) return `finished`;
+  if(diffInDays === 1) return '1 day left'
   if (diffInDays < 30) return `${diffInDays} days left`;
+  if(diffInMonths === 1) return '1 month left'
   if (diffInMonths < 12) return `${diffInMonths} months left`;
+  if(diffInYears === 1) return '1 year left'
   return `${diffInYears} years left`;
 };
 

@@ -17,6 +17,7 @@ export default function ProfileGoalHeader() {
           textTransform: "none",
           borderRadius: "30px",
           fontWeight: "bold",
+          fontSize : "0.75rem",
         }}
       />
     </div>

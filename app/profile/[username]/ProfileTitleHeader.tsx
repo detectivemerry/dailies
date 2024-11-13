@@ -34,8 +34,8 @@ export default function ProfileTitleHeader({
   return (
     <>
       <div className="border-b fixed bg-white h-16 w-full lg:w-[24.5rem] z-10">
-        <div className=" fixed left-1/2 transform -translate-x-1/2 top-4 w-auto">
-          <div className="text-lg text-main">
+        <div className=" fixed left-1/2 transform -translate-x-1/2 top-5 w-auto">
+          <div className="text-lg text-main text-sm">
             {username}
           </div>
         </div>

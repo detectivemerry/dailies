@@ -11,7 +11,7 @@ import {
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { PieChart } from "react-minimal-pie-chart";
-import {useState} from "react"
+import { useState } from "react";
 
 import { UserGoal } from "@/types/model";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
@@ -30,40 +30,49 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
   const router = useRouter();
   const [clickedEdit, setClickedEdit] = useState<boolean>(false);
 
-  const { data : pieChartData, percentCompleted } = computePieChartData(userGoal);
+  const { data: pieChartData, percentCompleted } =
+    computePieChartData(userGoal);
+  
 
-  useEffect(()=> {
-    if(clickedEdit){
+  const displayDate = computeTimeLeftForGoal(
+    {endDate : new Date(String(userGoal.endDate)), startDate : new Date(String(userGoal.startDate))})
+
+  useEffect(() => {
+    if (clickedEdit) {
       const intervalId = setInterval(() => {
-        setClickedEdit(false)
-      },1000)
+        setClickedEdit(false);
+      }, 1000);
 
       return () => clearInterval(intervalId);
     }
-  }, [clickedEdit])
+  }, [clickedEdit]);
 
   return (
     <div className="flex flex-col border p-3 mx-3">
       <div className="flex justify-between">
         <div className="text-main font-bold pb-3">{userGoal.name}</div>
         <div
-          className={`${clickedEdit && 'bg-lightGray'} mb-[7px] px-2`}
+          className={`${clickedEdit && "bg-lightGray"} mb-[7px] px-2`}
           onClick={async () => {
-            setClickedEdit(true)
+            setClickedEdit(true);
             router.push(`/edit-goal/${userGoal._id}`);
           }}
-        > 
+        >
           <Edit sx={{ color: "#1D5D9B", fontSize: "1rem" }} />
         </div>
       </div>
       <div className="flex gap-2 flex-wrap">
-        <div className="bg-lightGray rounded-2xl px-3 py-[2px]">{userGoal.goalName}</div>
+        <div className="bg-lightGray rounded-2xl px-3 py-[2px] bg-secondaryDark text-main" onClick ={() => {
+          router.push(`/community/${userGoal.goalName}`)
+        }}>
+          {userGoal.goalName}
+        </div>
         <div className="bg-lightGray rounded-2xl px-3 py-[2px]">
           {userGoal.frequencyCount} times {userGoal.frequencyPeriod}
         </div>
         <div className="bg-lightGray rounded-2xl px-3 flex py-[2px]">
           <div className="pr-[3px]">
-            {computeTimeLeftForGoal(userGoal) === "finished" ? (
+            {displayDate === "finished" ? (
               <CheckCircle
                 sx={{
                   color: "#1D5D9B",
@@ -89,7 +98,7 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
               />
             )}
           </div>
-          <div>{computeTimeLeftForGoal(userGoal)}</div>
+          <div>{displayDate}</div>
         </div>
       </div>
 
@@ -113,7 +122,7 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
       </div>
 
       <div className="flex justify-between items-center">
-        <div className = "">
+        <div className="">
           {userGoal.timesPostedCurrentPeriod}/{userGoal.frequencyCount}{" "}
           {userGoal.frequencyPeriod.replace(/per (\w+)/, "this $1")}
         </div>
@@ -121,7 +130,7 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
           <PrimaryButton
             text="Post"
             sx={{
-              fontSize : "0.75rem",
+              fontSize: "0.75rem",
               width: "6rem",
               borderRadius: "25px",
               fontWeight: "bold",
