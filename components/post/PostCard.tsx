@@ -112,7 +112,7 @@ export default function PostCard({ post }: PostCardProps) {
             <div className="text-main p-3">Goal: {post.userGoalName}</div>
             {expanded && (
                 <div className="flex gap-3 px-3 pb-3 justify-center">
-                  <div className="bg-lightGray rounded-2xl px-9 flex gap-1">
+                  <div className="bg-lightGray rounded-2xl px-9 flex gap-1 py-[2px]">
                     <div>
                       {displayTimeLeftForGoal() === "finished" ? (
                         <CheckCircle
@@ -142,7 +142,7 @@ export default function PostCard({ post }: PostCardProps) {
                     </div>
                     <div>{displayTimeLeftForGoal()}</div>
                   </div>
-                  <div className="bg-lightGray rounded-2xl px-9">
+                  <div className="bg-lightGray rounded-2xl px-9 py-[2px]">
                     {post.frequencyCount} times {post.frequencyPeriod}
                   </div>
                 </div>

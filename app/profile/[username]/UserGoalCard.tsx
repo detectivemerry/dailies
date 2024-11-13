@@ -57,11 +57,11 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
         </div>
       </div>
       <div className="flex gap-2 flex-wrap">
-        <div className="bg-lightGray rounded-2xl px-3">{userGoal.goalName}</div>
-        <div className="bg-lightGray rounded-2xl px-3">
+        <div className="bg-lightGray rounded-2xl px-3 py-[2px]">{userGoal.goalName}</div>
+        <div className="bg-lightGray rounded-2xl px-3 py-[2px]">
           {userGoal.frequencyCount} times {userGoal.frequencyPeriod}
         </div>
-        <div className="bg-lightGray rounded-2xl px-3 flex">
+        <div className="bg-lightGray rounded-2xl px-3 flex py-[2px]">
           <div className="pr-[3px]">
             {computeTimeLeftForGoal(userGoal) === "finished" ? (
               <CheckCircle
@@ -93,7 +93,7 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
         </div>
       </div>
 
-      <div className="flex py-3 justify-center gap-8">
+      <div className="flex py-3 justify-center gap-8 pt-5">
         <div className="flex items-center gap-1">
           <Whatshot sx={{ color: userGoal.streak ? "#1D5D9B" : "#D3D3D3" }} />
           {!userGoal.streak ? (
@@ -103,7 +103,7 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
           )}
         </div>
         {!isDefaultDate(dayjs(String(userGoal.endDate))) && (
-          <div className="flex gap-1">
+          <div className="flex gap-2 items-center">
             <div>
               <PieChart data={pieChartData} style={{ height: "25px" }} />
             </div>
@@ -112,8 +112,8 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
         )}
       </div>
 
-      <div className="flex pt-3 justify-between items-center">
-        <div>
+      <div className="flex justify-between items-center">
+        <div className = "">
           {userGoal.timesPostedCurrentPeriod}/{userGoal.frequencyCount}{" "}
           {userGoal.frequencyPeriod.replace(/per (\w+)/, "this $1")}
         </div>
@@ -121,6 +121,7 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
           <PrimaryButton
             text="Post"
             sx={{
+              fontSize : "0.75rem",
               width: "6rem",
               borderRadius: "25px",
               fontWeight: "bold",

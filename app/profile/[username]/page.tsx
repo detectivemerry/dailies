@@ -43,7 +43,7 @@ export default async function page({ params } : ProfilePageProps) {
   posts.reverse();
 
   return (
-    <div className = "flex flex-col w-screen lg:w-[24.5rem]">
+    <div className = "flex flex-col w-screen lg:w-[24.5rem] text-xs">
       <div className = "mb-16">
         <ProfileTitleHeader username = {params.username}/>
       </div>
