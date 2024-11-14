@@ -334,7 +334,7 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
                     <span className="text-sm">Or continue without goal</span>
                   </Link>
                 ) : (
-                  <Link href="/profile">
+                  <Link href={`/profile/${session?.user.username}`}>
                     <span className="text-sm">Back to profile</span>
                   </Link>
                 )}

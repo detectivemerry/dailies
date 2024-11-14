@@ -11,7 +11,7 @@ interface CommunityHeaderProps {
   setErrorMessage: Dispatch<SetStateAction<string>>;
   subscribed: boolean;
   setSubscribed: Dispatch<SetStateAction<boolean>>;
-  subscribedCommunities: Array<UserSubscribedCommunity> | unkown;
+  subscribedCommunities: Array<UserSubscribedCommunity> | unknown;
 }
 
 export default function CommunityHeader({
@@ -24,10 +24,10 @@ export default function CommunityHeader({
   const [pending, setPending] = useState<boolean>(false);
   const router = useRouter();
 
-  const subscribeCommunity = async () => {
+  const subscribeCommunity = async (subscribed : boolean) => {
     setPending(true);
     const subscribeResponse = await fetch("/api/subscribe", {
-      method: "POST",
+      method: subscribed ? "DELETE" : "POST",
       body: JSON.stringify({ communityId: community?._id }),
     });
 
@@ -39,6 +39,7 @@ export default function CommunityHeader({
 
     setPending(false);
   };
+
 
   useEffect(() => {
     if (Array.isArray(subscribedCommunities)) {
@@ -91,7 +92,7 @@ export default function CommunityHeader({
         <div className="flex-1 flex justify-center pt-1 pb-5 text-sm">
           <Button
             onClick={async () => {
-              await subscribeCommunity();
+                await subscribeCommunity(subscribed);
             }}
             variant = "outlined"
             sx={{
@@ -103,14 +104,13 @@ export default function CommunityHeader({
               fontSize: "0.75rem",
               fontWeight: !subscribed && "700",
             }}
-            disabled={subscribed}
           >
             {pending ? (
               <ButtonSpinner size={"1.15rem"} />
             ) : subscribed ? (
-              "Subscribed"
+              "Unsubscribe"
             ) : (
-              "Join"
+              "Subscribe"
             )}
           </Button>
         </div>
