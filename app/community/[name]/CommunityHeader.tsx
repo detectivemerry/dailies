@@ -5,6 +5,7 @@ import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import Message from "@/app/lib/message/Message";
 import ButtonSpinner from "@/components/loading/ButtonSpinner";
+import revalidatePage from "@/app/lib/actions/revalidatePage/revalidatePage";
 
 interface CommunityHeaderProps {
   community: Goal | undefined;
@@ -32,7 +33,8 @@ export default function CommunityHeader({
     });
 
     if (subscribeResponse.ok) {
-      setSubscribed(true);
+      setSubscribed((prev) => !prev);
+      revalidatePage(`/community/${community?.name}`)
     } else {
       setErrorMessage(Message.Error.UnsuccessfulSubscribe);
     }
@@ -100,7 +102,7 @@ export default function CommunityHeader({
               textTransform: "none",
               backgroundColor: !subscribed && "#FBEEAC",
               color: subscribed ? "#B3B3B3" : "#1D5D9B",
-              borderColor: subscribed ? "#B3B3B3" : "#1D5D9B",
+              borderColor: `${subscribed ? "#B3B3B3" : "#1D5D9B"} !important`,
               fontSize: "0.75rem",
               fontWeight: !subscribed && "700",
             }}

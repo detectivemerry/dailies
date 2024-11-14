@@ -6,6 +6,7 @@ import { ObjectId } from "mongodb";
 
 import { authOptions } from "../auth/[...nextauth]/auth";
 import ApiMessage from "@/app/lib/message/ApiMessage";
+import { subscribe } from "diagnostics_channel";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {
@@ -29,14 +30,10 @@ export async function POST(req: Request, res: NextApiResponse) {
       .find({ email: user.email })
       .next();
 
-    // console.log("user dog suubscribed communities")
-    // console.log(userDoc?.subscribedCommunities)
 
     const subscribedCommunities = userDoc?.subscribedCommunities.filter(
       (community) => String(community.goalId) === String(goalId)
     );
-
-    // console.log(subscribedCommunities)
 
     if (subscribedCommunities.length === 0) {
       // add community to user subscribedCommunities
@@ -110,63 +107,39 @@ export async function DELETE(req: Request, res: NextApiResponse) {
       );
     }
     const { user } = session;
-    // check if user is a new member, only new members can subscribe
-    const userDoc = await db
-      .collection("Users")
-      .find({ email: user.email })
-      .next();
 
-    const subscribedCommunities = userDoc?.subscribedCommunities.filter(
-      (community) => String(community.goalId) === String(goalId)
+    //delete goal from user's subscribedCommunities
+    const updatedUserResult = await db.collection("Users").updateOne(
+      {
+        username: user.username,
+      },
+      {
+        $pull: {
+          subscribedCommunities: { goalId: goalId },
+        },
+      }
     );
 
-    if (subscribedCommunities.length === 0) {
-      // add community to user subscribedCommunities
-      const addCommunity = await db.collection("Users").updateOne(
-        {
-          username: user.username,
-        },
-        {
-          $push: {
-            subscribedCommunities: {
-              _id: new ObjectId(),
-              subscribedDateTime: new Date(),
-              goalId: goalId,
-            },
-          },
-        },
-        { upsert: true }
+    //decrement the no_of_members for goalType
+    const updateNoOfMembersResult = await db
+      .collection("GoalTypes")
+      .updateOne(
+        { "goals._id": goalId },
+        { $inc: { "goals.$.no_of_members": -1 } }
       );
 
-      // console.log("add community");
-      // console.log(addCommunity);
-
-      // increment no_of_members
-      const updateNoOfMembersResult = await db
-        .collection("GoalTypes")
-        .updateOne(
-          { "goals._id": goalId },
-          { $inc: { "goals.$.no_of_members": 1 } }
-        );
-
-      if (
-        updateNoOfMembersResult.modifiedCount != 1 ||
-        addCommunity.modifiedCount != 1
-      ) {
-        console.error(`${goalId}: no_of_members not incremented`);
-        return NextResponse.json(
-          { message: ApiMessage.Error.General },
-          { status: 500 }
-        );
-      }
-
-      return NextResponse.json({ status: 200 });
-    } else {
+    if (
+      updateNoOfMembersResult.modifiedCount != 1 ||
+      updatedUserResult.modifiedCount != 1
+    ) {
+      console.error(`${goalId}: no_of_members not incremented`);
       return NextResponse.json(
-        { message: ApiMessage.Error.UserAlreadySubscribed },
-        { status: 409 }
+        { message: ApiMessage.Error.General },
+        { status: 500 }
       );
     }
+
+    return NextResponse.json({ status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
