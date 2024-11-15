@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/app/lib/mongodb";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { ObjectId } from "mongodb";
 
 import { authOptions } from "../auth/[...nextauth]/auth";
 import ApiMessage from "@/app/lib/message/ApiMessage";
-import { subscribe } from "diagnostics_channel";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {

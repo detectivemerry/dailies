@@ -92,6 +92,8 @@ export type Notification = {
     _id : ObjectId,
     notifiedDateTime : string,
     seen : boolean;
+    userId : ObjectId;
+    username : string;
 }
 
 
