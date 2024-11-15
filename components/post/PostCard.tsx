@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import GoalTag from "@/components/goal/GoalTag";
 import { computeTimeLeftForGoal } from "@/app/lib/display/userGoalCardDisplay";
+import computeTimeSincePosted from "@/app/lib/display/computeTimeSincePosted";
 
 interface PostCardProps {
   post: Post;
@@ -32,21 +33,6 @@ export default function PostCard({ post }: PostCardProps) {
 
   const displayDate = computeTimeLeftForGoal(
     {endDate : new Date(post.goalEndDate), startDate : new Date(post.goalStartDate)})
-
-  const computeTimeSincePosted = (time: Dayjs): string => {
-    const now = dayjs();
-    const diffInMinutes = now.diff(time, "minute");
-    const diffInHours = now.diff(time, "hour");
-    const diffInDays = now.diff(time, "day");
-
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes}m`; // e.g., "42m"
-    } else if (diffInHours < 24) {
-      return `${diffInHours}h`; // e.g., "3h"
-    } else {
-      return `${diffInDays}d`; // e.g., "2d"
-    }
-  };
 
   useEffect(()=> {
     if(clickedEdit){

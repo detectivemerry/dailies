@@ -4,7 +4,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import { Button } from "@mui/material";
 import { GoalType, Goal } from "@/types/model";
 import TitleHeader from "@/components/header/TitleHeader";
-import getAvatarIcon from "./getAvatarIcon";
+import getAvatarIcon from "@/app/lib/avatarIcon/getAvatarIcon";
 
 interface GoalListProps {
   goalType: GoalType;

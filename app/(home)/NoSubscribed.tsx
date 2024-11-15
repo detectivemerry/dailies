@@ -1,6 +1,6 @@
 "use client";
 
-import { HolidayVillageOutlined, HomeMaxOutlined } from "@mui/icons-material";
+import { HolidayVillageOutlined } from "@mui/icons-material";
 import React from "react";
 import { useRouter } from "next/navigation";
 

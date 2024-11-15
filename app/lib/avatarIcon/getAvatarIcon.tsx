@@ -44,6 +44,10 @@ import {
   ForumOutlined,
   Public,
   Psychology,
+  NotificationAddOutlined,
+  EditNotificationsOutlined,
+  Groups2Outlined,
+  WorkspacePremiumOutlined,
 } from "@mui/icons-material";
 
 type SvgIconComponent = typeof SvgIcon;
@@ -138,6 +142,14 @@ export default function getAvatarIcon(avatarIcon: string): SvgIconComponent {
       return FitnessCenter;
     case "INTELLECTUAL_GROWTH":
       return Psychology;
+    case "COMMUNITY_SUBSCRIPTION":
+        return NotificationAddOutlined;
+    case "GOAL_ADJUSTMENT":
+        return EditNotificationsOutlined;
+    case "COMMUNITY_ACTIVITY":
+        return Groups2Outlined;
+    case "MILESTONE":
+        return WorkspacePremiumOutlined;
     default:
       return QuestionMarkOutlined;
   }

@@ -3,7 +3,7 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "@mui/material";
 import TitleHeader from "@/components/header/TitleHeader";
-import getAvatarIcon from "./getAvatarIcon";
+import getAvatarIcon from "@/app/lib/avatarIcon/getAvatarIcon";
 import GoalList from "./GoalList";
 import {GoalType, Goal} from "@/types/model"
 
