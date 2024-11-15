@@ -29,7 +29,7 @@ export default function CommunityHeader({
     setPending(true);
     const subscribeResponse = await fetch("/api/subscribe", {
       method: subscribed ? "DELETE" : "POST",
-      body: JSON.stringify({ communityId: community?._id }),
+      body: JSON.stringify({ communityId: community?._id, goalName : community?.name }),
     });
 
     if (subscribeResponse.ok) {

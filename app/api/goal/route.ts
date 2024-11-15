@@ -93,7 +93,8 @@ export async function POST(req: Request, res: NextApiResponse) {
           subscribedCommunities : {
             _id : new ObjectId(),
             subscribedDateTime : new Date(),
-            goalId : goalIdObject
+            goalId : goalIdObject,
+            name : goalName,
           }
         } },
         { upsert : true }

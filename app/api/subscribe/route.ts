@@ -10,7 +10,7 @@ import { subscribe } from "diagnostics_channel";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {
-    const { communityId } = await req.json();
+    const { communityId, goalName } = await req.json();
     const goalId = new ObjectId(String(communityId));
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
@@ -47,6 +47,7 @@ export async function POST(req: Request, res: NextApiResponse) {
               _id: new ObjectId(),
               subscribedDateTime: new Date(),
               goalId: goalId,
+              name : goalName
             },
           },
         },

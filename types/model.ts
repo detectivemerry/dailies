@@ -21,6 +21,7 @@ export interface UserSubscribedCommunity {
     _id : ObjectId,
     goalId : ObjectId,
     subscribeddDateTime : Date,
+    name : string;
 } 
 
 export interface GoalType {

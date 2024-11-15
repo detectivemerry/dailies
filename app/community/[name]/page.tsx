@@ -45,7 +45,7 @@ export default async function CommunityPage({ params }: CommunityPageProps) {
 
   const userResponse = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/user`, {
     method : "GET",
-    headers : {"username" : session?.user.username},
+    headers : {"username" : session?.user.username || ""},
     cache: "no-store",
   })
 
