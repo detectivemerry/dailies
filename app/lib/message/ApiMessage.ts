@@ -13,7 +13,9 @@ const ApiMessage = {
     NoUserFound : "Current user was not found. Please try again later.",
     NoPostFound : "Post was not found, please try again later.",
     NoUserGoalFound : "Goal was not found from user. Please try again later",
-    UserAlreadySubscribed : "User is already subscribed to this community."
+    UserAlreadySubscribed : "User is already subscribed to this community.",
+    UnsuccessfulSubscription : "Something went wrong with subscription to community",
+    UnsuccessfulNotficationSent : "Something went wrong with sending notification",
   } 
 };
 

@@ -1,29 +1,23 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/app/lib/mongodb";
 import { NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
+import { headers } from 'next/headers'
 
-import { authOptions } from "../auth/[...nextauth]/auth";
 import ApiMessage from "@/app/lib/message/ApiMessage";
 
 export async function GET(req: Request, res: NextApiResponse) {
   try {
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
+    const headerList = headers();
+    const username = headerList.get("username");
 
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json(
-        { message: ApiMessage.Error.Unauthenticated },
-        { status: 401 }
-      );
-    }
-    const { user } = session;
+    const notificationDocs = await db
+      .collection("Notifications")
+      .find({ username: username })
+      .toArray();
 
-    const notificationDocs = await db.collection("Notifications").find({ username : user.username }).toArray();
-
-    return NextResponse.json({data : notificationDocs}, {status : 200})
-
+    return NextResponse.json({ data: notificationDocs }, { status: 200 });
   } catch (error) {
     console.error(error);
 

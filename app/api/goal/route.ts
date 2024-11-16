@@ -7,6 +7,7 @@ import { headers } from "next/headers";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import connectDB from "@/app/lib/mongodb";
 import ApiMessage from "@/app/lib/message/ApiMessage";
+import NotificationConfig from "@/app/lib/notificationConfig/notificationConfig";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {
@@ -72,35 +73,36 @@ export async function POST(req: Request, res: NextApiResponse) {
     );
     const { acknowledged, modifiedCount } = addGoalToUserResult;
 
+    let subscribeSuccess = true;
+    let sendNotificationSuccess = true;
+
     // Increment GoalType no_of_members if user is a new member
     const userDoc = await db
       .collection("Users")
       .find({ email: user.email }, { goals: 1 })
       .next();
 
-    // const relatedGoals = userDoc?.goals.filter(
-    //   (userGoal) => String(userGoal._id) === String(goalId)
-    // );
-
     const subscribedCommunities = userDoc?.subscribedCommunities.filter(
       (community) => String(community.goalId) === String(goalId)
     );
 
     if (subscribedCommunities.length === 0) {
-      const updateUserSubscribedCommunity = await db.collection("Users").updateOne(
-        { email : user.email, },
-        { $push : {
-          subscribedCommunities : {
-            _id : new ObjectId(),
-            subscribedDateTime : new Date(),
-            goalId : goalIdObject,
-            name : goalName,
-          }
-        } },
-        { upsert : true }
-      )
-      if (updateUserSubscribedCommunity.modifiedCount != 1)
-        console.error(`subscribedCommunity not added`);
+      const updateUserSubscribedCommunity = await db
+        .collection("Users")
+        .updateOne(
+          { email: user.email },
+          {
+            $push: {
+              subscribedCommunities: {
+                _id: new ObjectId(),
+                subscribedDateTime: new Date(),
+                goalId: goalIdObject,
+                name: goalName,
+              },
+            },
+          },
+          { upsert: true }
+        );
 
       const updateNoOfMembersResult = await db
         .collection("GoalTypes")
@@ -109,14 +111,41 @@ export async function POST(req: Request, res: NextApiResponse) {
           { $inc: { "goals.$.no_of_members": 1 } }
         );
 
-      if (updateNoOfMembersResult.modifiedCount != 1)
-        console.error(`${goalId}: no_of_members not incremented`);
-  
+      // send community subscribe notification to user
+      const notification = await db.collection("Notifications").insertOne({
+        _id: new ObjectId(),
+        type: NotificationConfig.AutoCommunitySubscription.type,
+        icon: NotificationConfig.AutoCommunitySubscription.icon,
+        text: NotificationConfig.AutoCommunitySubscription.text.replace(/\*/g, goalName),
+        buttonText: NotificationConfig.AutoCommunitySubscription.buttonText,
+        path: NotificationConfig.AutoCommunitySubscription.path.replace(/\*/g, goalName),
+        notifiedDateTime: new Date().toISOString(),
+        seen: false,
+        userId: userDoc?._id,
+        username: session.user.username,
+      });
+
+      if (
+        updateNoOfMembersResult.modifiedCount != 1 ||
+        updateUserSubscribedCommunity.modifiedCount != 1
+      ) {
+        subscribeSuccess = false;
+      }
+      if (!notification.acknowledged) {
+        sendNotificationSuccess = false;
+      }
     }
 
     if (acknowledged && modifiedCount === 1)
       return NextResponse.json(
-        { message: ApiMessage.Success.General },
+        {
+          message:
+            subscribeSuccess && sendNotificationSuccess
+              ? ApiMessage.Success.General
+              : subscribeSuccess
+              ? ApiMessage.Error.UnsuccessfulNotficationSent
+              : ApiMessage.Error.UnsuccessfulSubscription,
+        },
         { status: 200 }
       );
     else
@@ -202,7 +231,12 @@ export async function PATCH(req: Request, res: NextApiResponse) {
                 input: "$goals",
                 in: {
                   $cond: {
-                    if: { $eq: ["$$this._id", new ObjectId(String(originalUserGoal._id))] },
+                    if: {
+                      $eq: [
+                        "$$this._id",
+                        new ObjectId(String(originalUserGoal._id)),
+                      ],
+                    },
                     then: {
                       $mergeObjects: ["$$this", updateFields],
                     },
@@ -219,7 +253,6 @@ export async function PATCH(req: Request, res: NextApiResponse) {
       { message: ApiMessage.Success.General },
       { status: 200 }
     );
-
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -228,5 +261,3 @@ export async function PATCH(req: Request, res: NextApiResponse) {
     );
   }
 }
-
-
