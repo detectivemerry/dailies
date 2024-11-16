@@ -1,0 +1,182 @@
+
+> ran at Sat Nov 16 2024 22:50:06 GMT+0800 (Singapore Standard Time)
+> took 282.713041ms
+> logs: 
+object
+> result: 
+[
+  {
+    "_id": {
+      "$oid": "67259c6dbd40eddd733951aa"
+    },
+    "firstName": "don",
+    "lastName": "don",
+    "username": "TESTUSER_REBIRTHED",
+    "email": "testuser@gmail.com",
+    "password": "$2b$12$euHXVRtP.wo15bW2T4v9ZO0e0AJdGpSr46C57bUNakwuv6b7pGw9a",
+    "goals": {
+      "_id": {
+        "$oid": "67380779a3ebca4924653099"
+      },
+      "frequencyCount": {
+        "$numberInt": "1"
+      },
+      "frequencyPeriod": "per day",
+      "name": "notification test",
+      "goalId": {
+        "$oid": "66c20c2b4293b6fbac0507b4"
+      },
+      "inactive": false,
+      "streak": {
+        "$numberInt": "0"
+      },
+      "timesPostedCurrentPeriod": {
+        "$numberInt": "1"
+      },
+      "endDate": {
+        "$date": {
+          "$numberLong": "1763308800000"
+        }
+      },
+      "startDate": {
+        "$date": {
+          "$numberLong": "1731725147021"
+        }
+      },
+      "startOfCurrentPeriod": {
+        "$date": {
+          "$numberLong": "1731725176222"
+        }
+      },
+      "endOfCurrentPeriod": {
+        "$date": {
+          "$numberLong": "1731772756222"
+        }
+      },
+      "goalName": "Meditation",
+      "milestoneReached": {
+        "$numberInt": "0"
+      },
+      "totalDiff": {
+        "$numberLong": "31583652979"
+      },
+      "currentDiff": {
+        "$numberLong": "31540190417"
+      },
+      "percentage": {
+        "$numberDouble": "0.13761094078920602"
+      }
+    },
+    "subscribedCommunities": [
+      {
+        "_id": {
+          "$oid": "6734be96841ef002ce57e2d6"
+        },
+        "subscribedDateTime": {
+          "$date": {
+            "$numberLong": "1731509910450"
+          }
+        },
+        "goalId": {
+          "$oid": "66c20bd84293b6fbac0507af"
+        }
+      },
+      {
+        "_id": {
+          "$oid": "67361606cd9d5417000cd5ed"
+        },
+        "subscribedDateTime": {
+          "$date": {
+            "$numberLong": "1731597830590"
+          }
+        },
+        "goalId": {
+          "$oid": "66c214624293b6fbac0507c1"
+        }
+      },
+      {
+        "_id": {
+          "$oid": "673829ff0bc547565cc4133c"
+        },
+        "subscribedDateTime": {
+          "$date": {
+            "$numberLong": "1731734015579"
+          }
+        },
+        "goalId": {
+          "$oid": "66c20c2b4293b6fbac0507b4"
+        },
+        "name": "Meditation"
+      }
+    ],
+    "subscribedCommunity": [
+      {
+        "_id": {
+          "$oid": "67322392afb2f5e5d22928d0"
+        },
+        "subscribedDateTime": {
+          "$date": {
+            "$numberLong": "1731339154880"
+          }
+        },
+        "goalId": {
+          "$oid": "66c217cd4293b6fbac0507ce"
+        }
+      },
+      {
+        "_id": {
+          "$oid": "6732247dafb2f5e5d22928de"
+        },
+        "subscribedDateTime": {
+          "$date": {
+            "$numberLong": "1731339389392"
+          }
+        },
+        "goalId": {
+          "$oid": "66c20bfc4293b6fbac0507b2"
+        }
+      },
+      {
+        "_id": {
+          "$oid": "673224b1afb2f5e5d22928e8"
+        },
+        "subscribedDateTime": {
+          "$date": {
+            "$numberLong": "1731339441413"
+          }
+        },
+        "goalId": {
+          "$oid": "66c20bfc4293b6fbac0507b2"
+        }
+      },
+      {
+        "_id": {
+          "$oid": "673224bcafb2f5e5d22928f2"
+        },
+        "subscribedDateTime": {
+          "$date": {
+            "$numberLong": "1731339452822"
+          }
+        },
+        "goalId": {
+          "$oid": "66c217cd4293b6fbac0507ce"
+        }
+      },
+      {
+        "_id": {
+          "$oid": "673224faafb2f5e5d22928fa"
+        },
+        "subscribedDateTime": {
+          "$date": {
+            "$numberLong": "1731339514009"
+          }
+        },
+        "goalId": {
+          "$oid": "66c214624293b6fbac0507c1"
+        }
+      }
+    ]
+  }
+]
+> result (JavaScript): 
+EJSON.parse('[{"_id":{"$oid":"67259c6dbd40eddd733951aa"},"firstName":"don","lastName":"don","username":"TESTUSER_REBIRTHED","email":"testuser@gmail.com","password":"$2b$12$euHXVRtP.wo15bW2T4v9ZO0e0AJdGpSr46C57bUNakwuv6b7pGw9a","goals":{"_id":{"$oid":"67380779a3ebca4924653099"},"frequencyCount":{"$numberInt":"1"},"frequencyPeriod":"per day","name":"notification test","goalId":{"$oid":"66c20c2b4293b6fbac0507b4"},"inactive":false,"streak":{"$numberInt":"0"},"timesPostedCurrentPeriod":{"$numberInt":"1"},"endDate":{"$date":{"$numberLong":"1763308800000"}},"startDate":{"$date":{"$numberLong":"1731725147021"}},"startOfCurrentPeriod":{"$date":{"$numberLong":"1731725176222"}},"endOfCurrentPeriod":{"$date":{"$numberLong":"1731772756222"}},"goalName":"Meditation","milestoneReached":{"$numberInt":"0"},"totalDiff":{"$numberLong":"31583652979"},"currentDiff":{"$numberLong":"31540190417"},"percentage":{"$numberDouble":"0.13761094078920602"}},"subscribedCommunities":[{"_id":{"$oid":"6734be96841ef002ce57e2d6"},"subscribedDateTime":{"$date":{"$numberLong":"1731509910450"}},"goalId":{"$oid":"66c20bd84293b6fbac0507af"}},{"_id":{"$oid":"67361606cd9d5417000cd5ed"},"subscribedDateTime":{"$date":{"$numberLong":"1731597830590"}},"goalId":{"$oid":"66c214624293b6fbac0507c1"}},{"_id":{"$oid":"673829ff0bc547565cc4133c"},"subscribedDateTime":{"$date":{"$numberLong":"1731734015579"}},"goalId":{"$oid":"66c20c2b4293b6fbac0507b4"},"name":"Meditation"}],"subscribedCommunity":[{"_id":{"$oid":"67322392afb2f5e5d22928d0"},"subscribedDateTime":{"$date":{"$numberLong":"1731339154880"}},"goalId":{"$oid":"66c217cd4293b6fbac0507ce"}},{"_id":{"$oid":"6732247dafb2f5e5d22928de"},"subscribedDateTime":{"$date":{"$numberLong":"1731339389392"}},"goalId":{"$oid":"66c20bfc4293b6fbac0507b2"}},{"_id":{"$oid":"673224b1afb2f5e5d22928e8"},"subscribedDateTime":{"$date":{"$numberLong":"1731339441413"}},"goalId":{"$oid":"66c20bfc4293b6fbac0507b2"}},{"_id":{"$oid":"673224bcafb2f5e5d22928f2"},"subscribedDateTime":{"$date":{"$numberLong":"1731339452822"}},"goalId":{"$oid":"66c217cd4293b6fbac0507ce"}},{"_id":{"$oid":"673224faafb2f5e5d22928fa"},"subscribedDateTime":{"$date":{"$numberLong":"1731339514009"}},"goalId":{"$oid":"66c214624293b6fbac0507c1"}}]}]')

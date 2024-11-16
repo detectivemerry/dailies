@@ -6,7 +6,7 @@ import { ObjectId } from "mongodb";
 
 import { authOptions } from "../auth/[...nextauth]/auth";
 import ApiMessage from "@/app/lib/message/ApiMessage";
-import NotificationConfig from "@/app/lib/notificationConfig/notificationConfig";
+import NotificationConfig from "@/app/lib/notification/notificationConfig";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {

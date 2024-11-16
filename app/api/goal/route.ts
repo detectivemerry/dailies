@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import connectDB from "@/app/lib/mongodb";
 import ApiMessage from "@/app/lib/message/ApiMessage";
-import NotificationConfig from "@/app/lib/notificationConfig/notificationConfig";
+import NotificationConfig from "@/app/lib/notification/notificationConfig";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {
@@ -24,6 +24,7 @@ export async function POST(req: Request, res: NextApiResponse) {
       endOfCurrentPeriod,
       inactive,
       goalName,
+      milestoneReached,
     } = await req.json();
 
     const goalIdObject = new ObjectId(String(goalId));
@@ -67,6 +68,7 @@ export async function POST(req: Request, res: NextApiResponse) {
             startOfCurrentPeriod: startOfCurrentPeriodObject,
             endOfCurrentPeriod: endOfCurrentPeriodObject,
             goalName: goalName,
+            milestoneReached : milestoneReached,
           },
         },
       }

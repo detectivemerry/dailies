@@ -18,6 +18,9 @@ const computePieChartData = (userGoal: UserGoal): PieChartData => {
 
   const totalDiff = Math.abs(startDate.diff(endDate, "days"));
   const currentDiff = Math.abs(dayjs().diff(endDate, "days"));
+  console.log("-----------")
+  console.log(totalDiff)
+  console.log(currentDiff)
 
   if (startDate.isAfter(dayjs())) {
     return {

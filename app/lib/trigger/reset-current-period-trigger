@@ -16,41 +16,76 @@ exports = async function() {
   try {
     // const doc = await collection.findOne({ name: "mongodb" });
     const today = new Date();
+    const DEFAULT_DATE = new Date("1970-01-01T00:00:00.000Z");
     console.log(typeof today)
     const filter = { goals : { $elemMatch : { inactive : false }}}
 
+    // SEND MILESTONE NOTIFICATION ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // celeberate 25% done/50% done/100% done 
+        // endDate - startDate = total diff
+        // endDate - date.now = current diff
+        // result = total - current / total * 100
+        // if result > milestone_status THEN send notification and update milestone_status
+    let milestone25 = []
+    let milestone50 = []
+    let milestone75 = []
+    let milestone100 = []
+    
+    const getMilestoners = await userCollection.aggregate([
+      {$unwind : "$goals"},
+      {$match : {"goals.inactive" : {$ne : true}}},
+      {$match : {"goals.milestoneReached": {$lt : 100}}},
+      {$match : {"goals.endDate": {$ne : DEFAULT_DATE}}},
+      {$match : {"goals.startDate": {$lte : today}}},
+      {
+        $addFields : {
+          "goals.totalDiff" : { $subtract : [ "$goals.endDate", "$goals.startDate"]},
+          "goals.currentDiff" : { $subtract : ["$goals.endDate", today]}
+        }
+      },
+      { $addFields : {
+        "goals.percentage" : {
+          $multiply : [ {$divide : [{ $subtract : ["$goals.totalDiff", "$goals.currentDiff"]}, "$goals.totalDiff"]}, 100]
+        }
+      }}
+    ]).toArray()
+
+    return getMilestoners;
+    
+    
+    
+    
     // SEND GOAL ADJUSTMENT NOTFICIATION ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    // get goals that will be resetting streak
-    const getGoalsEndingStreak = await userCollection.aggregate([
-      { $unwind : "$goals"},
-      // {$match : {"goals.goalName" : "Hobbies"}},
-      {$match : { $and : [ { "goals.endOfCurrentPeriod" : {$lt : today}}, {"goals.inactive" : false },
-                          { $expr : { $lt : ["$goals.timesPostedCurrentPeriod", "$goals.frequencyCount"]}},
-                         ]}}
-    ]).toArray()
+    // // get goals that will be resetting streak
+    // const getGoalsEndingStreak = await userCollection.aggregate([
+    //   { $unwind : "$goals"},
+    //   {$match : { $and : [ { "goals.endOfCurrentPeriod" : {$lt : today}}, {"goals.inactive" : false },
+    //                       { $expr : { $lt : ["$goals.timesPostedCurrentPeriod", "$goals.frequencyCount"]}},
+    //                      ]}}
+    // ]).toArray()
     
-    // for each goal reset, send a goal adjustment notification
-    let notificationDocs = []
-    getGoalsEndingStreak.forEach((userDoc) => {
-      notificationDocs.push({
-          type : "GOAL_ADJUSTMENT",
-          icon : "GOAL_ADJUSTMENT",
-          text : `Try lowering "*" goal's frequency - it might help you stay consistent and avoid feeling overwhelmed!`.replace( /\*/g, userDoc.goals.name),
-          buttonText : "Adjust",
-          path : `/edit-goal/${userDoc.goals.goalId}`,
-          notifiedDateTime : today.toISOString(),
-          seen : false,
-          userId : userDoc._id,
-          username : userDoc.username,
-      })
-    })
-
-    // notificationDocs.forEach((doc) => {
-    //   console.log(notificationDocs)
+    // // for each goal reset, send a goal adjustment notification
+    // let notificationDocs = []
+    // getGoalsEndingStreak.forEach((userDoc) => {
+    //   notificationDocs.push({
+    //       type : "GOAL_ADJUSTMENT",
+    //       icon : "GOAL_ADJUSTMENT",
+    //       text : `Try lowering "*" goal's frequency - it might help you stay consistent and avoid feeling overwhelmed!`.replace( /\*/g, userDoc.goals.name),
+    //       buttonText : "Adjust",
+    //       path : `/edit-goal/${userDoc.goals.goalId}`,
+    //       notifiedDateTime : today.toISOString(),
+    //       seen : false,
+    //       userId : userDoc._id,
+    //       username : userDoc.username,
+    //   })
     // })
 
-    const addNotifications = await notificationCollection.insertMany(notificationDocs);
+    // // notificationDocs.forEach((doc) => {
+    // //   console.log(notificationDocs)
+    // // })
+
+    // const addNotifications = await notificationCollection.insertMany(notificationDocs);
   
     // RESET USER GOAL'S STREAK AND UPDATE CURRENT PERIOD ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     

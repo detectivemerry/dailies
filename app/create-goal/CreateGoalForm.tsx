@@ -36,6 +36,7 @@ export type CreateGoalInputs = {
   timesPostedCurrentPeriod: number;
   startOfCurrentPeriod: string;
   endOfCurrentPeriod: string;
+  milestoneReached : number;
 };
 
 interface CreateGoalProps {
@@ -101,6 +102,7 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
     data.inactive = false;
     data.streak = 0;
     data.timesPostedCurrentPeriod = 0;
+    data.milestoneReached = 0;
 
     if (data.frequencyPeriod === "per day") {
       data.startOfCurrentPeriod = dayjs().toISOString();
