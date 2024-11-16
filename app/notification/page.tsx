@@ -18,20 +18,9 @@ export default async function page() {
   console.log(notificationResponse.status);
 
   const { data: notificationData } = await notificationResponse.json();
-  console.log(notificationData);
-
-  // const notitifcations : Array<Notification> = [{
-  //   type : NotificationTypes.CommunitySubscription,
-  //   icon : "COMMUNITY_SUBSCRIPTION",
-  //   text : "Successfully subscribed to Running. Create a Running goal today!",
-  //   buttonText : "View",
-  //   path : `/community/running`,
-  //   _id : new ObjectId(),
-  //   notifiedDateTime : new Date().toISOString(),
-  //   seen : false,
-  //   userId : new ObjectId("507f1f77bcf86cd799439011"),
-  //   username : "",
-  // }]
+  
+  if(Array.isArray(notificationData))
+    notificationData.reverse()
 
   return (
     <div>

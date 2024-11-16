@@ -6,6 +6,7 @@ import { ObjectId } from "mongodb";
 
 import { authOptions } from "../auth/[...nextauth]/auth";
 import ApiMessage from "@/app/lib/message/ApiMessage";
+import NotificationConfig from "@/app/lib/notificationConfig/notificationConfig";
 
 export async function POST(req: Request, res: NextApiResponse) {
   try {
@@ -29,7 +30,6 @@ export async function POST(req: Request, res: NextApiResponse) {
       .find({ email: user.email })
       .next();
 
-
     const subscribedCommunities = userDoc?.subscribedCommunities.filter(
       (community) => String(community.goalId) === String(goalId)
     );
@@ -46,17 +46,13 @@ export async function POST(req: Request, res: NextApiResponse) {
               _id: new ObjectId(),
               subscribedDateTime: new Date(),
               goalId: goalId,
-              name : goalName
+              name: goalName,
             },
           },
         },
         { upsert: true }
       );
 
-      // console.log("add community");
-      // console.log(addCommunity);
-
-      // increment no_of_members
       const updateNoOfMembersResult = await db
         .collection("GoalTypes")
         .updateOne(
@@ -75,7 +71,36 @@ export async function POST(req: Request, res: NextApiResponse) {
         );
       }
 
-      return NextResponse.json({ status: 200 });
+      // send community subscribe notification to user
+      const notification = await db.collection("Notifications").insertOne({
+        _id: new ObjectId(),
+        type: NotificationConfig.CommunitySubscription.type,
+        icon: NotificationConfig.CommunitySubscription.icon,
+        text: NotificationConfig.CommunitySubscription.text.replace(
+          /\*/g,
+          goalName
+        ),
+        buttonText: NotificationConfig.CommunitySubscription.buttonText,
+        path: NotificationConfig.CommunitySubscription.path.replace(
+          /\*/g,
+          goalName
+        ),
+        notifiedDateTime: new Date().toISOString(),
+        seen: false,
+        userId: userDoc?._id,
+        username: session.user.username,
+      });
+
+      const notificationSuccess = notification.acknowledged;
+
+      return NextResponse.json(
+        {
+          message: notificationSuccess
+            ? ""
+            : ApiMessage.Error.UnsuccessfulNotficationSent,
+        },
+        { status: 200 }
+      );
     } else {
       return NextResponse.json(
         { message: ApiMessage.Error.UserAlreadySubscribed },
