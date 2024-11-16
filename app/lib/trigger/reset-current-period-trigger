@@ -9,86 +9,114 @@ exports = async function() {
   const serviceName = "DailiesTest";
   const databaseName = "Dailies";
   const collectionName = "Users";
-  const collection = context.services.get(serviceName).db(databaseName).collection(collectionName);
-  
-const frequencyMapping = {
-  "per day": 1,
-  "per week": 7,
-  "per month": 30,  // Approximate month as 30 days; adjust as needed
-  "per year": 365
-};
+  //const collection = context.services.get(serviceName).db(databaseName).collection(collectionName);
+  const userCollection = context.services.get(serviceName).db(databaseName).collection(collectionName);
+  const notificationCollection = context.services.get(serviceName).db(databaseName).collection("Notifications");
   
   try {
     // const doc = await collection.findOne({ name: "mongodb" });
     const today = new Date();
     console.log(typeof today)
-    //const filter = {"goals.$.inactive" : false, "goals.$.endOfCurrentPeriod" : { "$lte" : today }}
     const filter = { goals : { $elemMatch : { inactive : false }}}
-    //const users = collection.find(filter).toArray();""
-    
-    const updates = await collection.updateMany(filter, [{
-      $set : {
-        goals : {
-          $map : {
-            input : "$goals",
-            in  : {
-              $cond : {
-                // if end of current period is earlier than today, update streak and current period
-                if : { $and : [{$lt: ["$$this.endOfCurrentPeriod", today]}, {$eq : ["$$this.inactive", false]}] },
-                then : {
-                  $mergeObjects : [
-                    "$$this", {
-                      startOfCurrentPeriod : today, 
-                      endOfCurrentPeriod : {
-                        $switch : {
-                          branches : [
-                            {case : {$eq : ["$$this.frequencyPeriod","per day"]}, then : {
-                              $dateAdd : { 
-                                startDate : "$$this.endOfCurrentPeriod",
-                                unit : "day", amount : 1
-                             }
-                            }},
-                            {case : {$eq : ["$$this.frequencyPeriod","per week"]}, then : {
-                              $dateAdd : {
-                                startDate : "$$this.endOfCurrentPeriod",
-                                unit : "day",
-                                amount : 7
-                              }
-                            }},
-                            {case : {$eq : ["$$this.frequencyPeriod","per month"]}, then : {
-                              $dateAdd : {
-                                startDate : "$$this.endOfCurrentPeriod",
-                                unit : "day",
-                                amount : 30,
-                              }
-                            }},
-                            {case : {$eq : ["$$this.frequencyPeriod","per year"]}, then : {
-                              $dateAdd : {
-                                startDate : "$$this.endOfCurrentPeriod",
-                                unit : "day",
-                                amount : 365
-                              }
-                            }},
-                          ]
-                        }
-                      },
-                      streak : {$cond : {
-                        if : { $gte : ["$$this.timesPostedCurrentPeriod", "$$this.frequencyCount"] },
-                        then : "$$this.streak",
-                        else : 0
-                      }},
-                      timesPostedCurrentPeriod : 0,
-                    }
-                  ]
-                },
-                else : "$$this"
 
-              }
-            }
-          }
-        }
-      }
-    }])                                       
+    // SEND GOAL ADJUSTMENT NOTFICIATION ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    // get goals that will be resetting streak
+    const getGoalsEndingStreak = await userCollection.aggregate([
+      { $unwind : "$goals"},
+      // {$match : {"goals.goalName" : "Hobbies"}},
+      {$match : { $and : [ { "goals.endOfCurrentPeriod" : {$lt : today}}, {"goals.inactive" : false },
+                          { $expr : { $lt : ["$goals.timesPostedCurrentPeriod", "$goals.frequencyCount"]}},
+                         ]}}
+    ]).toArray()
+    
+    // for each goal reset, send a goal adjustment notification
+    let notificationDocs = []
+    getGoalsEndingStreak.forEach((userDoc) => {
+      notificationDocs.push({
+          type : "GOAL_ADJUSTMENT",
+          icon : "GOAL_ADJUSTMENT",
+          text : `Try lowering "*" goal's frequency - it might help you stay consistent and avoid feeling overwhelmed!`.replace( /\*/g, userDoc.goals.name),
+          buttonText : "Adjust",
+          path : `/edit-goal/${userDoc.goals.goalId}`,
+          notifiedDateTime : today.toISOString(),
+          seen : false,
+          userId : userDoc._id,
+          username : userDoc.username,
+      })
+    })
+
+    // notificationDocs.forEach((doc) => {
+    //   console.log(notificationDocs)
+    // })
+
+    const addNotifications = await notificationCollection.insertMany(notificationDocs);
+  
+    // RESET USER GOAL'S STREAK AND UPDATE CURRENT PERIOD ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    // const updates = await userCollection.updateMany(filter, [{
+    //   $set : {
+    //     goals : {
+    //       $map : {
+    //         input : "$goals",
+    //         in  : {
+    //           $cond : {
+    //             // if end of current period is earlier than today, update streak and current period
+    //             if : { $and : [{$lt: ["$$this.endOfCurrentPeriod", today]}, {$eq : ["$$this.inactive", false]}] },
+    //             then : {
+    //               $mergeObjects : [
+    //                 "$$this", {
+    //                   startOfCurrentPeriod : today, 
+    //                   endOfCurrentPeriod : {
+    //                     $switch : {
+    //                       branches : [
+    //                         {case : {$eq : ["$$this.frequencyPeriod","per day"]}, then : {
+    //                           $dateAdd : { 
+    //                             startDate : "$$this.endOfCurrentPeriod",
+    //                             unit : "day", amount : 1
+    //                          }
+    //                         }},
+    //                         {case : {$eq : ["$$this.frequencyPeriod","per week"]}, then : {
+    //                           $dateAdd : {
+    //                             startDate : "$$this.endOfCurrentPeriod",
+    //                             unit : "day",
+    //                             amount : 7
+    //                           }
+    //                         }},
+    //                         {case : {$eq : ["$$this.frequencyPeriod","per month"]}, then : {
+    //                           $dateAdd : {
+    //                             startDate : "$$this.endOfCurrentPeriod",
+    //                             unit : "day",
+    //                             amount : 30,
+    //                           }
+    //                         }},
+    //                         {case : {$eq : ["$$this.frequencyPeriod","per year"]}, then : {
+    //                           $dateAdd : {
+    //                             startDate : "$$this.endOfCurrentPeriod",
+    //                             unit : "day",
+    //                             amount : 365
+    //                           }
+    //                         }},
+    //                       ]
+    //                     }
+    //                   },
+    //                   streak : {$cond : {
+    //                     if : { $gte : ["$$this.timesPostedCurrentPeriod", "$$this.frequencyCount"] },
+    //                     then : "$$this.streak",
+    //                     else : 0
+    //                   }},
+    //                   timesPostedCurrentPeriod : 0,
+    //                 }
+    //               ]
+    //             },
+    //             else : "$$this"
+
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }])                                       
    
   } catch (err) {
     console.log("error performing mongodb findOne: ", err.message);

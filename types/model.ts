@@ -76,15 +76,8 @@ export type Post = {
     userGoalName : String;
 }
 
-export enum NotificationTypes {
-    GoalAdjustment,
-    CommunityActivity,
-    Milestone,
-    CommunitySubscription,
-}
-
 export type Notification = {
-    type : NotificationTypes,
+    type : string,
     icon : string,
     text : string,
     buttonText : string,

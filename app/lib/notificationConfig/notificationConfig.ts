@@ -1,40 +1,38 @@
-import { NotificationTypes } from "@/types/model";
-
 const NotificationConfig = {
   AutoCommunitySubscription: {
-    type: NotificationTypes.CommunitySubscription,
-    icon: "GOAL_ADJUSTMENT",
+    type: "AUTO_COMMUNITY_SUBSCRIPTION",
+    icon: "COMMUNITY_SUBSCRIPTION",
     text: "Successfully subscribed to *. Create a * goal today!",
     buttonText: "Create",
     path: "/community/*",
   },
   CommunitySubscription: {
-    type: NotificationTypes.CommunitySubscription,
-    icon: "GOAL_ADJUSTMENT",
+    type: "COMMUNITY_SUBSCRIPTION",
+    icon: "COMMUNITY_SUBSCRIPTION",
     text: "Successfully subscribed to *. Check out the community!",
     buttonText: "View",
     path: "/community/*",
   },
   CommunityActivity: {
-    type: NotificationTypes.CommunityActivity,
-    icon: "GOAL_ADJUSTMENT",
-    text: "Successfully subscribed to *. Check out the community!",
-    buttonText: "View",
-    path: "/community/*",
+    type: "COMMUNITY_ACTIVITY",
+    icon: "COMMUNITY_ACTIVITY",
+    text: "* users have posted this week in **! Add yours today!",
+    buttonText: "POST",
+    path: "/create-post",
   },
   Milestone: {
-    type: NotificationTypes.Milestone,
+    type: "MILESTONE",
     icon: "MILESTONE",
     text: "Congrats on reaching your milestone in *",
     buttonText: "View",
     path: "/profile/*",
   },
   GoalAdjustment: {
-    type: NotificationTypes.GoalAdjustment,
+    type: "GOAL_ADJUSTMENT",
     icon: "GOAL_ADJUSTMENT",
     text: "Try lowering * goal's frequency - it might help you stay consistent and avoid feeling overwhelmed!",
-    buttonText: "View",
-    path: "/profile/*",
+    buttonText: "Adjust",
+    path: "/edit-goal/*",
   },
 };
 
