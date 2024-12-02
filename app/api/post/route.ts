@@ -83,28 +83,6 @@ export async function POST(req: Request, res: NextApiResponse) {
         { status: 500 }
       );
 
-    //const result = response
-    //const goalIdObject = new ObjectId(String(data.goalId));
-    //const postId = new ObjectId();
-    //data._id = postId;
-    //const filter = {email : session?.user.email, 'goals.goalId' : goalIdObject}
-    //const options = { upsert : true }
-
-    //const update = {
-    //$push : {
-    //'goals.$.posts' : data
-    //}
-    //}
-    //const result = await db.collection("Users").updateOne(filter, update, options);
-
-    //const {matchedCount, modifiedCount} = result;
-
-    //if(matchedCount === 0){
-    //return NextResponse.json({message : ApiMessage.Error.NoUserFound}, {status : 500})
-    //}
-    //if(modifiedCount === 0){
-    //return NextResponse.json({message : ApiMessage.Error.General}, {status : 500})
-    //}
   } catch (error) {
     console.log(error);
     return NextResponse.json(
@@ -185,6 +163,33 @@ export async function PATCH(req: Request, res: NextApiResponse) {
 
     return NextResponse.json({ status: 200 });
   } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { message: ApiMessage.Error.General },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req : Request, res : NextApiResponse){
+  try{
+    const client = await connectDB();
+    const db = client.connection.useDb(`Dailies`);
+    let data = await req.json();
+    const postIdObject = new ObjectId(String(data.postId))
+    const deletePost = await db.collection("Posts").deleteOne({_id : postIdObject})
+    console.log("deletePost is this")
+    console.log(deletePost)
+    if(deletePost.deletedCount != 1){
+      return NextResponse.json({status : 500, message : ApiMessage.Error.UnsuccessfulPostDelete})
+    }
+    else{
+      return NextResponse.json({
+        status : 200
+      })
+    }
+  }
+  catch(error){
     console.log(error);
     return NextResponse.json(
       { message: ApiMessage.Error.General },

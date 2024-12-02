@@ -9,21 +9,29 @@ import UserGoalCard from "./UserGoalCard";
 import ProfileGoalHeader from "./ProfileGoalHeader";
 import NoGoals from "./NoGoals";
 import NoPosts from "./NoPosts";
+import { Alert, AlertColor } from "@mui/material";
 
 interface ProfileContentProps {
   userGoals: UserGoal[];
   posts: Post[];
+}
+
+type Alert = {
+  message : string,
+  type : AlertColor,
 }
 export default function ProfileContent({
   userGoals,
   posts,
 }: ProfileContentProps) {
   const [mode, setMode] = useState<string>("Goals");
+  const [alert, setAlert] = useState<Alert>({ message : "", type : "success"});
 
   return (
     <div className={`flex flex-col mb-20 h-full`}>
       <ProfileModeMenu mode={mode} setMode={setMode} />
       {mode === "Goals" && <ProfileGoalHeader />}
+      {alert.message && <Alert severity={alert.type} variant = "outlined"/>}
 
       {userGoals && mode === "Goals" && (
         <div className = "flex flex-col gap-3">
@@ -40,7 +48,7 @@ export default function ProfileContent({
       {posts && mode === "Posts" && (
         <div>
           {posts.map((post) => (
-            <PostCard post={post} key={String(post._id)} />
+            <PostCard post={post} key={String(post._id)} setAlert = {setAlert}/>
           ))}
         </div>
       )}

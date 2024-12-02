@@ -1,6 +1,6 @@
 "use client";
 import { Post } from "@/types/model";
-import React, { useState, useEffect, MouseEvent } from "react";
+import React, { useState, Dispatch, SetStateAction } from "react";
 import {
   AccessTime,
   CheckCircle,
@@ -10,7 +10,7 @@ import {
   Replay,
   Settings,
 } from "@mui/icons-material";
-import { Menu, MenuItem, MenuList } from "@mui/material";
+import { Menu, MenuItem, AlertColor } from "@mui/material";
 import { useSession } from "next-auth/react";
 import dayjs, { Dayjs } from "dayjs";
 import { useRouter } from "next/navigation";
@@ -22,9 +22,15 @@ import computeTimeSincePosted from "@/app/lib/display/computeTimeSincePosted";
 
 interface PostCardProps {
   post: Post;
+  setAlert : Dispatch<SetStateAction<Alert>>;
 }
 
-export default function PostCard({ post }: PostCardProps) {
+type Alert = {
+  message : string,
+  type : AlertColor,
+}
+
+export default function PostCard({ post, setAlert }: PostCardProps) {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [openSettings, setOpenSettings] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -52,8 +58,28 @@ export default function PostCard({ post }: PostCardProps) {
     startDate: new Date(post.goalStartDate),
   });
 
-  const deletePost = () => {
-    console.log("DELETING!");
+  const deletePost = async () => {
+    try{
+      const response = await fetch("/api/post", {
+        method : "DELETE",
+        headers : {
+          "Content-Type": "application/json",
+        },
+        body : JSON.stringify({postId : post._id })
+      })
+      setDeleteSelected(false)
+
+      if(response.ok){
+        setAlert({ message : "Post deleted", type : "success"})
+      }
+      else{
+        setAlert({ message : "Failed to delete post", type : "error"})
+      }
+    }
+    catch(error){
+      console.error(error)
+        setAlert({ message : "Failed to delete post", type : "error"})
+    }
   };
 
   return (
@@ -66,6 +92,7 @@ export default function PostCard({ post }: PostCardProps) {
         secondaryButtonText="Cancel"
         mainDialogAction={deletePost}
         secondaryDialogAction={() => {
+
           setDeleteSelected(false);
         }}
       />
