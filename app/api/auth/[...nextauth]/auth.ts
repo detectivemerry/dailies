@@ -39,8 +39,12 @@ export const authOptions: NextAuthOptions = {
         );
         const loginResult = await loginResponse.json();
         if (loginResponse.ok) {
-          // await sendMilestoneNotifications();
+
+          if(credentials?.email)
+            await sendMilestoneNotifications(credentials.email);
+
           const { user } = loginResult;
+          
           return user;
         } else {
           return null;

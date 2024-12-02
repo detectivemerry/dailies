@@ -5,15 +5,17 @@ import { getServerSession } from "next-auth";
 import { headers } from 'next/headers'
 import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import ApiMessage from "@/app/lib/message/ApiMessage";
+
 // moved to goals/user/ api
 export async function GET(req: Request, res: NextApiResponse) {
   try {
     const headerList = headers();
     const username = headerList.get('username')
+    const email = headerList.get('email')
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
 
-    const filter = { username: username };
+    const filter = username ? { username: username } : { email : email };
     const userDoc = await db
       .collection("Users")
       .findOne(filter, { password : 0, _id : 0, email : 0 });

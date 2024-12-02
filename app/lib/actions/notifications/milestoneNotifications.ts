@@ -1,7 +1,5 @@
 "use server";
-import { getServerSession } from "next-auth";
 import dayjs from "dayjs";
-import { authOptions } from "@/app/api/auth/[...nextauth]/auth";
 import { UserGoal } from "@/types/model";
 import {
   computePieChartData,
@@ -22,16 +20,19 @@ type UserNotification = {
   username: string;
 };
 
-const sendMilestoneNotifications = async () => {
+const sendMilestoneNotifications = async (userEmail : string) => {
+
   // get user goals
-  const session = await getServerSession(authOptions);
   const userResponse = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/user`, {
     method: "GET",
-    headers: { username: session?.user.username },
+    headers: { email: userEmail },
     cache: "no-store",
   });
 
   const { data: userData } = await userResponse.json();
+
+  if(!userData.goals)
+    return { error: true, message: "failed to retrieve user goals" };
 
   // iterate through goals to detect any milestones hit
   let newNotifications: UserNotification[] = [];
@@ -67,6 +68,8 @@ const sendMilestoneNotifications = async () => {
         goalsMilestone25.push(userGoal._id);
         newMilestone = 25;
       }
+      console.log("new milestone")
+      console.log(newMilestone)
 
       if (newMilestone > 0)
         newNotifications.push({
@@ -79,7 +82,7 @@ const sendMilestoneNotifications = async () => {
           buttonText: NotificationConfig.Milestone.buttonText,
           path: NotificationConfig.Milestone.path.replace(
             "*",
-            String(session?.user.username)
+            String(userData.username)
           ),
           notifiedDateTime: new Date().toISOString(),
           seen: false,
@@ -89,6 +92,7 @@ const sendMilestoneNotifications = async () => {
     });
   }
 ;
+
   if (newNotifications.length === 0)
     return { error: false, message: "no new milestones update" };
 
