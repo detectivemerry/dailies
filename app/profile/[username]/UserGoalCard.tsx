@@ -6,6 +6,7 @@ import {
   AccessTime,
   CheckCircle,
   Edit,
+  HourglassEmptyOutlined,
   Replay,
   Whatshot,
 } from "@mui/icons-material";
@@ -32,10 +33,11 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
 
   const { data: pieChartData, percentCompleted } =
     computePieChartData(userGoal);
-  
 
-  const displayDate = computeTimeLeftForGoal(
-    {endDate : new Date(String(userGoal.endDate)), startDate : new Date(String(userGoal.startDate))})
+  const displayDate = computeTimeLeftForGoal({
+    endDate: new Date(String(userGoal.endDate)),
+    startDate: new Date(String(userGoal.startDate)),
+  });
 
   useEffect(() => {
     if (clickedEdit) {
@@ -62,22 +64,33 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
         </div>
       </div>
       <div className="flex gap-2 flex-wrap">
-        <div className="bg-lightGray rounded-2xl px-3 py-[2px] bg-secondaryDark text-main" onClick ={() => {
-          router.push(`/community/${userGoal.goalName}`)
-        }}>
+        <div
+          className="bg-lightGray rounded-2xl px-3 py-[2px] bg-secondaryDark text-main"
+          onClick={() => {
+            router.push(`/community/${userGoal.goalName}`);
+          }}
+        >
           {userGoal.goalName}
         </div>
         <div className="bg-lightGray rounded-2xl px-3 py-[2px]">
           {userGoal.frequencyCount} times {userGoal.frequencyPeriod}
         </div>
-        <div className="bg-lightGray rounded-2xl px-3 flex py-[2px]">
+        <div className="bg-lightGray rounded-2xl px-3 flex py-[3px]">
           <div className="pr-[3px]">
-            {displayDate === "finished" ? (
+            {displayDate === "Finished" ? (
               <CheckCircle
                 sx={{
                   color: "#1D5D9B",
                   fontSize: "1rem",
                   marginTop: "-3px",
+                }}
+              />
+            ) : displayDate === "Not started" ? (
+              <HourglassEmptyOutlined
+                sx={{
+                  color: "#1D5D9B",
+                  fontSize: "1rem",
+                  marginTop: "-2px",
                 }}
               />
             ) : userGoal.endDate ? (

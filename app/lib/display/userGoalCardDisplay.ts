@@ -15,14 +15,13 @@ type PieChartData = {
 const computePieChartData = (userGoal: UserGoal): PieChartData => {
   const startDate = dayjs(String(userGoal.startDate));
   const endDate = dayjs(String(userGoal.endDate));
+  const isLifeLongGoal = isDefaultDate(endDate);
 
   const totalDiff = Math.abs(startDate.diff(endDate, "days"));
   const currentDiff = Math.abs(dayjs().diff(endDate, "days"));
-  console.log("-----------")
-  console.log(totalDiff)
-  console.log(currentDiff)
 
-  if (startDate.isAfter(dayjs())) {
+  // goal has not started yet or is a life long goal
+  if (startDate.isAfter(dayjs()) || isLifeLongGoal) {
     return {
       data: [
         { title: "completed", value: 0, color: "#1D5D9B" },
@@ -32,6 +31,18 @@ const computePieChartData = (userGoal: UserGoal): PieChartData => {
     };
   }
 
+  // goal has ended
+  else if(dayjs().isAfter(endDate)){
+    return {
+      data: [
+        { title: "completed", value: 100, color: "#1D5D9B" },
+        { title: "not completed", value: 0, color: "#D3D3D3" },
+      ],
+      percentCompleted: "100 %",
+    };
+  }
+
+  // goal is still ongoing
   return {
     data: [
       { title: "completed", value: totalDiff - currentDiff, color: "#1D5D9B" },
@@ -41,44 +52,31 @@ const computePieChartData = (userGoal: UserGoal): PieChartData => {
       String(Math.floor(((totalDiff - currentDiff) / totalDiff) * 100)) + "%",
   };
 
-  //return [
-  //{ title: "completed", value: totalDiff - currentDiff, color: "#1D5D9B" },
-  //{ title: "not completed", value: currentDiff, color: "#D3D3D3" },
-  //];
 };
 
-const computeTimeLeftForGoal = (dateRange : { endDate : Date, startDate : Date}): string => {
-  const endDate = new Date(String(dateRange.endDate));
-  const startDate = new Date(String(dateRange.startDate));
-  const DEFAULT_DATE = new Date("1970-01-01T00:00:00.000Z");
+const computeTimeLeftForGoal = (dateRange: {
+  endDate: Date;
+  startDate: Date;
+}): string => {
+  const endDate = dayjs(dateRange.endDate);
+  const startDate = dayjs(dateRange.startDate);
+  const DEFAULT_DATE = dayjs("1970-01-01T00:00:00.000Z");
+  const today = dayjs();
 
-  const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-  const _MS_PER_MONTH = 1000 * 60 * 60 * 24 * 30;
-  const _MS_PER_YEAR = 1000 * 60 * 60 * 24 * 30 * 12;
+  if (endDate.isSame(DEFAULT_DATE)) return "Lifelong goal";
+  else if(dayjs().isAfter(endDate)) return "Finished";
+  else if(dayjs().isBefore(startDate)) return "Not started";
 
-  if (endDate.getTime() === DEFAULT_DATE.getTime()) return "Lifelong goal";
-
-  const utc1 = Date.UTC(
-    endDate.getFullYear(),
-    endDate.getMonth(),
-    endDate.getDate()
-  );
-  const utc2 = Date.UTC(
-    startDate.getFullYear(),
-    startDate.getMonth(),
-    startDate.getDate()
-  );
-
-  const diffInDays = Math.floor((utc1 - utc2) / _MS_PER_DAY);
-  const diffInMonths = Math.floor((utc1 - utc2) / _MS_PER_MONTH);
-  const diffInYears = Math.floor((utc1 - utc2) / _MS_PER_YEAR);
+  const diffInDays = endDate.diff(today, "day");
+  const diffInMonths = endDate.diff(today, "month");
+  const diffInYears = endDate.diff(today, "year");
 
   if (diffInDays < 0) return `finished`;
-  if(diffInDays === 1) return '1 day left'
+  if (diffInDays === 1) return "1 day left";
   if (diffInDays < 30) return `${diffInDays} days left`;
-  if(diffInMonths === 1) return '1 month left'
+  if (diffInMonths === 1) return "1 month left";
   if (diffInMonths < 12) return `${diffInMonths} months left`;
-  if(diffInYears === 1) return '1 year left'
+  if (diffInYears === 1) return "1 year left";
   return `${diffInYears} years left`;
 };
 

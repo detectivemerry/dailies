@@ -1,6 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Goal } from "@/types/model";
+import sendMilestoneNotifications from "@/app/lib/actions/notifications/milestoneNotifications";
 
 type user = {
   username: string;
@@ -38,6 +39,7 @@ export const authOptions: NextAuthOptions = {
         );
         const loginResult = await loginResponse.json();
         if (loginResponse.ok) {
+          // await sendMilestoneNotifications();
           const { user } = loginResult;
           return user;
         } else {

@@ -52,6 +52,7 @@ export type UserGoal = {
     timesPostedCurrentPeriod : number;
     startOfCurrentPeriod : Date;
     endOfCurrentPeriod : Date;
+    milestoneReached : number;
 }
 
 export type Post = {

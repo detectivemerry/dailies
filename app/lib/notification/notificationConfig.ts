@@ -23,7 +23,7 @@ const NotificationConfig = {
   Milestone: {
     type: "MILESTONE",
     icon: "MILESTONE",
-    text: "Congrats on reaching your milestone in *",
+    text: "Congrats on reaching your milestone in \"*\"!",
     buttonText: "View",
     path: "/profile/*",
   },
