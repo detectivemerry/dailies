@@ -10,7 +10,9 @@ export default async function Home() {
     `${process.env.NEXT_PUBLIC_URL}/api/user`,
     {
       method: "GET",
-      headers: { username: session?.user.username },
+      headers: { 
+        username: typeof session?.user?.username === "string" ? session.user.username : "",
+      },
       cache: "no-store",
     }
   );

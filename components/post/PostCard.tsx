@@ -22,7 +22,7 @@ import computeTimeSincePosted from "@/app/lib/display/computeTimeSincePosted";
 
 interface PostCardProps {
   post: Post;
-  setAlert : Dispatch<SetStateAction<Alert>>;
+  setAlert? : Dispatch<SetStateAction<Alert>> | Function;
 }
 
 type Alert = {
@@ -30,7 +30,7 @@ type Alert = {
   type : AlertColor,
 }
 
-export default function PostCard({ post, setAlert }: PostCardProps) {
+export default function PostCard({ post, setAlert = ()=>{} }: PostCardProps) {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [openSettings, setOpenSettings] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
