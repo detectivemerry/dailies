@@ -98,7 +98,7 @@ export default function PostForm({userGoals} : PostFormProps) {
           message: Message.Error.UnsuccessfulPostCreation,
         });
       } else {
-        await revalidatePage("/profile/[username]")
+        revalidatePage("/profile/[username]")
         setPostCreated(true);
       }
     } catch (error) {

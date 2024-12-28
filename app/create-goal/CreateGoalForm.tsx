@@ -69,8 +69,11 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
     setValue,
   } = useForm<CreateGoalInputs>();
 
-  const onSubmit: SubmitHandler<CreateGoalInputs> = async (data) => {
+  const onSubmit: SubmitHandler<CreateGoalInputs> = async (data, event) => {
     setAlertMessage({ error: false, message: "" });
+    
+    event?.preventDefault();
+
     if (goal != null) {
       data.goalId = goal._id;
       data.goalName = goal.name;

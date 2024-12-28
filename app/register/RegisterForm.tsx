@@ -48,31 +48,31 @@ export default function RegisterForm() {
       });
 
       if (!response.ok) {
-        setPending(false)
         const result = await response.json();
         setAlertMessage({ error: true, message: result.message });
-        return
+        return;
       }
 
       // Logins user
       const loginResult = await signIn("credentials", {
         email: data.email,
         password: data.password,
-        redirect : false
+        redirect: false,
       });
 
       if (!loginResult?.ok) {
-        setPending(false);
         setAlertMessage({
           error: true,
           message: Message.Error.InvalidCredentials,
         });
+        return;
       }
       // Successful register and login
       router.push(`/create-goal?fromRegister=true`);
-
     } catch (error) {
       setAlertMessage({ error: true, message: Message.Error.General });
+    } finally {
+      setPending(false);
     }
   };
 
@@ -208,7 +208,7 @@ export default function RegisterForm() {
         </div>
 
         <div className="mb-20 fixed bottom-0 flex justify-center h-min-screen">
-          <PrimaryButton text="Continue" pending = {pending}/>
+          <PrimaryButton text="Continue" pending={pending} />
         </div>
       </form>
     </>

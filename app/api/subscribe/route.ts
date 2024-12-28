@@ -74,17 +74,11 @@ export async function POST(req: Request, res: NextApiResponse) {
       // send community subscribe notification to user
       const notification = await db.collection("Notifications").insertOne({
         _id: new ObjectId(),
-        type: NotificationConfig.CommunitySubscription.type,
-        icon: NotificationConfig.CommunitySubscription.icon,
-        text: NotificationConfig.CommunitySubscription.text.replace(
-          /\*/g,
-          goalName
-        ),
-        buttonText: NotificationConfig.CommunitySubscription.buttonText,
-        path: NotificationConfig.CommunitySubscription.path.replace(
-          /\*/g,
-          goalName
-        ),
+        type: NotificationConfig.AutoCommunitySubscription.type,
+        icon: NotificationConfig.AutoCommunitySubscription.icon,
+        text: NotificationConfig.AutoCommunitySubscription.text.replace(/\*/g, goalName),
+        buttonText: NotificationConfig.AutoCommunitySubscription.buttonText,
+        path: NotificationConfig.AutoCommunitySubscription.path.replace(/\*/g, goalName),
         notifiedDateTime: new Date().toISOString(),
         seen: false,
         userId: userDoc?._id,
