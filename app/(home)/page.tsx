@@ -40,7 +40,7 @@ export default async function Home() {
   return (
     <>
       <div className="flex flex-col w-screen lg:w-[24.5rem]">
-        <HomeContent subscribedPosts={subscribedPosts} />
+        <HomeContent subscribedPosts={subscribedPosts} email = {session?.user.email} />
       </div>
     </>
   );

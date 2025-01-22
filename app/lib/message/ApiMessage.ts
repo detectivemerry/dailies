@@ -17,6 +17,7 @@ const ApiMessage = {
     UnsuccessfulSubscription : "Something went wrong with subscription to community",
     UnsuccessfulNotficationSent : "Something went wrong with sending notification",
     UnsuccessfulPostDelete : "Failed to delete post. Please try again later.",
+    MissingNotificationList : "Missing notification list and no new notifications were added.",
   } 
 };
 

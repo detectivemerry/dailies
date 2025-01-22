@@ -15,8 +15,6 @@ export default async function page() {
       cache: "no-store",
     }
   );
-  console.log(notificationResponse.status);
-
   const { data: notificationData } = await notificationResponse.json();
   
   if(Array.isArray(notificationData))

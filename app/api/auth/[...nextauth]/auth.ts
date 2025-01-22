@@ -2,6 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Goal } from "@/types/model";
 import sendMilestoneNotifications from "@/app/lib/actions/notifications/milestoneNotifications";
+import sendCommunityActivityNotifications from "@/app/lib/actions/notifications/communityActivityNotifications";
 
 type user = {
   username: string;
@@ -42,6 +43,7 @@ export const authOptions: NextAuthOptions = {
 
           if(credentials?.email){
             sendMilestoneNotifications(credentials.email);
+            // sendCommunityActivityNotifications(credentials.email);
           }
 
           const { user } = loginResult;

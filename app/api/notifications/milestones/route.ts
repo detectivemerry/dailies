@@ -100,9 +100,6 @@ export async function PATCH(req: Request, res: NextApiResponse) {
         results[3].goalsMilestone25Success = false;
       }
     }
-    console.log("resutls")
-    console.log(results);
-    console.log(data.newNotifications);
 
     let message = "";
     let error = false;
