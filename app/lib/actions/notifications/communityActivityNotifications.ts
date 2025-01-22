@@ -79,7 +79,19 @@ const sendCommunityActivityNotifications = async (userEmail: string) => {
   // create new notification with above information
   if (notifyList.length == 0) return;
 
+  // remove duplicated notifications for same communities
+  // remove notifications for communities with 0 posts
+  const seen = new Set();
+  notifyList = notifyList.filter((notification : NotificationGoal) => {
+    if(seen.has(notification.goalName) || notification.numberOfPosts == 0){
+      return false
+    }
+    seen.add(notification.goalName)
+    return true
+  })
+
   notifyList = notifyList.map((notification: NotificationGoal) => {
+
     let text = NotificationConfig.CommunityActivity.text.replace(
       "*",
       String(notification.numberOfPosts)
@@ -110,7 +122,6 @@ const sendCommunityActivityNotifications = async (userEmail: string) => {
     }
   );
 
-  console.log(sendNotificationResponse.status);
 };
 
 export default sendCommunityActivityNotifications;

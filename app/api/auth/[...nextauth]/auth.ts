@@ -42,8 +42,9 @@ export const authOptions: NextAuthOptions = {
         if (loginResponse.ok) {
 
           if(credentials?.email){
-            sendMilestoneNotifications(credentials.email);
-            // sendCommunityActivityNotifications(credentials.email);
+            // milestone notifications are disabled until further rework
+            // sendMilestoneNotifications(credentials.email);
+            sendCommunityActivityNotifications(credentials.email);
           }
 
           const { user } = loginResult;

@@ -25,8 +25,6 @@ export async function POST(req: Request, res: NextApiResponse) {
       .collection("Notifications")
       .insertMany(notifylist);
 
-    console.log(sendNotification)
-
     if (!sendNotification.acknowledged) {
       return NextResponse.json(
         { message: ApiMessage.Error.General },
