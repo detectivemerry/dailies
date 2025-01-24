@@ -12,20 +12,20 @@ export default function ProfileModeMenu({
     <div className="flex">
       <div
         className={`w-2/4 font-bold flex justify-center h-full py-3 text-main ${
-          mode === "Goals" ? "border-b border-main" : "text-mainDisabled"
+          mode === "goals" ? "border-b border-main" : "text-mainDisabled"
         }`}
         onClick={() => {
-          setMode("Goals");
+          setMode("goals");
         }}
       >
         Goals
       </div>
       <div
         className={`w-2/4 font-bold flex justify-center h-full py-3 text-main ${
-          mode === "Posts" ? "border-b border-main" : "text-mainDisabled"
+          mode === "posts" ? "border-b border-main" : "text-mainDisabled"
         }`}
         onClick={() => {
-          setMode("Posts");
+          setMode("posts");
         }}
       >
         Posts

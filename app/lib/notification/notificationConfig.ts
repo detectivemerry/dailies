@@ -18,7 +18,7 @@ const NotificationConfig = {
     icon: "COMMUNITY_ACTIVITY",
     text: "* new posts were added in ** this ***! Add yours today!",
     buttonText: "Post",
-    path: "/create-post",
+    path: "/post",
   },
   Milestone: {
     type: "MILESTONE",

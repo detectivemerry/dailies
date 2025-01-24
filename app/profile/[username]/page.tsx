@@ -7,9 +7,10 @@ interface ProfilePageProps {
   params : {
   username : string
   }
+  searchParams?: { [key: string]: string | undefined }
 }
 
-export default async function page({ params } : ProfilePageProps) {
+export default async function page({ params, searchParams } : ProfilePageProps) {
 
   const userResponse = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/user`, {
     method : "GET",
@@ -33,13 +34,16 @@ export default async function page({ params } : ProfilePageProps) {
   const { data : posts } = await postsResponse.json();
   posts.reverse();
 
+  console.log("search param")
+  console.log(searchParams)
+
   return (
     <div className = "flex flex-col w-screen lg:w-[24.5rem] text-xs">
       <div className = "mb-16">
         <ProfileTitleHeader username = {params.username}/>
       </div>
       <div>
-        <ProfileContent userGoals = {userGoals} posts = {posts} />
+        <ProfileContent userGoals = {userGoals} posts = {posts} type = {searchParams?.type} />
       </div>
     </div>
   )

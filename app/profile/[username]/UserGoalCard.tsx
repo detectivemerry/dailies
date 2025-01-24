@@ -124,14 +124,14 @@ export default function UserGoalCard({ userGoal }: UserGoalCardProps) {
             <span className="text-main">{userGoal.streak} streak</span>
           )}
         </div>
-        {!isDefaultDate(dayjs(String(userGoal.endDate))) && (
+        {/* {!isDefaultDate(dayjs(String(userGoal.endDate))) && (
           <div className="flex gap-2 items-center">
             <div>
               <PieChart data={pieChartData} style={{ height: "25px" }} />
             </div>
             <div>{percentCompleted}</div>
           </div>
-        )}
+        )} */}
       </div>
 
       <div className="flex justify-between items-center">
