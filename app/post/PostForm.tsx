@@ -53,8 +53,13 @@ export default function PostForm({userGoals} : PostFormProps) {
       setPending(true);
       let imageData : FormData = new FormData();
 
-      if(image === null)
+      if(image === null){
+        setAlertMessage({
+          error: true,
+          message: Message.Error.ImageRequired,
+        });
         return
+      }
 
       imageData.append("file", image, "image")
 
@@ -163,7 +168,9 @@ export default function PostForm({userGoals} : PostFormProps) {
                   />
                 </div>
                 <div className="bg-gray-200 rounded-full p-1.5">
-                  <PhotoCamera sx={{ color: "#1D5D9B" }} />
+                  {/* color when photo camera feature is available  */}
+                  {/* <PhotoCamera sx={{ color: "#1D5D9B" }} /> */}
+                  <PhotoCamera sx={{ color: "#A9A9A9" }} />
                 </div>
               </div>
               <div>
