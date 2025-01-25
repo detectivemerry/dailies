@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 import { TextField, Alert, InputAdornment, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material/";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import Message from "@/app/lib/message/Message";
 import PrimaryButton from "@/components/buttons/PrimaryButton";
@@ -207,8 +208,11 @@ export default function RegisterForm() {
           </div>
         </div>
 
-        <div className="mb-20 fixed bottom-0 flex justify-center h-min-screen">
+        <div className="mb-20 fixed bottom-0 flex justify-center h-min-screen flex flex-col items-center gap-2">
           <PrimaryButton text="Continue" pending={pending} />
+          <div className="text-sm">
+            <Link href="/login">Go back to login page</Link>
+          </div>
         </div>
       </form>
     </>
