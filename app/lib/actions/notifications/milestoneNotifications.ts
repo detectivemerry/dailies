@@ -68,8 +68,8 @@ const sendMilestoneNotifications = async (userEmail : string) => {
         goalsMilestone25.push(userGoal._id);
         newMilestone = 25;
       }
-      console.log("new milestone")
-      console.log(newMilestone)
+      // console.log("new milestone")
+      // console.log(newMilestone)
 
       if (newMilestone > 0)
         newNotifications.push({

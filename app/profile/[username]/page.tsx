@@ -34,9 +34,6 @@ export default async function page({ params, searchParams } : ProfilePageProps) 
   const { data : posts } = await postsResponse.json();
   posts.reverse();
 
-  console.log("search param")
-  console.log(searchParams)
-
   return (
     <div className = "flex flex-col w-screen lg:w-[24.5rem] text-xs">
       <div className = "mb-16">

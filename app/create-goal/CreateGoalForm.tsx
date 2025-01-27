@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { BaseSyntheticEvent, useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
 import { Select, MenuItem, TextField, Alert } from "@mui/material";
@@ -69,10 +69,10 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
     setValue,
   } = useForm<CreateGoalInputs>();
 
-  const onSubmit: SubmitHandler<CreateGoalInputs> = async (data, event) => {
+  const onSubmit: SubmitHandler<CreateGoalInputs> = async (data, e ? :BaseSyntheticEvent) => {
     setAlertMessage({ error: false, message: "" });
     
-    event?.preventDefault();
+    e?.preventDefault();
 
     if (goal != null) {
       data.goalId = goal._id;
@@ -152,7 +152,6 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
 
     const result = await response.json();
     if (response.ok) {
-      revalidatePage(`/profile/${session?.user?.username}`);
       setIsGoalCreated(true);
     } else setAlertMessage({ error: true, message: result.message });
     setPending(false);
@@ -164,7 +163,8 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
         showDialog={isGoalCreated}
         title="Goal Added!"
         buttonText="View in profile"
-        path={`/profile/${session?.user.username}`}
+        path={`/profile/${session?.user.username}?type=goals`}
+        revalidate={async() => {revalidatePage(`/profile/${session?.user?.username}`)}}
       />
       {viewGoalTypes ? (
         <>

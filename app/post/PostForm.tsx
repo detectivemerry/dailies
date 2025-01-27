@@ -97,13 +97,11 @@ export default function PostForm({userGoals} : PostFormProps) {
 
       if (!response.ok) {
         setPending(false);
-        //const result = await response.json();
         setAlertMessage({
           error: true,
           message: Message.Error.UnsuccessfulPostCreation,
         });
       } else {
-        revalidatePage("/profile/[username]")
         setPostCreated(true);
       }
     } catch (error) {
@@ -127,6 +125,7 @@ export default function PostForm({userGoals} : PostFormProps) {
         title="Post created"
         buttonText="View in profile"
         path={`/profile/${username}`}
+        revalidate={async() => {revalidatePage("/profile/[username]")}}
        />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col justify-between h-screen">

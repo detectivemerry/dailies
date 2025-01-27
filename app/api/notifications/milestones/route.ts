@@ -6,7 +6,6 @@ import ApiMessage from "@/app/lib/message/ApiMessage";
 
 export async function PATCH(req: Request, res: NextApiResponse) {
   try {
-    console.log("yes patch is being ran")
     const client = await connectDB();
     const db = client.connection.useDb(`Dailies`);
     const data = await req.json();

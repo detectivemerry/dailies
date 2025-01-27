@@ -13,7 +13,7 @@ export default async function page({ params }: EditGoalPageProps) {
   const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/goal/user`, {
     method: "GET",
     headers: { goalId: params.goalId },
-    cache: "no-store",
+    // cache: "no-store",
   });
 
   const { data: userData } = await response.json();
