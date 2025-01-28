@@ -15,6 +15,7 @@ interface ProfileContentProps {
   userGoals: UserGoal[];
   posts: Post[];
   type: string | undefined;
+  currentProfileUsername: string | undefined;
 }
 
 type Alert = {
@@ -26,6 +27,7 @@ export default function ProfileContent({
   userGoals,
   posts,
   type,
+  currentProfileUsername,
 }: ProfileContentProps) {
   const [mode, setMode] = useState<string>(
     !type || type == "goals" ? "goals" : type == "posts" ? "posts" : "goals"
@@ -55,6 +57,7 @@ export default function ProfileContent({
               userGoal={userGoal}
               key={String(userGoal._id)}
               setAlert={setAlert}
+              currentProfileUsername={currentProfileUsername}
             />
           ))}
         </div>

@@ -24,6 +24,7 @@ import revalidatePage from "@/app/lib/actions/revalidatePage/revalidatePage";
 interface UserGoalCardProps {
   userGoal: UserGoal;
   setAlert: Dispatch<SetStateAction<Alert>>;
+  currentProfileUsername: string | undefined;
 }
 
 type Alert = {
@@ -34,6 +35,7 @@ type Alert = {
 export default function UserGoalCard({
   userGoal,
   setAlert,
+  currentProfileUsername,
 }: UserGoalCardProps) {
   const router = useRouter();
   const [clickedEdit, setClickedEdit] = useState<boolean>(false);
@@ -107,40 +109,44 @@ export default function UserGoalCard({
       <div className="flex flex-col border p-3 mx-3">
         <div className="flex justify-between">
           <div className="text-main font-bold pb-3">{userGoal.name}</div>
-          <div
-            onClick={handleClick}
-            className={`${
-              openSettings ? "bg-lightGray" : "bg-white"
-            } rounded my-[7px] pt-[2px] px-2`}
-          >
-            <MoreHorizOutlined
-              sx={{ color: "#1D5D9B", fontSize: "1.125rem" }}
-            />
-          </div>
-          <Menu
-            anchorEl={anchorEl}
-            open={openSettings}
-            onClose={handleClose}
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            transformOrigin={{ vertical: "top", horizontal: "right" }}
-            autoFocus={false}
-            slotProps={{ paper: { sx: { width: "7rem" } } }}
-          >
-            <MenuItem
-              onClick={() => {
-                router.push(`/edit-goal/${userGoal._id}`);
-              }}
-            >
-              Edit
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                setDeleteSelected(true);
-              }}
-            >
-              Delete
-            </MenuItem>
-          </Menu>
+          {session?.user.username === currentProfileUsername && (
+            <>
+              <div
+                onClick={handleClick}
+                className={`${
+                  openSettings ? "bg-lightGray" : "bg-white"
+                } rounded my-[7px] pt-[2px] px-2`}
+              >
+                <MoreHorizOutlined
+                  sx={{ color: "#1D5D9B", fontSize: "1.125rem" }}
+                />
+              </div>
+              <Menu
+                anchorEl={anchorEl}
+                open={openSettings}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+                autoFocus={false}
+                slotProps={{ paper: { sx: { width: "7rem" } } }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    router.push(`/edit-goal/${userGoal._id}`);
+                  }}
+                >
+                  Edit
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    setDeleteSelected(true);
+                  }}
+                >
+                  Delete
+                </MenuItem>
+              </Menu>
+            </>
+          )}
           {/* <div
           className={`${clickedEdit && "bg-lightGray"} mb-[7px] px-2`}
           onClick={async () => {

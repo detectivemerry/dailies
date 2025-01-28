@@ -40,7 +40,7 @@ export default async function page({ params, searchParams } : ProfilePageProps) 
         <ProfileTitleHeader username = {params.username}/>
       </div>
       <div>
-        <ProfileContent userGoals = {userGoals} posts = {posts} type = {searchParams?.type} />
+        <ProfileContent userGoals = {userGoals} posts = {posts} type = {searchParams?.type} currentProfileUsername = {params.username} />
       </div>
     </div>
   )
