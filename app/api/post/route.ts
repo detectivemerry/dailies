@@ -178,8 +178,7 @@ export async function DELETE(req : Request, res : NextApiResponse){
     let data = await req.json();
     const postIdObject = new ObjectId(String(data.postId))
     const deletePost = await db.collection("Posts").deleteOne({_id : postIdObject})
-    console.log("deletePost is this")
-    console.log(deletePost)
+
     if(deletePost.deletedCount != 1){
       return NextResponse.json({status : 500, message : ApiMessage.Error.UnsuccessfulPostDelete})
     }

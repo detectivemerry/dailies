@@ -1,5 +1,5 @@
 "use client";
-import React, { BaseSyntheticEvent, useState } from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
 import { Select, MenuItem, TextField, Alert } from "@mui/material";
@@ -62,18 +62,13 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-    reset,
     control,
-    setValue,
   } = useForm<CreateGoalInputs>();
 
-  const onSubmit: SubmitHandler<CreateGoalInputs> = async (data, e ? :BaseSyntheticEvent) => {
+  const onSubmit: SubmitHandler<CreateGoalInputs> = async (data) => {
     setAlertMessage({ error: false, message: "" });
     
-    e?.preventDefault();
-
     if (goal != null) {
       data.goalId = goal._id;
       data.goalName = goal.name;
@@ -187,7 +182,7 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
                   <div>Create a goal with us now!</div>
                 </div>
               </div>
-              <div className="w-80 -my-5 mb-0.5">
+              <div>
                 {Boolean(alertMessage.message) && (
                   <Alert severity={alertMessage.error ? "error" : "success"}>
                     {alertMessage.message}

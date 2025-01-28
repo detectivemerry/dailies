@@ -1,12 +1,21 @@
 import React, { Dispatch, SetStateAction } from "react";
+import { AlertColor } from "@mui/material";
 
 interface ProfileModeMenuProps {
   mode: string;
   setMode: Dispatch<SetStateAction<string>>;
+  setAlert: Dispatch<SetStateAction<Alert>>;
 }
+
+type Alert = {
+  message: string;
+  type: AlertColor;
+};
+
 export default function ProfileModeMenu({
   mode,
   setMode,
+  setAlert,
 }: ProfileModeMenuProps) {
   return (
     <div className="flex">
@@ -15,6 +24,7 @@ export default function ProfileModeMenu({
           mode === "goals" ? "border-b border-main" : "text-mainDisabled"
         }`}
         onClick={() => {
+          setAlert({ message: "", type: "success" });
           setMode("goals");
         }}
       >
@@ -25,6 +35,7 @@ export default function ProfileModeMenu({
           mode === "posts" ? "border-b border-main" : "text-mainDisabled"
         }`}
         onClick={() => {
+          setAlert({ message: "", type: "success" });
           setMode("posts");
         }}
       >

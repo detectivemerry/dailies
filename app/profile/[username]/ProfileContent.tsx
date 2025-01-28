@@ -21,6 +21,7 @@ type Alert = {
   message: string;
   type: AlertColor;
 };
+
 export default function ProfileContent({
   userGoals,
   posts,
@@ -39,14 +40,22 @@ export default function ProfileContent({
 
   return (
     <div className={`flex flex-col mb-20 h-full`}>
-      <ProfileModeMenu mode={mode} setMode={setMode} />
+      <ProfileModeMenu mode={mode} setMode={setMode} setAlert={setAlert} />
       {mode === "goals" && <ProfileGoalHeader />}
-      {alert.message && <Alert severity={alert.type} variant="outlined" />}
+      {alert.message && (
+        <div className="my-1">
+          <Alert severity={alert.type}>{alert.message}</Alert>
+        </div>
+      )}
 
       {userGoals && mode === "goals" && (
         <div className="flex flex-col gap-3">
           {userGoals.map((userGoal) => (
-            <UserGoalCard userGoal={userGoal} key={String(userGoal._id)} />
+            <UserGoalCard
+              userGoal={userGoal}
+              key={String(userGoal._id)}
+              setAlert={setAlert}
+            />
           ))}
         </div>
       )}
