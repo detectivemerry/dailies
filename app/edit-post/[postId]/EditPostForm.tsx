@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { BaseSyntheticEvent, ChangeEvent, useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { CollectionsOutlined, PhotoCamera } from "@mui/icons-material";
 import {
@@ -37,18 +37,15 @@ export default function EditPostForm({ post }: EditPostPageProps) {
     message: "",
   });
   const [postEdited, setPostEdited] = useState(false);
-  const { data: session } = useSession();
-
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-    reset,
   } = useForm<Post>();
 
-  const onSubmit: SubmitHandler<Post> = async (data) => {
+  const onSubmit: SubmitHandler<Post> = async (data, e? : BaseSyntheticEvent) => {
     try {
+      e?.preventDefault();
       setPending(true);
       if (image !== null) {
         let imageData: FormData = new FormData();
@@ -83,7 +80,7 @@ export default function EditPostForm({ post }: EditPostPageProps) {
           message: Message.Error.UnsuccessfulPostEdit,
         });
       } else {
-        await revalidatePage("/profile/[username]")
+        // await revalidatePage("/profile/[username]")
         setPostEdited(true);
       }
     } catch (error) {
@@ -107,7 +104,8 @@ export default function EditPostForm({ post }: EditPostPageProps) {
         title="Post successfully edited"
         content="Post has been updated, view the updated post in profile."
         buttonText="View in profile"
-        path={`/profile/${post.username}`}
+        path={`/profile/${post.username}?type=posts`}
+        revalidate={async() => {revalidatePage("/profile/[username]")}}
       />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col justify-between h-screen">
@@ -145,7 +143,9 @@ export default function EditPostForm({ post }: EditPostPageProps) {
                   />
                 </div>
                 <div className="bg-gray-200 rounded-full p-1.5">
-                  <PhotoCamera sx={{ color: "#1D5D9B" }} />
+                  {/* color when photo camera feature is available  */}
+                  {/* <PhotoCamera sx={{ color: "#1D5D9B" }} /> */}
+                  <PhotoCamera sx={{ color: "#A9A9A9" }} />
                 </div>
               </div>
               <div>

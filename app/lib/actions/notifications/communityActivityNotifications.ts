@@ -73,9 +73,6 @@ const sendCommunityActivityNotifications = async (userEmail: string) => {
     })
   );
 
-  console.log("notify list! #2");
-  console.log(notifyList);
-
   // create new notification with above information
   if (notifyList.length == 0) return;
 

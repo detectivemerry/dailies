@@ -62,18 +62,13 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-    reset,
     control,
-    setValue,
   } = useForm<CreateGoalInputs>();
 
-  const onSubmit: SubmitHandler<CreateGoalInputs> = async (data, event) => {
+  const onSubmit: SubmitHandler<CreateGoalInputs> = async (data) => {
     setAlertMessage({ error: false, message: "" });
     
-    event?.preventDefault();
-
     if (goal != null) {
       data.goalId = goal._id;
       data.goalName = goal.name;
@@ -152,7 +147,6 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
 
     const result = await response.json();
     if (response.ok) {
-      revalidatePage(`/profile/${session?.user?.username}`);
       setIsGoalCreated(true);
     } else setAlertMessage({ error: true, message: result.message });
     setPending(false);
@@ -164,7 +158,8 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
         showDialog={isGoalCreated}
         title="Goal Added!"
         buttonText="View in profile"
-        path={`/profile/${session?.user.username}`}
+        path={`/profile/${session?.user.username}?type=goals`}
+        revalidate={async() => {revalidatePage(`/profile/${session?.user?.username}`)}}
       />
       {viewGoalTypes ? (
         <>
@@ -187,7 +182,7 @@ export default function CreateGoalForm({ goalTypes }: CreateGoalProps) {
                   <div>Create a goal with us now!</div>
                 </div>
               </div>
-              <div className="w-80 -my-5 mb-0.5">
+              <div>
                 {Boolean(alertMessage.message) && (
                   <Alert severity={alertMessage.error ? "error" : "success"}>
                     {alertMessage.message}

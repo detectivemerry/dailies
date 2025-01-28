@@ -68,7 +68,7 @@ export async function POST(req: Request, res: NextApiResponse) {
             startOfCurrentPeriod: startOfCurrentPeriodObject,
             endOfCurrentPeriod: endOfCurrentPeriodObject,
             goalName: goalName,
-            milestoneReached : milestoneReached,
+            milestoneReached: milestoneReached,
           },
         },
       }
@@ -263,6 +263,50 @@ export async function PATCH(req: Request, res: NextApiResponse) {
     );
   } catch (error) {
     console.error(error);
+    return NextResponse.json(
+      { message: ApiMessage.Error.General },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: Request, res: NextApiResponse) {
+  try {
+    const client = await connectDB();
+    const db = client.connection.useDb(`Dailies`);
+    let data = await req.json();
+    const userGoalId = new ObjectId(String(data.userGoalId));
+
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { message: ApiMessage.Error.Unauthenticated },
+        { status: 401 }
+      );
+    }
+    const { user } = session;
+
+    // const deletePost = await db.collection("Users").deleteOne({_id : postIdObject})
+    const result = await db.collection("Users").updateOne(
+      { email: user.email },
+      {
+        $pull: {
+          goals: { _id: userGoalId },
+        },
+      }
+    );
+
+    if (result.modifiedCount != 1) {
+      return NextResponse.json(
+        { message: ApiMessage.Error.General },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ status: 200 });
+
+  } catch (error) {
+    console.log(error);
     return NextResponse.json(
       { message: ApiMessage.Error.General },
       { status: 500 }

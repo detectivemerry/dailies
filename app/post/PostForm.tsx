@@ -53,8 +53,13 @@ export default function PostForm({userGoals} : PostFormProps) {
       setPending(true);
       let imageData : FormData = new FormData();
 
-      if(image === null)
+      if(image === null){
+        setAlertMessage({
+          error: true,
+          message: Message.Error.ImageRequired,
+        });
         return
+      }
 
       imageData.append("file", image, "image")
 
@@ -92,13 +97,11 @@ export default function PostForm({userGoals} : PostFormProps) {
 
       if (!response.ok) {
         setPending(false);
-        //const result = await response.json();
         setAlertMessage({
           error: true,
           message: Message.Error.UnsuccessfulPostCreation,
         });
       } else {
-        revalidatePage("/profile/[username]")
         setPostCreated(true);
       }
     } catch (error) {
@@ -122,6 +125,7 @@ export default function PostForm({userGoals} : PostFormProps) {
         title="Post created"
         buttonText="View in profile"
         path={`/profile/${username}`}
+        revalidate={async() => {revalidatePage("/profile/[username]")}}
        />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col justify-between h-screen">
@@ -163,7 +167,9 @@ export default function PostForm({userGoals} : PostFormProps) {
                   />
                 </div>
                 <div className="bg-gray-200 rounded-full p-1.5">
-                  <PhotoCamera sx={{ color: "#1D5D9B" }} />
+                  {/* color when photo camera feature is available  */}
+                  {/* <PhotoCamera sx={{ color: "#1D5D9B" }} /> */}
+                  <PhotoCamera sx={{ color: "#A9A9A9" }} />
                 </div>
               </div>
               <div>

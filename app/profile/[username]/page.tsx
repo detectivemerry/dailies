@@ -7,9 +7,10 @@ interface ProfilePageProps {
   params : {
   username : string
   }
+  searchParams?: { [key: string]: string | undefined }
 }
 
-export default async function page({ params } : ProfilePageProps) {
+export default async function page({ params, searchParams } : ProfilePageProps) {
 
   const userResponse = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/user`, {
     method : "GET",
@@ -39,7 +40,7 @@ export default async function page({ params } : ProfilePageProps) {
         <ProfileTitleHeader username = {params.username}/>
       </div>
       <div>
-        <ProfileContent userGoals = {userGoals} posts = {posts} />
+        <ProfileContent userGoals = {userGoals} posts = {posts} type = {searchParams?.type} currentProfileUsername = {params.username} />
       </div>
     </div>
   )

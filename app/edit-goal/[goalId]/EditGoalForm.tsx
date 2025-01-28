@@ -73,7 +73,6 @@ export default function EditGoalForm({ userGoal }: EditGoalFormProps) {
       })
       return;
     }
-
     
     let startDateStr = "";
     let endDateStr = "";
@@ -147,7 +146,7 @@ export default function EditGoalForm({ userGoal }: EditGoalFormProps) {
 
     const result = await response.json();
     if (response.ok){
-      revalidatePage(`/profile/${session?.user?.username}`);
+      // revalidatePage(`/profile/${session?.user?.username}`);
       setIsGoalEdited(true);
     }
     else setAlertMessage({ error: true, message: result.message });
@@ -169,6 +168,7 @@ export default function EditGoalForm({ userGoal }: EditGoalFormProps) {
         content=" You  have successfully edited your goal. View it in your profile."
         buttonText="View profile"
         path={`/profile/${session?.user?.username as string}`}
+        revalidate={async() => {revalidatePage(`/profile/${session?.user?.username}`)}}
       />
       <TitleHeaderWithClose title="Edit Goal" />
       <div className="mx-8 mt-14">

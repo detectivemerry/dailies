@@ -19,6 +19,7 @@ import GoalTag from "@/components/goal/GoalTag";
 import WarningAlertDialog from "../dialogs/WarningAlertDialog";
 import { computeTimeLeftForGoal } from "@/app/lib/display/userGoalCardDisplay";
 import computeTimeSincePosted from "@/app/lib/display/computeTimeSincePosted";
+import revalidatePage from "@/app/lib/actions/revalidatePage/revalidatePage";
 
 interface PostCardProps {
   post: Post;
@@ -71,6 +72,7 @@ export default function PostCard({ post, setAlert = ()=>{} }: PostCardProps) {
 
       if(response.ok){
         setAlert({ message : "Post deleted", type : "success"})
+        revalidatePage(`/profile/${session?.user.username}`);
       }
       else{
         setAlert({ message : "Failed to delete post", type : "error"})
@@ -92,7 +94,6 @@ export default function PostCard({ post, setAlert = ()=>{} }: PostCardProps) {
         secondaryButtonText="Cancel"
         mainDialogAction={deletePost}
         secondaryDialogAction={() => {
-
           setDeleteSelected(false);
         }}
       />
