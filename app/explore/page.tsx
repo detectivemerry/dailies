@@ -27,7 +27,9 @@ export default async function page() {
 
   return (
     <div className="flex flex-col w-screen lg:w-[24.5rem]">
+      <div className = "mb-[4.5rem]">
       <SectionHeader>Popular Communities</SectionHeader>
+      </div>
       <div className="flex overflow-x-auto gap-4">
         {goals.map((goal:Goal) => (
           <GoalTag goalName={goal.name} key={String(goal._id)} />

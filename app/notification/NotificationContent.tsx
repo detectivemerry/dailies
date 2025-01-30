@@ -26,8 +26,8 @@ export default function NotificationContent({
 
   useEffect(() => {
     return () => {
-      console.log("unmounted");
-      if (session?.user.username) updateNotifications();
+      if (session?.user.username && unseenNotifications.length > 0)
+        updateNotifications();
     };
   }, []);
 
@@ -45,7 +45,7 @@ export default function NotificationContent({
 
   return (
     <div className="flex flex-col">
-      <div className="-mb-4">
+      <div className="mb-16">
         <SectionHeader>Notifications</SectionHeader>
       </div>
       {unseenNotifications.length > 0 && (

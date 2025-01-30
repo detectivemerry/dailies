@@ -15,7 +15,7 @@ interface HomeContentProps {
 export default function HomeContent({ subscribedPosts }: HomeContentProps) {
   return (
     <div className="flex flex-col">
-      <div className="-mb-4">
+      <div className="mb-16">
         <SectionHeader>Your Communities</SectionHeader>
       </div>
       <div>
