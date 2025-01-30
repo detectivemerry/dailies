@@ -16,12 +16,11 @@ export default async function page() {
     }
   );
   const { data: notificationData } = await notificationResponse.json();
-  
-  if(Array.isArray(notificationData))
-    notificationData.reverse()
+
+  if (Array.isArray(notificationData)) notificationData.reverse();
 
   return (
-    <div>
+    <div className="flex flex-col w-screen lg:w-[24.5rem]">
       <NotificationContent
         notifications={notificationData ? notificationData : []}
       />

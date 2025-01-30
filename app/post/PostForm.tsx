@@ -124,7 +124,7 @@ export default function PostForm({userGoals} : PostFormProps) {
         showDialog={postCreated}
         title="Post created"
         buttonText="View in profile"
-        path={`/profile/${username}`}
+        path={`/profile/${username}?type=posts`}
         revalidate={async() => {revalidatePage("/profile/[username]")}}
        />
       <form onSubmit={handleSubmit(onSubmit)}>
